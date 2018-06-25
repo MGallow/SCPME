@@ -1,14 +1,13 @@
-Package: ADMMsigma
+Package: shrink
 Type: Package
-Title: Penalized Precision Matrix Estimation via ADMM
+Title: Shrinking characteristics of precision matrix estimators
 Version: 2.0
 Date: 2018-05-30
 Authors@R: person("Matt", "Galloway", email = "gall0441@umn.edu",
                   role = c("aut", "cre"))
-Description: Estimates a penalized precision matrix via the alternating direction method of multipliers (ADMM) algorithm. It currently supports a general elastic-net penalty that allows for both ridge and lasso-type penalties as special cases. This package is an alternative to the 'glasso' package.
-    See Boyd et al (2010) <doi:10.1561/2200000016> for details regarding the estimation method.
-URL: https://github.com/MGallow/ADMMsigma
-BugReports: https://github.com/MGallow/ADMMsigma/issues
+Description: This package is an implementation of the methods described in "Shrinking Characteristics of Precision Matrix Estimators". https://arxiv.org/pdf/1704.04820.pdf
+URL: https://github.com/MGallow/shrink
+BugReports: https://github.com/MGallow/shrink/issues
 License: GPL (>= 2)
 ByteCompile: TRUE
 NeedsCompilation: yes

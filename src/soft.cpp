@@ -39,14 +39,14 @@ double softc(const double &s, const double &tau) {
 //' @keywords internal
 //'
 
-void softmatrixc(arma::mat &S, const arma::mat &Tau) {
+void softmatrixc(arma::mat &S, const double &Tau) {
 
   // loop over all elements
   for (int i = 0; i < S.n_rows; ++i){
     for (int j = 0; j < S.n_cols; ++j){
 
       // soft threshold each element
-      S(i, j) = softc(S(i, j), Tau(i, j));
+      S(i, j) = softc(S(i, j), Tau);
 
     }
   }

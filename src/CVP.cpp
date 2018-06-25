@@ -3,7 +3,7 @@
 #include <RcppArmadillo.h>
 #include <Rcpp.h>
 #include <progress.hpp>
-#include "Sigma.h"
+#include "ADMM.h"
 #include "soft.h"
 
 using namespace Rcpp;
@@ -12,14 +12,16 @@ using namespace Rcpp;
 
 
 //' @title CV (no folds) ADMM penalized precision matrix estimation (c++)
-//' @description Cross validation (no folds) function for ADMMsigma. This function is to be used with CVP_ADMM.
+//' @description Cross validation (no folds) function for shrink. This function is to be used with CVP_ADMM.
 //'
-//' @param n sample size for X_valid (used to calculate crit_cv)
-//' @param S_train pxp sample covariance matrix for training data (denominator n).
-//' @param S_valid pxp sample covariance matrix for validation data (denominator n).
+//' @param X_train nxp training data matrix.
+//' @param X_valid (n - q)xp validation data matrix matrix.
+//' @param Y_train nxr training response matrix.
+//' @param Y_valid (n - q)xr validation response matrix.
+//' @param A option to provide user-specified matrix for penalty term. This matrix must have p columns. Defaults to identity matrix.
+//' @param B option to provide user-specified matrix for penalty term. This matrix must have p rows. Defaults to identity matrix.
+//' @param C option to provide user-specified matrix for penalty term. This matrix must have nrow(A) rows and ncol(B) columns. Defaults to identity matrix.
 //' @param lam positive tuning parameters for elastic net penalty. If a vector of parameters is provided, they should be in increasing order.
-//' @param alpha elastic net mixing parameter contained in [0, 1]. \code{0 = ridge, 1 = lasso}. If a vector of parameters is provided, they should be in increasing order.
-//' @param diagonal option to penalize the diagonal elements of the estimated precision matrix (\eqn{\Omega}). Defaults to \code{FALSE}.
 //' @param rho initial step size for ADMM algorithm.
 //' @param mu factor for primal and residual norms in the ADMM algorithm. This will be used to adjust the step size \code{rho} after each iteration.
 //' @param tau_inc factor in which to increase step size \code{rho}
@@ -28,8 +30,8 @@ using namespace Rcpp;
 //' @param tol_abs absolute convergence tolerance. Defaults to 1e-4.
 //' @param tol_rel relative convergence tolerance. Defaults to 1e-4.
 //' @param maxit maximum number of iterations. Defaults to 1e4.
-//' @param adjmaxit adjusted maximum number of iterations. During cross validation this option allows the user to adjust the maximum number of iterations after the first \code{lam} tuning parameter has converged (for each \code{alpha}). This option is intended to be paired with \code{warm} starts and allows for "one-step" estimators. Defaults to 1e4.
-//' @param crit_cv cross validation criterion (\code{loglik}, \code{AIC}, or \code{BIC}). Defaults to \code{loglik}.
+//' @param adjmaxit adjusted maximum number of iterations. During cross validation this option allows the user to adjust the maximum number of iterations after the first \code{lam} tuning parameter has converged. This option is intended to be paired with \code{warm} starts and allows for "one-step" estimators. Defaults to 1e4.
+//' @param crit_cv cross validation criterion (\code{MSE}, \code{loglik}, \code{AIC}, or \code{BIC}). Defaults to \code{MSE}.
 //' @param start specify \code{warm} or \code{cold} start for cross validation. Default is \code{warm}.
 //' @param trace option to display progress of CV. Choose one of \code{progress} to print a progress bar, \code{print} to print completed tuning parameters, or \code{none}.
 //' 
@@ -38,99 +40,19 @@ using namespace Rcpp;
 //' @keywords internal
 //'
 // [[Rcpp::export]]
-arma::mat CVP_ADMMc(const int n, const arma::mat &S_train, const arma::mat &S_valid, const arma::colvec &lam, const arma::colvec &alpha, bool diagonal = false, double rho = 2, const double mu = 10, const double tau_inc = 2, const double tau_dec = 2, std::string crit = "ADMM", const double tol_abs = 1e-4, const double tol_rel = 1e-4, int maxit = 1e4, int adjmaxit = 1e4, std::string crit_cv = "loglik", std::string start = "warm", std::string trace = "progress") {
+arma::mat CVP_ADMMc(const arma::mat &X_train, const arma::mat &X_valid, const arma::mat &Y_train, const arma::mat &Y_valid, const arma::mat &A, const arma::mat &B, const arma::mat &C, const arma::colvec &lam, double rho = 2, const double mu = 10, const double tau_inc = 2, const double tau_dec = 2, std::string crit = "ADMM", const double tol_abs = 1e-4, const double tol_rel = 1e-4, int maxit = 1e4, int adjmaxit = 1e4, std::string crit_cv = "MSE", std::string start = "warm", std::string trace = "progress") {
   
   // initialization
-  int p = S_train.n_rows, l = lam.n_rows, a = alpha.n_rows;
-  double sgn = 0, logdet = 0, alpha_, lam_;
-  arma::mat Omega, initOmega, initZ2, initY; arma::colvec nzeros;
-  initOmega = initZ2 = initY = arma::zeros<arma::mat>(p, p);
-  arma::mat CV_error(l, a, arma::fill::zeros);
-  Progress progress(l*a, trace == "progress");
-  
-  
-  // loop over all tuning parameters
-  for (int i = 0; i < l; i++){
-    for (int j = 0; j < a; j++){
-      
-      // set temporary tuning parameters
-      lam_ = lam[i];
-      alpha_ = alpha[j];
-      
-      // compute the penalized likelihood precision matrix estimator at the ith value in lam:
-      List ADMM = ADMMc(S_train, initOmega, initZ2, initY, lam_, alpha_, diagonal, rho, mu, tau_inc, tau_dec, crit, tol_abs, tol_rel, maxit);
-      Omega = as<arma::mat>(ADMM["Omega"]);
-
-      if (start == "warm"){
-        
-        // option to save initial values for warm starts
-        initOmega = as<arma::mat>(ADMM["Omega"]);
-        initZ2 = as<arma::mat>(ADMM["Z2"]);
-        initY = as<arma::mat>(ADMM["Y"]);
-        rho = as<double>(ADMM["rho"]);
-        maxit = adjmaxit;
-        
-      }
-      
-      // compute the observed negative validation loglikelihood (close enough)
-      arma::log_det(logdet, sgn, Omega);
-      CV_error(i, j) = (n/2)*(arma::accu(Omega % S_valid) - logdet);
-      
-      // update for crit_cv, if necessary
-      if (crit_cv == "AIC"){
-        CV_error(i, j) += numzeros(Omega);
-      }
-      if (crit_cv == "BIC"){
-        CV_error(i, j) += numzeros(Omega)*std::log(n)/2;
-      }
-      
-      // update progress bar
-      if (trace == "progress"){
-        progress.increment();
-      
-      // if not quiet, then print progress lambda
-      } else if (trace == "print"){
-        Rcout << "Finished lam = " << lam[i] << "\n";
-      }
-    }
-  }
-  
-  // return CV errors
-  return(CV_error);
-}
-
-
-
-
-
-//-------------------------------------------------------------------------------------
-
-
-
-
-
-//' @title CV (no folds) RIDGE penalized precision matrix estimation (c++)
-//' @description Cross validation (no folds) function for RIDGEsigma. This function is to be used with CVP_RIDGE.
-//'
-//' @param n sample size for X_valid (used to calculate CV_error)
-//' @param S_train pxp sample covariance matrix for training data (denominator n).
-//' @param S_valid pxp sample covariance matrix for validation data (denominator n).
-//' @param lam positive tuning parameters for ridge penalty. If a vector of parameters is provided, they should be in increasing order.
-//' @param trace option to display progress of CV. Choose one of \code{progress} to print a progress bar, \code{print} to print completed tuning parameters, or \code{none}.
-//' 
-//' @return cross validation errors (negative validation likelihood)
-//' 
-//' @keywords internal
-//'
-// [[Rcpp::export]]
-arma::mat CVP_RIDGEc(const int n, const arma::mat &S_train, const arma::mat &S_valid, const arma::colvec &lam, std::string trace = "none") {
-  
-  // initialization
-  int p = S_train.n_rows, l = lam.n_rows;
+  int n = X_valid.n_rows, p = X_train.n_cols, r = Y_valid.n_cols, l = lam.n_rows;
   double sgn = 0, logdet = 0, lam_;
-  arma::mat Omega(p, p, arma::fill::zeros), CV_error(l, 1, arma::fill::zeros);
+  arma::mat S_train, S_valid, Omega, initOmega, initZ2, initY; arma::colvec nzeros;
+  initOmega = initZ2 = initY = arma::zeros<arma::mat>(p, p);
+  arma::mat CV_error(l, 1, arma::fill::zeros);
   Progress progress(l, trace == "progress");
   
+  // calculate sample covariances
+  S_train = arma::cov(X_train, 1);
+  S_valid = arma::cov(X_valid, 1);
   
   // loop over all tuning parameters
   for (int i = 0; i < l; i++){
@@ -138,18 +60,46 @@ arma::mat CVP_RIDGEc(const int n, const arma::mat &S_train, const arma::mat &S_v
     // set temporary tuning parameters
     lam_ = lam[i];
     
-    // compute the ridge-penalized likelihood precision matrix estimator at the ith value in lam:
-    Omega = RIDGEc(S_train, lam_);
+    // compute the penalized likelihood precision matrix estimator at the ith value in lam:
+    List ADMM = ADMMc(S_train, A, B, C, initOmega, initZ2, initY, lam_, rho, mu, tau_inc, tau_dec, crit, tol_abs, tol_rel, maxit);
+    Omega = as<arma::mat>(ADMM["Omega"]);
     
-    // compute the observed negative validation loglikelihood (close enough)
-    arma::log_det(logdet, sgn, Omega);
-    CV_error[i] = (n/2)*(arma::accu(Omega % S_valid) - logdet);
+    if (start == "warm"){
+      
+      // option to save initial values for warm starts
+      initOmega = as<arma::mat>(ADMM["Omega"]);
+      initZ2 = as<arma::mat>(ADMM["Z2"]);
+      initY = as<arma::mat>(ADMM["Y"]);
+      rho = as<double>(ADMM["rho"]);
+      maxit = adjmaxit;
+      
+    }
+    
+    // criterion MSE
+    if (crit_cv == "MSE"){
+      CV_error[i] = arma::accu(Y_valid - X_valid*Omega*arma::cov(X_valid, Y_valid, 1))/(n*r);
+      
+      // criterion loglik
+    } else if (crit_cv == "loglik"){
+      arma::log_det(logdet, sgn, Omega);
+      CV_error[i] = (n/2)*(arma::accu(Omega % S_valid) - logdet);
+      
+      // criterion AIC
+    } else if (crit_cv == "AIC"){
+      arma::log_det(logdet, sgn, Omega);
+      CV_error[i] = (n/2)*(arma::accu(Omega % S_valid) - logdet) + numzeros(Omega);
+      
+      // criterion BIC
+    } else {
+      arma::log_det(logdet, sgn, Omega);
+      CV_error[i] = (n/2)*(arma::accu(Omega % S_valid) - logdet) + numzeros(Omega)*std::log(n)/2;
+    }
     
     // update progress bar
     if (trace == "progress"){
       progress.increment();
-    
-    // if not quiet, then print progress lambda
+      
+      // if not quiet, then print progress lambda
     } else if (trace == "print"){
       Rcout << "Finished lam = " << lam[i] << "\n";
     }
@@ -158,3 +108,5 @@ arma::mat CVP_RIDGEc(const int n, const arma::mat &S_train, const arma::mat &S_v
   // return CV errors
   return(CV_error);
 }
+
+

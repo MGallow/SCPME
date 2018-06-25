@@ -4,12 +4,18 @@
 \alias{ADMMc}
 \title{Penalized precision matrix estimation via ADMM (c++)}
 \usage{
-ADMMc(S, initOmega, initZ2, initY, lam, alpha = 1, diagonal = FALSE,
-  rho = 2, mu = 10, tau_inc = 2, tau_dec = 2, crit = "ADMM",
-  tol_abs = 1e-04, tol_rel = 1e-04, maxit = 10000L)
+ADMMc(S, A, B, C, initOmega, initZ2, initY, lam, rho = 2, mu = 10,
+  tau_inc = 2, tau_dec = 2, crit = "ADMM", tol_abs = 1e-04,
+  tol_rel = 1e-04, maxit = 10000L)
 }
 \arguments{
 \item{S}{pxp sample covariance matrix (denominator n).}
+
+\item{A}{option to provide user-specified matrix for penalty term. This matrix must have p columns. Defaults to identity matrix.}
+
+\item{B}{option to provide user-specified matrix for penalty term. This matrix must have p rows. Defaults to identity matrix.}
+
+\item{C}{option to provide user-specified matrix for penalty term. This matrix must have nrow(A) rows and ncol(B) columns. Defaults to identity matrix.}
 
 \item{initOmega}{initialization matrix for Omega}
 
@@ -18,10 +24,6 @@ ADMMc(S, initOmega, initZ2, initY, lam, alpha = 1, diagonal = FALSE,
 \item{initY}{initialization matrix for Y}
 
 \item{lam}{postive tuning parameter for elastic net penalty.}
-
-\item{alpha}{elastic net mixing parameter contained in [0, 1]. \code{0 = ridge, 1 = lasso}. Defaults to alpha = 1.}
-
-\item{diagonal}{option to penalize the diagonal elements of the estimated precision matrix (\eqn{\Omega}). Defaults to \code{FALSE}.}
 
 \item{rho}{initial step size for ADMM algorithm.}
 
@@ -42,8 +44,7 @@ ADMMc(S, initOmega, initZ2, initY, lam, alpha = 1, diagonal = FALSE,
 \value{
 returns list of returns which includes:
 \item{Iterations}{number of iterations.}
-\item{lam}{optimal tuning parameters.}
-\item{alpha}{optimal tuning parameter.}
+\item{lam}{optimal tuning parameter.}
 \item{Omega}{estimated penalized precision matrix.}
 \item{Z2}{estimated Z matrix.}
 \item{Y}{estimated Y matrix.}
@@ -54,13 +55,13 @@ Penalized precision matrix estimation using the ADMM algorithm
 }
 \details{
 For details on the implementation of 'ADMMsigma', see the vignette
-\url{https://mgallow.github.io/ADMMsigma/}.
+\url{https://mgallow.github.io/shrink/}.
 }
 \references{
 \itemize{
 \item Boyd, Stephen, Neal Parikh, Eric Chu, Borja Peleato, Jonathan Eckstein, and others. 2011. 'Distributed Optimization and Statistical Learning via the Alternating Direction Method of Multipliers.' \emph{Foundations and Trends in Machine Learning} 3 (1). Now Publishers, Inc.: 1-122. \url{https://web.stanford.edu/~boyd/papers/pdf/admm_distr_stats.pdf}
 \item Hu, Yue, Chi, Eric C, amd Allen, Genevera I. 2016. 'ADMM Algorithmic Regularization Paths for Sparse Statistical Machine Learning.' \emph{Splitting Methods in Communication, Imaging, Science, and Engineering}. Springer: 433-459.
-\item Zou, Hui and Hastie, Trevor. 2005. "Regularization and Variable Selection via the Elastic Net." \emph{Journal of the Royal Statistial Society: Series B (Statistical Methodology)} 67 (2). Wiley Online Library: 301-320.
+\item Molstad, Aaron J., and Adam J. Rothman. (2017). 'Shrinking Characteristics of Precision Matrix Estimators. \emph{arXiv preprint arXiv: 1704.04820.}. \url{https://arxiv.org/pdf/1704.04820.pdf}
 \item Rothman, Adam. 2017. 'STAT 8931 notes on an algorithm to compute the Lasso-penalized Gaussian likelihood precision matrix estimator.'
 }
 }

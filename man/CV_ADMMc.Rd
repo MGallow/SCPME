@@ -4,21 +4,25 @@
 \alias{CV_ADMMc}
 \title{CV ADMM penalized precision matrix estimation (c++)}
 \usage{
-CV_ADMMc(X, S, lam, alpha, diagonal = FALSE, path = FALSE, rho = 2,
-  mu = 10, tau_inc = 2, tau_dec = 2, crit = "ADMM", tol_abs = 1e-04,
+CV_ADMMc(X, S, Y, A, B, C, lam, path = FALSE, rho = 2, mu = 10,
+  tau_inc = 2, tau_dec = 2, crit = "ADMM", tol_abs = 1e-04,
   tol_rel = 1e-04, maxit = 10000L, adjmaxit = 10000L, K = 5L,
-  crit_cv = "loglik", start = "warm", trace = "progress")
+  crit_cv = "MSE", start = "warm", trace = "progress")
 }
 \arguments{
 \item{X}{option to provide a nxp matrix. Each row corresponds to a single observation and each column contains n observations of a single feature/variable.}
 
 \item{S}{option to provide a pxp sample covariance matrix (denominator n). If argument is \code{NULL} and \code{X} is provided instead then \code{S} will be computed automatically.}
 
+\item{Y}{option to provide nxr response matrix. Each row corresponds to a single response and each column contains n response of a single feature/response.}
+
+\item{A}{option to provide user-specified matrix for penalty term. This matrix must have p columns. Defaults to identity matrix.}
+
+\item{B}{option to provide user-specified matrix for penalty term. This matrix must have p rows. Defaults to identity matrix.}
+
+\item{C}{option to provide user-specified matrix for penalty term. This matrix must have nrow(A) rows and ncol(B) columns. Defaults to identity matrix.}
+
 \item{lam}{positive tuning parameters for elastic net penalty. If a vector of parameters is provided, they should be in increasing order.}
-
-\item{alpha}{elastic net mixing parameter contained in [0, 1]. \code{0 = ridge, 1 = lasso}. If a vector of parameters is provided, they should be in increasing order.}
-
-\item{diagonal}{option to penalize the diagonal elements of the estimated precision matrix (\eqn{\Omega}). Defaults to \code{FALSE}.}
 
 \item{path}{option to return the regularization path. This option should be used with extreme care if the dimension is large. If set to TRUE, cores will be set to 1 and errors and optimal tuning parameters will based on the full sample. Defaults to FALSE.}
 
@@ -36,7 +40,7 @@ CV_ADMMc(X, S, lam, alpha, diagonal = FALSE, path = FALSE, rho = 2,
 
 \item{maxit}{maximum number of iterations. Defaults to 1e4.}
 
-\item{adjmaxit}{adjusted maximum number of iterations. During cross validation this option allows the user to adjust the maximum number of iterations after the first \code{lam} tuning parameter has converged (for each \code{alpha}). This option is intended to be paired with \code{warm} starts and allows for "one-step" estimators. Defaults to 1e4.}
+\item{adjmaxit}{adjusted maximum number of iterations. During cross validation this option allows the user to adjust the maximum number of iterations after the first \code{lam} tuning parameter has converged. This option is intended to be paired with \code{warm} starts and allows for 'one-step' estimators. Defaults to 1e4.}
 
 \item{K}{specify the number of folds for cross validation.}
 
@@ -49,8 +53,7 @@ CV_ADMMc(X, S, lam, alpha, diagonal = FALSE, path = FALSE, rho = 2,
 \value{
 list of returns includes:
 \item{lam}{optimal tuning parameter.}
-\item{alpha}{optimal tuning parameter.}
-\item{path}{array containing the solution path. Solutions will be ordered in ascending alpha values for each lambda.}
+\item{path}{array containing the solution path. Solutions will be ordered in ascending lambda values.}
 \item{min.error}{minimum average cross validation error (cv_crit) for optimal parameters.}
 \item{avg.error}{average cross validation error (cv_crit) across all folds.}
 \item{cv.error}{cross validation errors (cv_crit).}

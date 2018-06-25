@@ -1,4 +1,4 @@
 library(testthat)
-library(ADMMsigma)
+library(shrink)
 
-test_check("ADMMsigma")
+test_check("shrink")

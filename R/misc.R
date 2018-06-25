@@ -1,4 +1,4 @@
-#' @useDynLib ADMMsigma
+#' @useDynLib shrink
 #' @importFrom Rcpp sourceCpp
 #' @importFrom grDevices colorRampPalette
 #' @importFrom stats cov

@@ -2,34 +2,36 @@ pandoc: 1.19.2.1
 pkgdown: 1.0.0
 pkgdown_sha: ~
 
-title: ADMMsigma
-url: https://mgallow.github.io/ADMMsigma/
+title: shrink
+url: https://mgallow.github.io/shrink/
 template:
   params:
     bootswatch: flatly
-    ganalytics: UA-84680750-3
+    #ganalytics: UA-84680750-3
 
 navbar:
-  title: "ADMMsigma"
+  title: "shrink"
   left:
     - icon: fa-home fa-lg
       href: index.html
-    - text: Articles
-      menu:
-        - text: "Tutorial"
-          href: articles/Tutorial.html
-        - text: "Details"
-          href: articles/Details.html
-        - text: "Simulations"
-          href: articles/Simulations.html
-        - text: "Benchmark"
-          href: articles/Benchmark.html
-        - text: "Functions"
-          href: "reference/index.html"
+    #- text: Articles
+    #  menu:
+    #    - text: "Tutorial"
+    #      href: articles/Tutorial.html
+    #    - text: "Details"
+    #      href: articles/Details.html
+    #    - text: "Simulations"
+    #      href: articles/Simulations.html
+    #    - text: "Benchmark"
+    #      href: articles/Benchmark.html
+    #    - text: "Functions"
+    #      href: "reference/index.html"
     - text: "Related Packages"
       menu:
         - text: "Omega"
           href: https://mgallow.github.io/Omega/
+        - text: "ADMMsigma"
+          href: https://mgallow.github.io/ADMMsigma/
         - text: "GLASSOO"
           href: https://mgallow.github.io/GLASSOO/
         - text: "CVglasso"
@@ -40,7 +42,7 @@ navbar:
       href: news/index.html
     - icon: fa-github fa-lg
       #text: "Github"
-      href: https://github.com/MGallow/ADMMsigma/
+      href: https://github.com/MGallow/shrink/
     - icon: fa-user fa-lg
       text: "MGallow"
       href: https://mgallow.github.io/

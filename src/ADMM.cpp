@@ -49,15 +49,16 @@ arma::mat RIDGEc(const arma::mat &S, double lam){
 //' @description Penalized precision matrix estimation using the ADMM algorithm
 //' 
 //' @details For details on the implementation of 'ADMMsigma', see the vignette
-//' \url{https://mgallow.github.io/ADMMsigma/}.
+//' \url{https://mgallow.github.io/shrink/}.
 //'
 //' @param S pxp sample covariance matrix (denominator n).
+//' @param A option to provide user-specified matrix for penalty term. This matrix must have p columns. Defaults to identity matrix.
+//' @param B option to provide user-specified matrix for penalty term. This matrix must have p rows. Defaults to identity matrix.
+//' @param C option to provide user-specified matrix for penalty term. This matrix must have nrow(A) rows and ncol(B) columns. Defaults to identity matrix.
 //' @param initOmega initialization matrix for Omega
 //' @param initZ2 initialization matrix for Z2
 //' @param initY initialization matrix for Y
 //' @param lam postive tuning parameter for elastic net penalty.
-//' @param alpha elastic net mixing parameter contained in [0, 1]. \code{0 = ridge, 1 = lasso}. Defaults to alpha = 1.
-//' @param diagonal option to penalize the diagonal elements of the estimated precision matrix (\eqn{\Omega}). Defaults to \code{FALSE}.
 //' @param rho initial step size for ADMM algorithm.
 //' @param mu factor for primal and residual norms in the ADMM algorithm. This will be used to adjust the step size \code{rho} after each iteration.
 //' @param tau_inc factor in which to increase step size \code{rho}.
@@ -69,8 +70,7 @@ arma::mat RIDGEc(const arma::mat &S, double lam){
 //' 
 //' @return returns list of returns which includes:
 //' \item{Iterations}{number of iterations.}
-//' \item{lam}{optimal tuning parameters.}
-//' \item{alpha}{optimal tuning parameter.}
+//' \item{lam}{optimal tuning parameter.}
 //' \item{Omega}{estimated penalized precision matrix.}
 //' \item{Z2}{estimated Z matrix.}
 //' \item{Y}{estimated Y matrix.}
@@ -80,7 +80,7 @@ arma::mat RIDGEc(const arma::mat &S, double lam){
 //' \itemize{
 //' \item Boyd, Stephen, Neal Parikh, Eric Chu, Borja Peleato, Jonathan Eckstein, and others. 2011. 'Distributed Optimization and Statistical Learning via the Alternating Direction Method of Multipliers.' \emph{Foundations and Trends in Machine Learning} 3 (1). Now Publishers, Inc.: 1-122. \url{https://web.stanford.edu/~boyd/papers/pdf/admm_distr_stats.pdf}
 //' \item Hu, Yue, Chi, Eric C, amd Allen, Genevera I. 2016. 'ADMM Algorithmic Regularization Paths for Sparse Statistical Machine Learning.' \emph{Splitting Methods in Communication, Imaging, Science, and Engineering}. Springer: 433-459.
-//' \item Zou, Hui and Hastie, Trevor. 2005. "Regularization and Variable Selection via the Elastic Net." \emph{Journal of the Royal Statistial Society: Series B (Statistical Methodology)} 67 (2). Wiley Online Library: 301-320.
+//' \item Molstad, Aaron J., and Adam J. Rothman. (2017). 'Shrinking Characteristics of Precision Matrix Estimators. \emph{arXiv preprint arXiv: 1704.04820.}. \url{https://arxiv.org/pdf/1704.04820.pdf}
 //' \item Rothman, Adam. 2017. 'STAT 8931 notes on an algorithm to compute the Lasso-penalized Gaussian likelihood precision matrix estimator.'
 //' }
 //' 
@@ -91,24 +91,15 @@ arma::mat RIDGEc(const arma::mat &S, double lam){
 //' @keywords internal
 //'
 // [[Rcpp::export]]
-List ADMMc(const arma::mat &S, const arma::mat &initOmega, const arma::mat &initZ2, const arma::mat &initY, const double lam, const double alpha = 1, bool diagonal = false, double rho = 2, const double mu = 10, const double tau_inc = 2, const double tau_dec = 2, std::string crit = "ADMM", const double tol_abs = 1e-4, const double tol_rel = 1e-4, const int maxit = 1e4){
+List ADMMc(const arma::mat &S, const arma::mat &A, const arma::mat &B, const arma::mat &C, const arma::mat &initOmega, const arma::mat &initZ2, const arma::mat &initY, const double lam, double rho = 2, const double mu = 10, const double tau_inc = 2, const double tau_dec = 2, std::string crit = "ADMM", const double tol_abs = 1e-4, const double tol_rel = 1e-4, const int maxit = 1e4){
   
   // allocate memory
   bool criterion = true;
   int p = S.n_cols, iter = 0;
   double s, r, eps1, eps2, lik, lik2, sgn, logdet;
   s = r = eps1 = eps2 = lik = lik2 = sgn = logdet = 0;
-  arma::mat Z2(initZ2), Z(initZ2), Y(initY), Omega(initOmega), C(p, p, arma::fill::ones), Tau, Taum;
+  arma::mat Z2(initZ2), Z(initZ2), Y(initY), Omega(initOmega);
 
-  
-  // option to penalize diagonal elements
-  if (!diagonal){
-    C -= arma::diagmat(C);
-  }
-  
-  // save values
-  Tau = lam*alpha*C;
-  Taum = lam*C - Tau;
   
   // loop until convergence
   while (criterion && (iter < maxit)){
@@ -120,8 +111,8 @@ List ADMMc(const arma::mat &S, const arma::mat &initOmega, const arma::mat &init
     // penalty equation (1)
     // soft-thresholding
     Z2 = Y + rho*Omega;
-    softmatrixc(Z2, Tau);
-    Z2 /= (Taum + rho);
+    softmatrixc(Z2, lam);
+    Z2 /= rho;
     
     // ridge equation (2)
     // gather eigen values (spectral decomposition)
@@ -145,7 +136,7 @@ List ADMMc(const arma::mat &S, const arma::mat &initOmega, const arma::mat &init
       
       // compute penalized loglik (close enough)
       arma::log_det(logdet, sgn, Omega);
-      lik2 = (-p/2)*(arma::accu(Omega % S) - logdet + lam*((1 - alpha)/2*arma::norm(C % Omega, "fro") + alpha*arma::accu(C % arma::abs(Omega))));
+      lik2 = (-p/2)*(arma::accu(Omega % S) - logdet + lam*arma::accu(C % arma::abs(Omega)));
       criterion = (std::abs((lik2 - lik)/lik) >= tol_abs);
       lik = lik2;
       
@@ -166,7 +157,6 @@ List ADMMc(const arma::mat &S, const arma::mat &initOmega, const arma::mat &init
   
   return List::create(Named("Iterations") = iter,
                       Named("lam") = lam,
-                      Named("alpha") = alpha,
                       Named("Omega") = Omega,
                       Named("Z2") = Z2,
                       Named("Y") = Y,

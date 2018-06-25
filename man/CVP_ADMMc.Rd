@@ -4,23 +4,27 @@
 \alias{CVP_ADMMc}
 \title{CV (no folds) ADMM penalized precision matrix estimation (c++)}
 \usage{
-CVP_ADMMc(n, S_train, S_valid, lam, alpha, diagonal = FALSE, rho = 2,
+CVP_ADMMc(X_train, X_valid, Y_train, Y_valid, A, B, C, lam, rho = 2,
   mu = 10, tau_inc = 2, tau_dec = 2, crit = "ADMM", tol_abs = 1e-04,
-  tol_rel = 1e-04, maxit = 10000L, adjmaxit = 10000L,
-  crit_cv = "loglik", start = "warm", trace = "progress")
+  tol_rel = 1e-04, maxit = 10000L, adjmaxit = 10000L, crit_cv = "MSE",
+  start = "warm", trace = "progress")
 }
 \arguments{
-\item{n}{sample size for X_valid (used to calculate crit_cv)}
+\item{X_train}{nxp training data matrix.}
 
-\item{S_train}{pxp sample covariance matrix for training data (denominator n).}
+\item{X_valid}{(n - q)xp validation data matrix matrix.}
 
-\item{S_valid}{pxp sample covariance matrix for validation data (denominator n).}
+\item{Y_train}{nxr training response matrix.}
+
+\item{Y_valid}{(n - q)xr validation response matrix.}
+
+\item{A}{option to provide user-specified matrix for penalty term. This matrix must have p columns. Defaults to identity matrix.}
+
+\item{B}{option to provide user-specified matrix for penalty term. This matrix must have p rows. Defaults to identity matrix.}
+
+\item{C}{option to provide user-specified matrix for penalty term. This matrix must have nrow(A) rows and ncol(B) columns. Defaults to identity matrix.}
 
 \item{lam}{positive tuning parameters for elastic net penalty. If a vector of parameters is provided, they should be in increasing order.}
-
-\item{alpha}{elastic net mixing parameter contained in [0, 1]. \code{0 = ridge, 1 = lasso}. If a vector of parameters is provided, they should be in increasing order.}
-
-\item{diagonal}{option to penalize the diagonal elements of the estimated precision matrix (\eqn{\Omega}). Defaults to \code{FALSE}.}
 
 \item{rho}{initial step size for ADMM algorithm.}
 
@@ -38,9 +42,9 @@ CVP_ADMMc(n, S_train, S_valid, lam, alpha, diagonal = FALSE, rho = 2,
 
 \item{maxit}{maximum number of iterations. Defaults to 1e4.}
 
-\item{adjmaxit}{adjusted maximum number of iterations. During cross validation this option allows the user to adjust the maximum number of iterations after the first \code{lam} tuning parameter has converged (for each \code{alpha}). This option is intended to be paired with \code{warm} starts and allows for "one-step" estimators. Defaults to 1e4.}
+\item{adjmaxit}{adjusted maximum number of iterations. During cross validation this option allows the user to adjust the maximum number of iterations after the first \code{lam} tuning parameter has converged. This option is intended to be paired with \code{warm} starts and allows for 'one-step' estimators. Defaults to 1e4.}
 
-\item{crit_cv}{cross validation criterion (\code{loglik}, \code{AIC}, or \code{BIC}). Defaults to \code{loglik}.}
+\item{crit_cv}{cross validation criterion (\code{MSE}, \code{loglik}, \code{AIC}, or \code{BIC}). Defaults to \code{MSE}.}
 
 \item{start}{specify \code{warm} or \code{cold} start for cross validation. Default is \code{warm}.}
 
@@ -50,6 +54,6 @@ CVP_ADMMc(n, S_train, S_valid, lam, alpha, diagonal = FALSE, rho = 2,
 cross validation errors (cv_crit)
 }
 \description{
-Cross validation (no folds) function for ADMMsigma. This function is to be used with CVP_ADMM.
+Cross validation (no folds) function for shrink. This function is to be used with CVP_ADMM.
 }
 \keyword{internal}

@@ -1,9 +1,9 @@
 ## Matt Galloway
 
 
-#' @title Penalized precision matrix estimation via ADMM
+#' @title Shrinking characteristics of precision matrix estimators
 #' 
-#' @description Penalized precision matrix estimation using the ADMM algorithm.
+#' @description Shrinking characteristics of precision matrix estimators. Penalized precision matrix estimation using the ADMM algorithm.
 #' Consider the case where \eqn{X_{1}, ..., X_{n}} are iid \eqn{N_{p}(\mu,
 #' \Sigma)} and we are tasked with estimating the precision matrix,
 #' denoted \eqn{\Omega \equiv \Sigma^{-1}}. This function solves the
@@ -12,27 +12,24 @@
 #' \item{Objective:}{
 #' \eqn{\hat{\Omega}_{\lambda} = \arg\min_{\Omega \in S_{+}^{p}}
 #' \left\{ Tr\left(S\Omega\right) - \log \det\left(\Omega \right) +
-#' \lambda\left[\frac{1 - \alpha}{2}\left\| \Omega \right|_{F}^{2} +
-#' \alpha\left\| \Omega \right\|_{1} \right] \right\}}}
+#' \lambda\left\| A \Omega B - C \right\|_{1} \right\}}}
 #' }
-#' where \eqn{0 \leq \alpha \leq 1}, \eqn{\lambda > 0},
-#' \eqn{\left\|\cdot \right\|_{F}^{2}} is the Frobenius norm and we define
+#' where \eqn{\lambda > 0} and we define
 #' \eqn{\left\|A \right\|_{1} = \sum_{i, j} \left| A_{ij} \right|}.
-#' This elastic net penalty is identical to the penalty used in the popular penalized
-#' regression package \code{glmnet}. Clearly, when \eqn{\alpha = 0} the elastic-net
-#' reduces to a ridge-type penalty and when \eqn{\alpha = 1} it reduces to a
-#' lasso-type penalty.
 #' 
-#' @details For details on the implementation of 'ADMMsigma', see the vignette
-#' \url{https://mgallow.github.io/ADMMsigma/}.
+#' @details For details on the implementation of 'shrink', see the vignette
+#' \url{https://mgallow.github.io/shrink/}.
 #' 
 #' @param X option to provide a nxp data matrix. Each row corresponds to a single observation and each column contains n observations of a single feature/variable.
 #' @param S option to provide a pxp sample covariance matrix (denominator n). If argument is \code{NULL} and \code{X} is provided instead then \code{S} will be computed automatically.
+#' @param Y option to provide nxr response matrix. Each row corresponds to a single response and each column contains n response of a single feature/response.
+#' @param A option to provide user-specified matrix for penalty term. This matrix must have p columns. Defaults to identity matrix.
+#' @param B option to provide user-specified matrix for penalty term. This matrix must have p rows. Defaults to identity matrix.
+#' @param C option to provide user-specified matrix for penalty term. This matrix must have nrow(A) rows and ncol(B) columns. Defaults to identity matrix.
 #' @param nlam number of \code{lam} tuning parameters for penalty term generated from \code{lam.min.ratio} and \code{lam.max} (automatically generated). Defaults to 10.
 #' @param lam.min.ratio smallest \code{lam} value provided as a fraction of \code{lam.max}. The function will automatically generate \code{nlam} tuning parameters from \code{lam.min.ratio*lam.max} to \code{lam.max} in log10 scale. \code{lam.max} is calculated to be the smallest \code{lam} such that all off-diagonal entries in \code{Omega} are equal to zero (\code{alpha} = 1). Defaults to 1e-2.
 #' @param lam option to provide positive tuning parameters for penalty term. This will cause \code{nlam} and \code{lam.min.ratio} to be disregarded. If a vector of parameters is provided, they should be in increasing order. Defaults to NULL.
 #' @param alpha elastic net mixing parameter contained in [0, 1]. \code{0 = ridge, 1 = lasso}. If a vector of parameters is provided, they should be in increasing order. Defaults to grid of values \code{seq(0, 1, 0.2)}.
-#' @param diagonal option to penalize the diagonal elements of the estimated precision matrix (\eqn{\Omega}). Defaults to \code{FALSE}.
 #' @param path option to return the regularization path. This option should be used with extreme care if the dimension is large. If set to TRUE, cores must be set to 1 and errors and optimal tuning parameters will based on the full sample. Defaults to FALSE.
 #' @param rho initial step size for ADMM algorithm.
 #' @param mu factor for primal and residual norms in the ADMM algorithm. This will be used to adjust the step size \code{rho} after each iteration.
@@ -44,7 +41,7 @@
 #' @param maxit maximum number of iterations. Defaults to 1e4.
 #' @param adjmaxit adjusted maximum number of iterations. During cross validation this option allows the user to adjust the maximum number of iterations after the first \code{lam} tuning parameter has converged (for each \code{alpha}). This option is intended to be paired with \code{warm} starts and allows for 'one-step' estimators. Defaults to NULL.
 #' @param K specify the number of folds for cross validation.
-#' @param crit.cv cross validation criterion (\code{loglik}, \code{AIC}, or \code{BIC}). Defaults to \code{loglik}.
+#' @param crit.cv cross validation criterion (\code{MSE}, \code{loglik}, \code{AIC}, or \code{BIC}). Defaults to \code{MSE}.
 #' @param start specify \code{warm} or \code{cold} start for cross validation. Default is \code{warm}.
 #' @param cores option to run CV in parallel. Defaults to \code{cores = 1}.
 #' @param trace option to display progress of CV. Choose one of \code{progress} to print a progress bar, \code{print} to print completed tuning parameters, or \code{none}.
@@ -53,9 +50,8 @@
 #' @return returns class object \code{ADMMsigma} which includes:
 #' \item{Call}{function call.}
 #' \item{Iterations}{number of iterations.}
-#' \item{Tuning}{optimal tuning parameters (lam and alpha).}
+#' \item{Tuning}{optimal tuning parameter.}
 #' \item{Lambdas}{grid of lambda values for CV.}
-#' \item{Alphas}{grid of alpha values for CV.}
 #' \item{maxit}{maximum number of iterations.}
 #' \item{Omega}{estimated penalized precision matrix.}
 #' \item{Sigma}{estimated covariance matrix from the penalized precision matrix (inverse of Omega).}
@@ -72,69 +68,42 @@
 #' \itemize{
 #' \item Boyd, Stephen, Neal Parikh, Eric Chu, Borja Peleato, Jonathan Eckstein, and others. 2011. 'Distributed Optimization and Statistical Learning via the Alternating Direction Method of Multipliers.' \emph{Foundations and Trends in Machine Learning} 3 (1). Now Publishers, Inc.: 1-122. \url{https://web.stanford.edu/~boyd/papers/pdf/admm_distr_stats.pdf}
 #' \item Hu, Yue, Chi, Eric C, amd Allen, Genevera I. 2016. 'ADMM Algorithmic Regularization Paths for Sparse Statistical Machine Learning.' \emph{Splitting Methods in Communication, Imaging, Science, and Engineering}. Springer: 433-459.
-#' \item Zou, Hui and Hastie, Trevor. 2005. 'Regularization and Variable Selection via the Elastic Net.' \emph{Journal of the Royal Statistial Society: Series B (Statistical Methodology)} 67 (2). Wiley Online Library: 301-320.
+#' \item Molstad, Aaron J., and Adam J. Rothman. (2017). 'Shrinking Characteristics of Precision Matrix Estimators. \emph{arXiv preprint arXiv: 1704.04820.}. \url{https://arxiv.org/pdf/1704.04820.pdf}
 #' \item Rothman, Adam. 2017. 'STAT 8931 notes on an algorithm to compute the Lasso-penalized Gaussian likelihood precision matrix estimator.'
 #' }
 #' 
 #' @author Matt Galloway \email{gall0441@@umn.edu}
 #' 
-#' @seealso \code{\link{plot.ADMM}}, \code{\link{RIDGEsigma}}
-#' 
+#' @seealso \code{\link{plot.shrink}}
 #' @export
 #' 
 #' @examples
-#' # generate data from a sparse matrix
-#' # first compute covariance matrix
-#' S = matrix(0.7, nrow = 5, ncol = 5)
-#' for (i in 1:5){
-#'  for (j in 1:5){
-#'    S[i, j] = S[i, j]^abs(i - j)
-#'  }
-#'  }
-#'
-#' # generate 100 x 5 matrix with rows drawn from iid N_p(0, S)
-#' set.seed(123)
-#' Z = matrix(rnorm(100*5), nrow = 100, ncol = 5)
-#' out = eigen(S, symmetric = TRUE)
-#' S.sqrt = out$vectors %*% diag(out$values^0.5)
-#' S.sqrt = S.sqrt %*% t(out$vectors)
-#' X = Z %*% S.sqrt
-#'
-#' # elastic-net type penalty (use CV for optimal lambda and alpha)
-#' ADMMsigma(X)
-#'
-#' # ridge penalty (use CV for optimal lambda)
-#' ADMMsigma(X, alpha = 0)
-#'
-#' # lasso penalty (lam = 0.1)
-#' ADMMsigma(X, lam = 0.1, alpha = 1)
+#' # NEED TO COMPLETE
 
 # we define the ADMM covariance estimation function
-ADMMsigma = function(X = NULL, S = NULL, nlam = 10, lam.min.ratio = 0.01, 
-    lam = NULL, alpha = seq(0, 1, 0.2), diagonal = FALSE, 
-    path = FALSE, rho = 2, mu = 10, tau.inc = 2, tau.dec = 2, 
+shrink = function(X = NULL, S = NULL, Y = NULL, A = diag(ncol(S)), 
+    B = diag(ncol(S)), C = diag(ncol(S)), nlam = 10, lam.min.ratio = 0.01, 
+    lam = NULL, path = FALSE, rho = 2, mu = 10, tau.inc = 2, tau.dec = 2, 
     crit = c("ADMM", "loglik"), tol.abs = 1e-04, tol.rel = 1e-04, 
-    maxit = 10000, adjmaxit = NULL, K = 5, crit.cv = c("loglik", 
-        "AIC", "BIC"), start = c("warm", "cold"), cores = 1, 
+    maxit = 10000, adjmaxit = NULL, K = 5, crit.cv = c("MSE", 
+        "loglik", "AIC", "BIC"), start = c("warm", "cold"), cores = 1, 
     trace = c("progress", "print", "none")) {
+    
     
     # checks
     if (is.null(X) && is.null(S)) {
         stop("Must provide entry for X or S!")
     }
-    if (!all(alpha >= 0 & alpha <= 1)) {
-        stop("alpha must be in [0,1]!")
-    }
     if (!all(lam > 0)) {
         stop("lam must be positive!")
     }
-    if (!(all(c(rho, mu, tau.inc, tau.dec, tol.abs, tol.rel, 
-        maxit, adjmaxit, K, cores) > 0))) {
+    if (!(all(c(rho, mu, tau.inc, tau.dec, tol.abs, tol.rel, maxit, 
+        adjmaxit, K, cores) > 0))) {
         stop("Entry must be positive!")
     }
-    if (!(all(sapply(c(rho, mu, tau.inc, tau.dec, tol.abs, 
-        tol.rel, maxit, adjmaxit, K, cores, nlam, lam.min.ratio), 
-        length) <= 1))) {
+    if (!(all(sapply(c(rho, mu, tau.inc, tau.dec, tol.abs, tol.rel, 
+        maxit, adjmaxit, K, cores, nlam, lam.min.ratio), length) <= 
+        1))) {
         stop("Entry must be single value!")
     }
     if (all(c(maxit, adjmaxit, K, cores)%%1 != 0)) {
@@ -143,13 +112,21 @@ ADMMsigma = function(X = NULL, S = NULL, nlam = 10, lam.min.ratio = 0.01,
     if (cores < 1) {
         stop("Number of cores must be positive!")
     }
+    if (((length(lam) > 1) & (!path || (crit.cv == "MSE"))) & 
+        (is.null(X) || is.null(Y))) {
+        stop("Must provide entry for X and Y!")
+    }
+    if (is.null(Y) && (crit.cv == "MSE")) {
+        cat("Matrix Y not detected... will use loglik for crit.cv instead!\n\n")
+        crit.cv = "loglik"
+    }
     if (cores > 1 && path) {
-        cat("\nParallelization not possible when producing solution path. Setting cores = 1...")
+        cat("Parallelization not possible when producing solution path. Setting cores = 1...\n\n")
         cores = 1
     }
     K = ifelse(path, 1, K)
     if (cores > K) {
-        cat("\nNumber of cores exceeds K... setting cores = K")
+        cat("Number of cores exceeds K... setting cores = K\n\n")
         cores = K
     }
     if (is.null(adjmaxit)) {
@@ -163,23 +140,45 @@ ADMMsigma = function(X = NULL, S = NULL, nlam = 10, lam.min.ratio = 0.01,
     start = match.arg(start)
     trace = match.arg(trace)
     call = match.call()
-    alpha = sort(alpha)
     MIN.error = AVG.error = CV.error = NULL
     n = ifelse(is.null(X), nrow(S), nrow(X))
+    if (is.null(Y)) {
+        Y = matrix(0)
+    }
     
     # compute sample covariance matrix, if necessary
     if (is.null(S)) {
         S = (nrow(X) - 1)/nrow(X) * cov(X)
+        if (nrow(A) == 0) {
+            A = diag(ncol(S))
+        }
+        if (nrow(B) == 0) {
+            B = diag(ncol(S))
+        }
+        if (nrow(C) == 0) {
+            C = diag(ncol(S))
+        }
+    }
+    
+    # more checks
+    if (ncol(A) != ncol(S)) {
+        stop("Matrix A has incompatible number of columns!")
+    }
+    if (nrow(B) != ncol(S)) {
+        stop("Matrix B has incompatible number of rows!")
+    }
+    if ((nrow(C) != nrow(A)) || (ncol(C) != ncol(B))) {
+        stop("Matrix C has incompatible dimensions!")
     }
     
     # compute grid of lam values, if necessary
     if (is.null(lam)) {
         if (!((lam.min.ratio <= 1) && (lam.min.ratio > 0))) {
-            cat("\nlam.min.ratio must be in (0, 1]... setting to 1e-2!")
+            cat("lam.min.ratio must be in (0, 1]... setting to 1e-2!\n\n")
             lam.min.ratio = 0.01
         }
         if (!((nlam > 0) && (nlam%%1 == 0))) {
-            cat("\nnlam must be a positive integer... setting to 10!")
+            cat("nlam must be a positive integer... setting to 10!\n\n")
             nlam = 10
         }
         
@@ -199,19 +198,18 @@ ADMMsigma = function(X = NULL, S = NULL, nlam = 10, lam.min.ratio = 0.01,
     
     # perform cross validation, if necessary
     init = matrix(0, nrow = ncol(S), ncol = ncol(S))
-    if ((length(lam) > 1 || length(alpha) > 1) & (!is.null(X) || 
-        path)) {
+    if ((length(lam) > 1) && (!is.null(X) || path)) {
         
         # run CV in parallel?
         if (cores > 1) {
             
             # execute CVP_ADMM
-            ADMM = CVP_ADMM(X = X, lam = lam, alpha = alpha, 
-                diagonal = diagonal, rho = rho, mu = mu, 
-                tau.inc = tau.inc, tau.dec = tau.dec, crit = crit, 
-                tol.abs = tol.abs, tol.rel = tol.rel, maxit = maxit, 
-                adjmaxit = adjmaxit, K = K, crit.cv = crit.cv, 
-                start = start, cores = cores, trace = trace)
+            ADMM = CVP_ADMM(X = X, Y = Y, A = A, B = B, C = C, 
+                lam = lam, rho = rho, mu = mu, tau.inc = tau.inc, 
+                tau.dec = tau.dec, crit = crit, tol.abs = tol.abs, 
+                tol.rel = tol.rel, maxit = maxit, adjmaxit = adjmaxit, 
+                K = K, crit.cv = crit.cv, start = start, cores = cores, 
+                trace = trace)
             MIN.error = ADMM$min.error
             AVG.error = ADMM$avg.error
             CV.error = ADMM$cv.error
@@ -222,12 +220,12 @@ ADMMsigma = function(X = NULL, S = NULL, nlam = 10, lam.min.ratio = 0.01,
             if (is.null(X)) {
                 X = matrix(0)
             }
-            ADMM = CV_ADMMc(X = X, S = S, lam = lam, alpha = alpha, 
-                diagonal = diagonal, path = path, rho = rho, 
-                mu = mu, tau_inc = tau.inc, tau_dec = tau.dec, 
-                crit = crit, tol_abs = tol.abs, tol_rel = tol.rel, 
-                maxit = maxit, adjmaxit = adjmaxit, K = K, 
-                crit_cv = crit.cv, start = start, trace = trace)
+            ADMM = CV_ADMMc(X = X, S = S, Y = Y, A = A, B = B, 
+                C = C, lam = lam, path = path, rho = rho, mu = mu, 
+                tau_inc = tau.inc, tau_dec = tau.dec, crit = crit, 
+                tol_abs = tol.abs, tol_rel = tol.rel, maxit = maxit, 
+                adjmaxit = adjmaxit, K = K, crit_cv = crit.cv, 
+                start = start, trace = trace)
             MIN.error = ADMM$min.error
             AVG.error = ADMM$avg.error
             CV.error = ADMM$cv.error
@@ -242,57 +240,46 @@ ADMMsigma = function(X = NULL, S = NULL, nlam = 10, lam.min.ratio = 0.01,
         }
         
         # compute final estimate at best tuning parameters
-        ADMM = ADMMc(S = S, initOmega = init, initZ2 = init, 
-            initY = init, lam = ADMM$lam, alpha = ADMM$alpha, 
-            diagonal = diagonal, rho = rho, mu = mu, tau_inc = tau.inc, 
-            tau_dec = tau.dec, crit = crit, tol_abs = tol.abs, 
-            tol_rel = tol.rel, maxit = maxit)
+        ADMM = ADMMc(S = S, A = A, B = B, C = C, initOmega = init, 
+            initZ2 = init, initY = init, lam = ADMM$lam, rho = rho, 
+            mu = mu, tau_inc = tau.inc, tau_dec = tau.dec, crit = crit, 
+            tol_abs = tol.abs, tol_rel = tol.rel, maxit = maxit)
         
         
     } else {
         
         # execute ADMM_sigmac
-        if (length(lam) > 1 || length(alpha) > 1) {
-            stop("Must set specify X, set path = TRUE, or provide single value for lam and alpha.")
+        if (length(lam) > 1) {
+            stop("Must set specify X, set path = TRUE, or provide single value for lam.")
         }
         
-        ADMM = ADMMc(S = S, initOmega = init, initZ2 = init, 
-            initY = init, lam = lam, alpha = alpha, diagonal = diagonal, 
-            rho = rho, mu = mu, tau_inc = tau.inc, tau_dec = tau.dec, 
-            crit = crit, tol_abs = tol.abs, tol_rel = tol.rel, 
-            maxit = maxit)
+        ADMM = ADMMc(S = S, A = A, B = B, C = C, initOmega = init, 
+            initZ2 = init, initY = init, lam = lam, rho = rho, 
+            mu = mu, tau_inc = tau.inc, tau_dec = tau.dec, crit = crit, 
+            tol_abs = tol.abs, tol_rel = tol.rel, maxit = maxit)
         
-    }
-    
-    # option to penalize diagonal
-    if (diagonal) {
-        C = 1
-    } else {
-        C = 1 - diag(ncol(S))
     }
     
     # compute penalized loglik
     loglik = (-n/2) * (sum(ADMM$Omega * S) - determinant(ADMM$Omega, 
-        logarithm = TRUE)$modulus[1] + ADMM$lam * ((1 - ADMM$alpha)/2 * 
-        sum((C * ADMM$Omega)^2) + ADMM$alpha * sum(abs(C * 
-        ADMM$Omega))))
+        logarithm = TRUE)$modulus[1] + ADMM$lam * (sum(abs(A %*% 
+        ADMM$Omega %*% B - C))))
     
     
     # return values
-    tuning = matrix(c(log10(ADMM$lam), ADMM$alpha), ncol = 2)
-    colnames(tuning) = c("log10(lam)", "alpha")
+    tuning = matrix(c(log10(ADMM$lam), ADMM$lam), ncol = 2)
+    colnames(tuning) = c("log10(lam)", "lam")
     if (!path) {
         Path = NULL
     }
     
     returns = list(Call = call, Iterations = ADMM$Iterations, 
-        Tuning = tuning, Lambdas = lam, Alphas = alpha, maxit = maxit, 
-        Omega = ADMM$Omega, Sigma = qr.solve(ADMM$Omega), 
-        Path = Path, Z = ADMM$Z2, Y = ADMM$Y, rho = ADMM$rho, 
-        Loglik = loglik, MIN.error = MIN.error, AVG.error = AVG.error, 
-        CV.error = CV.error)
+        Tuning = tuning, Lambdas = lam, maxit = maxit, Omega = ADMM$Omega, 
+        Sigma = qr.solve(ADMM$Omega), Path = Path, Z = ADMM$Z2, 
+        Y = ADMM$Y, rho = ADMM$rho, Loglik = loglik, MIN.error = MIN.error, 
+        AVG.error = AVG.error, CV.error = CV.error)
     
-    class(returns) = "ADMM"
+    class(returns) = "shrink"
     return(returns)
     
 }
@@ -306,13 +293,13 @@ ADMMsigma = function(X = NULL, S = NULL, nlam = 10, lam.min.ratio = 0.01,
 
 
 
-#' @title Print ADMM object
-#' @description Prints ADMM object and suppresses output if needed.
-#' @param x class object ADMM
+#' @title Print shrink object
+#' @description Prints shrink object and suppresses output if needed.
+#' @param x class object shrink
 #' @param ... additional arguments.
 #' @keywords internal
 #' @export
-print.ADMM = function(x, ...) {
+print.shrink = function(x, ...) {
     
     # print warning if maxit reached
     if (x$maxit <= x$Iterations) {
@@ -324,8 +311,8 @@ print.ADMM = function(x, ...) {
         "\n", sep = "")
     
     # print iterations
-    cat("\nIterations: ", paste(x$Iterations, sep = "\n", 
-        collapse = "\n"), "\n", sep = "")
+    cat("\nIterations: ", paste(x$Iterations, sep = "\n", collapse = "\n"), 
+        "\n", sep = "")
     
     # print optimal tuning parameters
     cat("\nTuning parameters:\n")
@@ -352,38 +339,17 @@ print.ADMM = function(x, ...) {
 
 
 
-#' @title Plot ADMM object
+#' @title Plot shrink object
 #' @description Produces a plot for the cross validation errors, if available.
-#' @param x class object ADMM.
+#' @param x class object shrink.
 #' @param type produce either 'heatmap' or 'line' graph
 #' @param footnote option to print footnote of optimal values. Defaults to TRUE.
 #' @param ... additional arguments.
 #' @export
 #' @examples
-#' # generate data from a sparse matrix
-#' # first compute covariance matrix
-#' S = matrix(0.7, nrow = 5, ncol = 5)
-#' for (i in 1:5){
-#'  for (j in 1:5){
-#'    S[i, j] = S[i, j]^abs(i - j)
-#'  }
-#'  }
-#'
-#' # generate 100 x 5 matrix with rows drawn from iid N_p(0, S)
-#' set.seed(123)
-#' Z = matrix(rnorm(100*5), nrow = 100, ncol = 5)
-#' out = eigen(S, symmetric = TRUE)
-#' S.sqrt = out$vectors %*% diag(out$values^0.5)
-#' S.sqrt = S.sqrt %*% t(out$vectors)
-#' X = Z %*% S.sqrt
-#' 
-#' # produce line graph for ADMMsigma
-#' plot(ADMMsigma(X), type = 'line')
-#'
-#' # produce CV heat map for ADMMsigma
-#' plot(ADMMsigma(X), type = 'heatmap')
+#' # NEED TO COMPLETE
 
-plot.ADMM = function(x, type = c("line", "heatmap"), footnote = TRUE, 
+plot.shrink = function(x, type = c("line", "heatmap"), footnote = TRUE, 
     ...) {
     
     # check
@@ -396,36 +362,21 @@ plot.ADMM = function(x, type = c("line", "heatmap"), footnote = TRUE,
     if (type == "line") {
         
         # gather values to plot
-        cv = cbind(expand.grid(lam = x$Lambdas, alpha = x$Alphas), 
-            Errors = as.data.frame.table(x$CV.error)$Freq)
+        cv = cbind(expand.grid(lam = x$Lambdas, alpha = 0), Errors = as.data.frame.table(x$CV.error)$Freq)
         
-        if (length(x$Alphas) > 1) {
-            
-            # produce line graph
-            graph = ggplot(summarise(group_by(cv, lam, alpha), 
-                Means = mean(Errors)), aes(log10(lam), Means, 
-                color = as.factor(alpha))) + theme_minimal() + 
-                geom_line() + labs(title = "Cross-Validation Errors", 
-                color = "alpha", y = "Average Error") + geom_vline(xintercept = x$Tuning[1], 
-                linetype = "dotted")
-            
-        } else {
-            
-            # produce line graph with boxplots
-            graph = ggplot(cv, aes(as.factor(log10(lam)), 
-                Errors)) + geom_jitter(width = 0.2, color = "navy blue") + 
-                geom_boxplot() + theme_minimal() + labs(title = "Cross-Validation Errors", 
-                y = "Error", x = "log10(lam)")
-            
-        }
+        # produce line graph
+        graph = ggplot(summarise(group_by(cv, lam), Means = mean(Errors)), 
+            aes(log10(lam), Means)) + geom_jitter(width = 0.2, 
+            color = "navy blue") + theme_minimal() + geom_line(color = "red") + 
+            labs(title = "Cross-Validation Errors", y = "Error") + 
+            geom_vline(xintercept = x$Tuning[1], linetype = "dotted")
         
     } else {
         
         # augment values for heat map (helps visually)
         lam = x$Lambdas
-        cv = expand.grid(lam = lam, alpha = x$Alphas)
-        Errors = 1/(c(x$AVG.error) + abs(min(x$AVG.error)) + 
-            1)
+        cv = expand.grid(lam = lam, alpha = 0)
+        Errors = 1/(c(x$AVG.error) + abs(min(x$AVG.error)) + 1)
         cv = cbind(cv, Errors)
         
         # design color palette
@@ -434,7 +385,9 @@ plot.ADMM = function(x, type = c("line", "heatmap"), footnote = TRUE,
         # produce ggplot heat map
         graph = ggplot(cv, aes(alpha, log10(lam))) + geom_raster(aes(fill = Errors)) + 
             scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), 
-                guide = "none") + theme_minimal() + labs(title = "Heatmap of Cross-Validation Errors")
+                guide = "none") + theme_minimal() + labs(title = "Heatmap of Cross-Validation Errors") + 
+            theme(axis.title.x = element_blank(), axis.text.x = element_blank(), 
+                axis.ticks.x = element_blank())
         
     }
     
@@ -442,8 +395,7 @@ plot.ADMM = function(x, type = c("line", "heatmap"), footnote = TRUE,
         
         # produce with footnote
         graph + labs(caption = paste("**Optimal: log10(lam) = ", 
-            round(x$Tuning[1], 3), ", alpha = ", round(x$Tuning[2], 
-                3), sep = ""))
+            round(x$Tuning[1], 3), sep = ""))
         
     } else {
         
