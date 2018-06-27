@@ -12,6 +12,9 @@ branches:
 # cache local packages
 cache: packages
 
+# download specific R packages
+r_packages: devtools
+
 # install the package and dependencies:
 # - update all installed packages
 # - install package with dependencies
