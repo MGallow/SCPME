@@ -52,6 +52,7 @@ arma::vec kfold(const int &n, const int &K){
 //' @param B option to provide user-specified matrix for penalty term. This matrix must have p rows. Defaults to identity matrix.
 //' @param C option to provide user-specified matrix for penalty term. This matrix must have nrow(A) rows and ncol(B) columns. Defaults to identity matrix.
 //' @param path option to return the regularization path. This option should be used with extreme care if the dimension is large. If set to TRUE, cores will be set to 1 and errors and optimal tuning parameters will based on the full sample. Defaults to FALSE.
+//' @param tau optional constant used to ensure positive definiteness in Q matrix in algorithm
 //' @param rho initial step size for ADMM algorithm.
 //' @param mu factor for primal and residual norms in the ADMM algorithm. This will be used to adjust the step size \code{rho} after each iteration.
 //' @param tau_inc factor in which to increase step size \code{rho}
@@ -75,7 +76,7 @@ arma::vec kfold(const int &n, const int &K){
 //' @keywords internal
 //'
 // [[Rcpp::export]]
-List CV_ADMMc(const arma::mat &X, const arma::mat &S, const arma::mat &Y, const arma::mat &A, const arma::mat &B, const arma::mat &C, const arma::colvec &lam, bool path = false, double rho = 2, const double mu = 10, const double tau_inc = 2, const double tau_dec = 2, std::string crit = "ADMM", const double tol_abs = 1e-4, const double tol_rel = 1e-4, int maxit = 1e4, int adjmaxit = 1e4, int K = 5, std::string crit_cv = "MSE", std::string start = "warm", std::string trace = "progress") {
+List CV_ADMMc(const arma::mat &X, const arma::mat &S, const arma::mat &Y, const arma::mat &A, const arma::mat &B, const arma::mat &C, const arma::colvec &lam, bool path = false, double tau = 10, double rho = 2, const double mu = 10, const double tau_inc = 2, const double tau_dec = 2, std::string crit = "ADMM", const double tol_abs = 1e-4, const double tol_rel = 1e-4, int maxit = 1e4, int adjmaxit = 1e4, int K = 5, std::string crit_cv = "MSE", std::string start = "warm", std::string trace = "progress") {
   
   // initialization
   int n, p = S.n_cols, r = Y.n_cols, l = lam.n_rows, initmaxit = maxit;
@@ -149,7 +150,7 @@ List CV_ADMMc(const arma::mat &X, const arma::mat &S, const arma::mat &Y, const 
         lam_ = lam[i];
         
         // compute the ridge-penalized likelihood precision matrix estimator at the ith value in lam:
-        List ADMM = ADMMc(S_train, A, B, C, initOmega, initZ2, initY, lam_, rho, mu, tau_inc, tau_dec, crit, tol_abs, tol_rel, maxit);
+        List ADMM = ADMMc(S_train, A, B, C, initOmega, initZ2, initY, lam_, tau, rho, mu, tau_inc, tau_dec, crit, tol_abs, tol_rel, maxit);
         Omega = as<arma::mat>(ADMM["Omega"]);
         
         if (start == "warm"){
@@ -165,7 +166,7 @@ List CV_ADMMc(const arma::mat &X, const arma::mat &S, const arma::mat &Y, const 
         
         // criterion MSE
         if (crit_cv == "MSE"){
-          CV_error[i] = arma::accu(Y - X*Omega*arma::cov(X, Y, 1))/(n*r);
+          CV_error[i] = std::pow(arma::norm(Y_valid - X_valid*Omega*arma::cov(X_valid, Y_valid, 1), "fro"), 2)/(n*r);
         
         // criterion loglik
         } else if (crit_cv == "loglik"){

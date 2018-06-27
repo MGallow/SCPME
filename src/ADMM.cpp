@@ -56,10 +56,11 @@ arma::mat RIDGEc(const arma::mat &S, double lam){
 //' @param B option to provide user-specified matrix for penalty term. This matrix must have p rows. Defaults to identity matrix.
 //' @param C option to provide user-specified matrix for penalty term. This matrix must have nrow(A) rows and ncol(B) columns. Defaults to identity matrix.
 //' @param initOmega initialization matrix for Omega
-//' @param initZ2 initialization matrix for Z2
+//' @param initZ initialization matrix for Z2
 //' @param initY initialization matrix for Y
 //' @param lam postive tuning parameter for elastic net penalty.
 //' @param rho initial step size for ADMM algorithm.
+//' @param tau optional constant used to ensure positive definiteness in Q matrix in algorithm
 //' @param mu factor for primal and residual norms in the ADMM algorithm. This will be used to adjust the step size \code{rho} after each iteration.
 //' @param tau_inc factor in which to increase step size \code{rho}.
 //' @param tau_dec factor in which to decrease step size \code{rho}.
@@ -91,14 +92,14 @@ arma::mat RIDGEc(const arma::mat &S, double lam){
 //' @keywords internal
 //'
 // [[Rcpp::export]]
-List ADMMc(const arma::mat &S, const arma::mat &A, const arma::mat &B, const arma::mat &C, const arma::mat &initOmega, const arma::mat &initZ2, const arma::mat &initY, const double lam, double rho = 2, const double mu = 10, const double tau_inc = 2, const double tau_dec = 2, std::string crit = "ADMM", const double tol_abs = 1e-4, const double tol_rel = 1e-4, const int maxit = 1e4){
+List ADMMc(const arma::mat &S, const arma::mat &A, const arma::mat &B, const arma::mat &C, const arma::mat &initOmega, const arma::mat &initZ, const arma::mat &initY, const double lam, const double tau = 10, double rho = 2, const double mu = 10, const double tau_inc = 2, const double tau_dec = 2, std::string crit = "ADMM", const double tol_abs = 1e-4, const double tol_rel = 1e-4, const int maxit = 1e4){
   
   // allocate memory
   bool criterion = true;
   int p = S.n_cols, iter = 0;
   double s, r, eps1, eps2, lik, lik2, sgn, logdet;
   s = r = eps1 = eps2 = lik = lik2 = sgn = logdet = 0;
-  arma::mat Z2(initZ2), Z(initZ2), Y(initY), Omega(initOmega);
+  arma::mat Z(initZ), Z2(initZ), Y(initY), Omega(initOmega), G;
 
   
   // loop until convergence
@@ -108,18 +109,21 @@ List ADMMc(const arma::mat &S, const arma::mat &A, const arma::mat &B, const arm
     iter++;
     Z = Z2;
     
-    // penalty equation (1)
-    // soft-thresholding
-    Z2 = Y + rho*Omega;
-    softmatrixc(Z2, lam);
-    Z2 /= rho;
+    // compute G (1)
+    G = rho*A.t()*(A*Omega*B - Z - C + Y/rho)*B.t();
     
     // ridge equation (2)
     // gather eigen values (spectral decomposition)
-    Omega = RIDGEc(S + Y - rho*Z2, rho);
+    Omega = RIDGEc(S + (G + G.t())/2 - rho*tau*Omega, rho*tau);
     
-    // update Y (3)
-    Y += rho*(Omega - Z2);
+    // penalty equation (3)
+    // soft-thresholding
+    Z2 = rho*(A*Omega*B - C) + Y;
+    softmatrixc(Z2, lam);
+    Z2 /= rho;
+    
+    // update Y (4)
+    Y += rho*(A*Omega*B - Z2 - C);
     
     // calculate new rho
     s = arma::norm(rho*(Z2 - Z), "fro");

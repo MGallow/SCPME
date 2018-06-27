@@ -22,6 +22,7 @@ using namespace Rcpp;
 //' @param B option to provide user-specified matrix for penalty term. This matrix must have p rows. Defaults to identity matrix.
 //' @param C option to provide user-specified matrix for penalty term. This matrix must have nrow(A) rows and ncol(B) columns. Defaults to identity matrix.
 //' @param lam positive tuning parameters for elastic net penalty. If a vector of parameters is provided, they should be in increasing order.
+//' @param tau optional constant used to ensure positive definiteness in Q matrix in algorithm
 //' @param rho initial step size for ADMM algorithm.
 //' @param mu factor for primal and residual norms in the ADMM algorithm. This will be used to adjust the step size \code{rho} after each iteration.
 //' @param tau_inc factor in which to increase step size \code{rho}
@@ -40,7 +41,7 @@ using namespace Rcpp;
 //' @keywords internal
 //'
 // [[Rcpp::export]]
-arma::mat CVP_ADMMc(const arma::mat &X_train, const arma::mat &X_valid, const arma::mat &Y_train, const arma::mat &Y_valid, const arma::mat &A, const arma::mat &B, const arma::mat &C, const arma::colvec &lam, double rho = 2, const double mu = 10, const double tau_inc = 2, const double tau_dec = 2, std::string crit = "ADMM", const double tol_abs = 1e-4, const double tol_rel = 1e-4, int maxit = 1e4, int adjmaxit = 1e4, std::string crit_cv = "MSE", std::string start = "warm", std::string trace = "progress") {
+arma::mat CVP_ADMMc(const arma::mat &X_train, const arma::mat &X_valid, const arma::mat &Y_train, const arma::mat &Y_valid, const arma::mat &A, const arma::mat &B, const arma::mat &C, const arma::colvec &lam, const double tau = 10, double rho = 2, const double mu = 10, const double tau_inc = 2, const double tau_dec = 2, std::string crit = "ADMM", const double tol_abs = 1e-4, const double tol_rel = 1e-4, int maxit = 1e4, int adjmaxit = 1e4, std::string crit_cv = "MSE", std::string start = "warm", std::string trace = "progress") {
   
   // initialization
   int n = X_valid.n_rows, p = X_train.n_cols, r = Y_valid.n_cols, l = lam.n_rows;
@@ -61,7 +62,7 @@ arma::mat CVP_ADMMc(const arma::mat &X_train, const arma::mat &X_valid, const ar
     lam_ = lam[i];
     
     // compute the penalized likelihood precision matrix estimator at the ith value in lam:
-    List ADMM = ADMMc(S_train, A, B, C, initOmega, initZ2, initY, lam_, rho, mu, tau_inc, tau_dec, crit, tol_abs, tol_rel, maxit);
+    List ADMM = ADMMc(S_train, A, B, C, initOmega, initZ2, initY, lam_, tau, rho, mu, tau_inc, tau_dec, crit, tol_abs, tol_rel, maxit);
     Omega = as<arma::mat>(ADMM["Omega"]);
     
     if (start == "warm"){
@@ -77,7 +78,7 @@ arma::mat CVP_ADMMc(const arma::mat &X_train, const arma::mat &X_valid, const ar
     
     // criterion MSE
     if (crit_cv == "MSE"){
-      CV_error[i] = arma::accu(Y_valid - X_valid*Omega*arma::cov(X_valid, Y_valid, 1))/(n*r);
+      CV_error[i] = std::pow(arma::norm(Y_valid - X_valid*Omega*arma::cov(X_valid, Y_valid, 1), "fro"), 2)/(n*r);
       
       // criterion loglik
     } else if (crit_cv == "loglik"){

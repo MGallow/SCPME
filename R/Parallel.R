@@ -10,6 +10,7 @@
 #' @param B option to provide user-specified matrix for penalty term. This matrix must have p rows. Defaults to identity matrix.
 #' @param C option to provide user-specified matrix for penalty term. This matrix must have nrow(A) rows and ncol(B) columns. Defaults to identity matrix.
 #' @param lam positive tuning parameters for elastic net penalty. If a vector of parameters is provided, they should be in increasing order. Defaults to grid of values \code{10^seq(-2, 2, 0.2)}.
+#' @param tau optional constant used to ensure positive definiteness in Q matrix in algorithm
 #' @param rho initial step size for ADMM algorithm.
 #' @param mu factor for primal and residual norms in the ADMM algorithm. This will be used to adjust the step size \code{rho} after each iteration.
 #' @param tau.inc factor in which to increase step size \code{rho}
@@ -35,7 +36,7 @@
 
 # we define the CV_ADMMc function
 CVP_ADMM = function(X, Y = NULL, A = diag(ncol(X)), B = diag(ncol(X)), 
-    C = diag(ncol(X)), lam = 10^seq(-2, 2, 0.2), rho = 2, mu = 10, 
+    C = diag(ncol(X)), lam = 10^seq(-2, 2, 0.2), tau = 10, rho = 2, mu = 10, 
     tau.inc = 2, tau.dec = 2, crit = c("ADMM", "loglik"), tol.abs = 1e-04, 
     tol.rel = 1e-04, maxit = 1000, adjmaxit = NULL, K = 5, crit.cv = c("MSE", 
         "loglik", "AIC", "BIC"), start = c("warm", "cold"), cores = 1, 
@@ -94,7 +95,7 @@ CVP_ADMM = function(X, Y = NULL, A = diag(ncol(X)), B = diag(ncol(X)),
         
         # run foreach loop on CVP_ADMMc
         CVP_ADMMc(X_train = X.train, X_valid = X.valid, Y_train = Y.train, 
-            Y_valid = Y.valid, A = A, B = B, C = C, lam = lam, 
+            Y_valid = Y.valid, A = A, B = B, C = C, lam = lam, tau = tau, 
             rho = rho, mu = mu, tau_inc = tau.inc, tau_dec = tau.dec, 
             crit = crit, tol_abs = tol.abs, tol_rel = tol.rel, 
             maxit = maxit, adjmaxit = adjmaxit, crit_cv = crit.cv, 
