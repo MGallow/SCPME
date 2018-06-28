@@ -13,12 +13,13 @@ branches:
 cache: packages
 
 # download specific R packages
-r_packages: devtools
+#r_packages: devtools
 
 # install the package and dependencies:
 # - update all installed packages
 # - install package with dependencies
 install:
+  - Rscript -e 'install.packages("devtools")'
   - Rscript -e 'update.packages(ask = FALSE)'
   - Rscript -e 'devtools::install(pkg = ".", dependencies = TRUE)'
 

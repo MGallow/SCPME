@@ -21,8 +21,8 @@
 #' \url{https://mgallow.github.io/shrink/}.
 #' 
 #' @param X option to provide a nxp data matrix. Each row corresponds to a single observation and each column contains n observations of a single feature/variable.
-#' @param S option to provide a pxp sample covariance matrix (denominator n). If argument is \code{NULL} and \code{X} is provided instead then \code{S} will be computed automatically.
 #' @param Y option to provide nxr response matrix. Each row corresponds to a single response and each column contains n response of a single feature/response.
+#' @param S option to provide a pxp sample covariance matrix (denominator n). If argument is \code{NULL} and \code{X} is provided instead then \code{S} will be computed automatically.
 #' @param A option to provide user-specified matrix for penalty term. This matrix must have p columns. Defaults to identity matrix.
 #' @param B option to provide user-specified matrix for penalty term. This matrix must have p rows. Defaults to identity matrix.
 #' @param C option to provide user-specified matrix for penalty term. This matrix must have nrow(A) rows and ncol(B) columns. Defaults to zero matrix.
@@ -81,7 +81,7 @@
 #' # NEED TO COMPLETE
 
 # we define the ADMM covariance estimation function
-shrink = function(X = NULL, S = NULL, Y = NULL, A = diag(ncol(S)), 
+shrink = function(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)), 
     B = diag(ncol(S)), C = matrix(0, ncol = ncol(B), nrow = ncol(A)), 
     nlam = 10, lam.min.ratio = 0.01, lam = NULL, path = FALSE, 
     rho = 2, mu = 10, tau.inc = 2, tau.dec = 2, crit = c("ADMM", 
