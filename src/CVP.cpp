@@ -44,10 +44,11 @@ using namespace Rcpp;
 arma::mat CVP_ADMMc(const arma::mat &X_train, const arma::mat &X_valid, const arma::mat &Y_train, const arma::mat &Y_valid, const arma::mat &A, const arma::mat &B, const arma::mat &C, const arma::colvec &lam, const double tau = 10, double rho = 2, const double mu = 10, const double tau_inc = 2, const double tau_dec = 2, std::string crit = "ADMM", const double tol_abs = 1e-4, const double tol_rel = 1e-4, int maxit = 1e4, int adjmaxit = 1e4, std::string crit_cv = "MSE", std::string start = "warm", std::string trace = "progress") {
   
   // initialization
-  int n = X_valid.n_rows, p = X_train.n_cols, r = Y_valid.n_cols, l = lam.n_rows;
+  int n = X_valid.n_rows, r = Y_valid.n_cols, l = lam.n_rows;
   double sgn = 0, logdet = 0, lam_;
   arma::mat S_train, S_valid, Omega, initOmega, initZ2, initY; arma::colvec nzeros;
-  initOmega = initZ2 = initY = arma::zeros<arma::mat>(p, p);
+  initOmega = initZ2 = initY = arma::zeros<arma::mat>(X_train.n_cols, X_train.n_cols);
+  initZ2 = initY = arma::zeros<arma::mat>(A.n_rows, B.n_cols);
   arma::mat CV_error(l, 1, arma::fill::zeros);
   Progress progress(l, trace == "progress");
   

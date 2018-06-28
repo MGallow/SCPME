@@ -79,10 +79,10 @@ arma::vec kfold(const int &n, const int &K){
 List CV_ADMMc(const arma::mat &X, const arma::mat &S, const arma::mat &Y, const arma::mat &A, const arma::mat &B, const arma::mat &C, const arma::colvec &lam, bool path = false, double tau = 10, double rho = 2, const double mu = 10, const double tau_inc = 2, const double tau_dec = 2, std::string crit = "ADMM", const double tol_abs = 1e-4, const double tol_rel = 1e-4, int maxit = 1e4, int adjmaxit = 1e4, int K = 5, std::string crit_cv = "MSE", std::string start = "warm", std::string trace = "progress") {
   
   // initialization
-  int n, p = S.n_cols, r = Y.n_cols, l = lam.n_rows, initmaxit = maxit;
+  int n, r = Y.n_cols, p = S.n_cols, l = lam.n_rows, initmaxit = maxit;
   double sgn = 0, logdet = 0, initrho = rho, lam_;
   arma::mat X_train, X_valid, Y_train, Y_valid, S_train(S), S_valid(S), Omega, initOmega, initZ2, initY;
-  arma::mat zeros(p, p, arma::fill::zeros), CV_errors(l, K, arma::fill::zeros);
+  arma::mat zeros(p, p, arma::fill::zeros), zerosC(C.n_rows, C.n_cols, arma::fill::zeros), CV_errors(l, K, arma::fill::zeros);
   arma::colvec CV_error, zerosl(l, arma::fill::zeros); arma::rowvec X_bar;
   arma::uvec index, index_; arma::vec folds; arma::cube Path;
   Progress progress(l*K, trace == "progress");
@@ -111,7 +111,7 @@ List CV_ADMMc(const arma::mat &X, const arma::mat &S, const arma::mat &Y, const 
     
     // re-initialize values for each fold
     CV_error = zerosl; maxit = initmaxit;
-    initOmega = initZ2 = initY = zeros; rho = initrho;
+    initOmega = zeros; initZ2 = initY = zerosC; rho = initrho;
       
     if (K > 1) {
       

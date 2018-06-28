@@ -4,7 +4,7 @@
 \alias{ADMMc}
 \title{Penalized precision matrix estimation via ADMM (c++)}
 \usage{
-ADMMc(S, A, B, C, initOmega, initZ, initY, lam, tau = 10, rho = 2,
+ADMMc(S, A, B, C, initOmega, initZ2, initY, lam, tau = 10, rho = 2,
   mu = 10, tau_inc = 2, tau_dec = 2, crit = "ADMM", tol_abs = 1e-04,
   tol_rel = 1e-04, maxit = 10000L)
 }
@@ -18,8 +18,6 @@ ADMMc(S, A, B, C, initOmega, initZ, initY, lam, tau = 10, rho = 2,
 \item{C}{option to provide user-specified matrix for penalty term. This matrix must have nrow(A) rows and ncol(B) columns. Defaults to identity matrix.}
 
 \item{initOmega}{initialization matrix for Omega}
-
-\item{initZ}{initialization matrix for Z2}
 
 \item{initY}{initialization matrix for Y}
 
@@ -42,6 +40,8 @@ ADMMc(S, A, B, C, initOmega, initZ, initY, lam, tau = 10, rho = 2,
 \item{tol_rel}{relative convergence tolerance. Defaults to 1e-4.}
 
 \item{maxit}{maximum number of iterations. Defaults to 1e4.}
+
+\item{initZ}{initialization matrix for Z2}
 }
 \value{
 returns list of returns which includes:
