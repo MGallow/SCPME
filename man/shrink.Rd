@@ -4,7 +4,7 @@
 \alias{shrink}
 \title{Shrinking characteristics of precision matrix estimators}
 \usage{
-shrink(X = NULL, S = NULL, Y = NULL, A = diag(ncol(S)),
+shrink(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)),
   B = diag(ncol(S)), C = matrix(0, ncol = ncol(B), nrow = ncol(A)),
   nlam = 10, lam.min.ratio = 0.01, lam = NULL, path = FALSE, rho = 2,
   mu = 10, tau.inc = 2, tau.dec = 2, crit = c("ADMM", "loglik"),
@@ -15,9 +15,9 @@ shrink(X = NULL, S = NULL, Y = NULL, A = diag(ncol(S)),
 \arguments{
 \item{X}{option to provide a nxp data matrix. Each row corresponds to a single observation and each column contains n observations of a single feature/variable.}
 
-\item{S}{option to provide a pxp sample covariance matrix (denominator n). If argument is \code{NULL} and \code{X} is provided instead then \code{S} will be computed automatically.}
-
 \item{Y}{option to provide nxr response matrix. Each row corresponds to a single response and each column contains n response of a single feature/response.}
+
+\item{S}{option to provide a pxp sample covariance matrix (denominator n). If argument is \code{NULL} and \code{X} is provided instead then \code{S} will be computed automatically.}
 
 \item{A}{option to provide user-specified matrix for penalty term. This matrix must have p columns. Defaults to identity matrix.}
 
