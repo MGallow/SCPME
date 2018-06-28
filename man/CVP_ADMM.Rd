@@ -5,11 +5,11 @@
 \title{Parallel CV (uses CV_ADMMc)}
 \usage{
 CVP_ADMM(X, Y = NULL, A = diag(ncol(X)), B = diag(ncol(X)),
-  C = diag(ncol(X)), lam = 10^seq(-2, 2, 0.2), rho = 2, mu = 10,
-  tau.inc = 2, tau.dec = 2, crit = c("ADMM", "loglik"), tol.abs = 1e-04,
-  tol.rel = 1e-04, maxit = 1000, adjmaxit = NULL, K = 5,
-  crit.cv = c("MSE", "loglik", "AIC", "BIC"), start = c("warm", "cold"),
-  cores = 1, trace = c("progress", "print", "none"))
+  C = diag(ncol(X)), lam = 10^seq(-2, 2, 0.2), tau = 10, rho = 2,
+  mu = 10, tau.inc = 2, tau.dec = 2, crit = c("ADMM", "loglik"),
+  tol.abs = 1e-04, tol.rel = 1e-04, maxit = 1000, adjmaxit = NULL,
+  K = 5, crit.cv = c("MSE", "loglik", "AIC", "BIC"), start = c("warm",
+  "cold"), cores = 1, trace = c("progress", "print", "none"))
 }
 \arguments{
 \item{X}{nxp data matrix. Each row corresponds to a single observation and each column contains n observations of a single feature/variable.}
@@ -23,6 +23,8 @@ CVP_ADMM(X, Y = NULL, A = diag(ncol(X)), B = diag(ncol(X)),
 \item{C}{option to provide user-specified matrix for penalty term. This matrix must have nrow(A) rows and ncol(B) columns. Defaults to identity matrix.}
 
 \item{lam}{positive tuning parameters for elastic net penalty. If a vector of parameters is provided, they should be in increasing order. Defaults to grid of values \code{10^seq(-2, 2, 0.2)}.}
+
+\item{tau}{optional constant used to ensure positive definiteness in Q matrix in algorithm}
 
 \item{rho}{initial step size for ADMM algorithm.}
 

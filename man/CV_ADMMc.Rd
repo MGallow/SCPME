@@ -4,8 +4,8 @@
 \alias{CV_ADMMc}
 \title{CV ADMM penalized precision matrix estimation (c++)}
 \usage{
-CV_ADMMc(X, S, Y, A, B, C, lam, path = FALSE, rho = 2, mu = 10,
-  tau_inc = 2, tau_dec = 2, crit = "ADMM", tol_abs = 1e-04,
+CV_ADMMc(X, S, Y, A, B, C, lam, path = FALSE, tau = 10, rho = 2,
+  mu = 10, tau_inc = 2, tau_dec = 2, crit = "ADMM", tol_abs = 1e-04,
   tol_rel = 1e-04, maxit = 10000L, adjmaxit = 10000L, K = 5L,
   crit_cv = "MSE", start = "warm", trace = "progress")
 }
@@ -26,6 +26,8 @@ CV_ADMMc(X, S, Y, A, B, C, lam, path = FALSE, rho = 2, mu = 10,
 
 \item{path}{option to return the regularization path. This option should be used with extreme care if the dimension is large. If set to TRUE, cores will be set to 1 and errors and optimal tuning parameters will based on the full sample. Defaults to FALSE.}
 
+\item{tau}{optional constant used to ensure positive definiteness in Q matrix in algorithm}
+
 \item{rho}{initial step size for ADMM algorithm.}
 
 \item{mu}{factor for primal and residual norms in the ADMM algorithm. This will be used to adjust the step size \code{rho} after each iteration.}
@@ -40,7 +42,7 @@ CV_ADMMc(X, S, Y, A, B, C, lam, path = FALSE, rho = 2, mu = 10,
 
 \item{maxit}{maximum number of iterations. Defaults to 1e4.}
 
-\item{adjmaxit}{adjusted maximum number of iterations. During cross validation this option allows the user to adjust the maximum number of iterations after the first \code{lam} tuning parameter has converged. This option is intended to be paired with \code{warm} starts and allows for 'one-step' estimators. Defaults to 1e4.}
+\item{adjmaxit}{adjusted maximum number of iterations. During cross validation this option allows the user to adjust the maximum number of iterations after the first \code{lam} tuning parameter has converged. This option is intended to be paired with \code{warm} starts and allows for "one-step" estimators. Defaults to 1e4.}
 
 \item{K}{specify the number of folds for cross validation.}
 

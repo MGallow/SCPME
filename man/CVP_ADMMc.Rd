@@ -4,10 +4,10 @@
 \alias{CVP_ADMMc}
 \title{CV (no folds) ADMM penalized precision matrix estimation (c++)}
 \usage{
-CVP_ADMMc(X_train, X_valid, Y_train, Y_valid, A, B, C, lam, rho = 2,
-  mu = 10, tau_inc = 2, tau_dec = 2, crit = "ADMM", tol_abs = 1e-04,
-  tol_rel = 1e-04, maxit = 10000L, adjmaxit = 10000L, crit_cv = "MSE",
-  start = "warm", trace = "progress")
+CVP_ADMMc(X_train, X_valid, Y_train, Y_valid, A, B, C, lam, tau = 10,
+  rho = 2, mu = 10, tau_inc = 2, tau_dec = 2, crit = "ADMM",
+  tol_abs = 1e-04, tol_rel = 1e-04, maxit = 10000L, adjmaxit = 10000L,
+  crit_cv = "MSE", start = "warm", trace = "progress")
 }
 \arguments{
 \item{X_train}{nxp training data matrix.}
@@ -26,6 +26,8 @@ CVP_ADMMc(X_train, X_valid, Y_train, Y_valid, A, B, C, lam, rho = 2,
 
 \item{lam}{positive tuning parameters for elastic net penalty. If a vector of parameters is provided, they should be in increasing order.}
 
+\item{tau}{optional constant used to ensure positive definiteness in Q matrix in algorithm}
+
 \item{rho}{initial step size for ADMM algorithm.}
 
 \item{mu}{factor for primal and residual norms in the ADMM algorithm. This will be used to adjust the step size \code{rho} after each iteration.}
@@ -42,7 +44,7 @@ CVP_ADMMc(X_train, X_valid, Y_train, Y_valid, A, B, C, lam, rho = 2,
 
 \item{maxit}{maximum number of iterations. Defaults to 1e4.}
 
-\item{adjmaxit}{adjusted maximum number of iterations. During cross validation this option allows the user to adjust the maximum number of iterations after the first \code{lam} tuning parameter has converged. This option is intended to be paired with \code{warm} starts and allows for 'one-step' estimators. Defaults to 1e4.}
+\item{adjmaxit}{adjusted maximum number of iterations. During cross validation this option allows the user to adjust the maximum number of iterations after the first \code{lam} tuning parameter has converged. This option is intended to be paired with \code{warm} starts and allows for "one-step" estimators. Defaults to 1e4.}
 
 \item{crit_cv}{cross validation criterion (\code{MSE}, \code{loglik}, \code{AIC}, or \code{BIC}). Defaults to \code{MSE}.}
 

@@ -4,8 +4,8 @@
 \alias{ADMMc}
 \title{Penalized precision matrix estimation via ADMM (c++)}
 \usage{
-ADMMc(S, A, B, C, initOmega, initZ2, initY, lam, rho = 2, mu = 10,
-  tau_inc = 2, tau_dec = 2, crit = "ADMM", tol_abs = 1e-04,
+ADMMc(S, A, B, C, initOmega, initZ, initY, lam, tau = 10, rho = 2,
+  mu = 10, tau_inc = 2, tau_dec = 2, crit = "ADMM", tol_abs = 1e-04,
   tol_rel = 1e-04, maxit = 10000L)
 }
 \arguments{
@@ -19,11 +19,13 @@ ADMMc(S, A, B, C, initOmega, initZ2, initY, lam, rho = 2, mu = 10,
 
 \item{initOmega}{initialization matrix for Omega}
 
-\item{initZ2}{initialization matrix for Z2}
+\item{initZ}{initialization matrix for Z2}
 
 \item{initY}{initialization matrix for Y}
 
 \item{lam}{postive tuning parameter for elastic net penalty.}
+
+\item{tau}{optional constant used to ensure positive definiteness in Q matrix in algorithm}
 
 \item{rho}{initial step size for ADMM algorithm.}
 

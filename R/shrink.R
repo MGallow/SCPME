@@ -82,13 +82,13 @@
 
 # we define the ADMM covariance estimation function
 shrink = function(X = NULL, S = NULL, Y = NULL, A = diag(ncol(S)), 
-    B = diag(ncol(S)), C = matrix(0, ncol = ncol(S), nrow = ncol(S)),
-    nlam = 10, lam.min.ratio = 0.01, 
-    lam = NULL, path = FALSE, rho = 2, mu = 10, tau.inc = 2, tau.dec = 2, 
-    crit = c("ADMM", "loglik"), tol.abs = 1e-04, tol.rel = 1e-04, 
-    maxit = 10000, adjmaxit = NULL, K = 5, crit.cv = c("MSE", 
-        "loglik", "AIC", "BIC"), start = c("warm", "cold"), cores = 1, 
-    trace = c("progress", "print", "none")) {
+    B = diag(ncol(S)), C = matrix(0, ncol = ncol(B), nrow = ncol(A)), 
+    nlam = 10, lam.min.ratio = 0.01, lam = NULL, path = FALSE, 
+    rho = 2, mu = 10, tau.inc = 2, tau.dec = 2, crit = c("ADMM", 
+        "loglik"), tol.abs = 1e-04, tol.rel = 1e-04, maxit = 10000, 
+    adjmaxit = NULL, K = 5, crit.cv = c("MSE", "loglik", "AIC", 
+        "BIC"), start = c("warm", "cold"), cores = 1, trace = c("progress", 
+        "print", "none")) {
     
     
     # checks
@@ -157,12 +157,13 @@ shrink = function(X = NULL, S = NULL, Y = NULL, A = diag(ncol(S)),
             B = diag(ncol(S))
         }
         if (nrow(C) == 0) {
-            C = matrix(0, ncol = ncol(S), nrow = ncol(S))
+            C = matrix(0, ncol = ncol(B), nrow = ncol(A))
         }
     }
     
     # calculate tau used in algorithm
-    tau = max(eigen(crossprod(A))$values)*max(eigen(tcrossprod(B))$values) + 1e-8
+    tau = max(eigen(crossprod(A))$values) * max(eigen(tcrossprod(B))$values) + 
+        1e-08
     
     # more checks
     if (ncol(A) != ncol(S)) {
@@ -225,10 +226,10 @@ shrink = function(X = NULL, S = NULL, Y = NULL, A = diag(ncol(S)),
                 X = matrix(0)
             }
             ADMM = CV_ADMMc(X = X, S = S, Y = Y, A = A, B = B, 
-                C = C, lam = lam, path = path, tau = tau rho = rho, mu = mu, 
-                tau_inc = tau.inc, tau_dec = tau.dec, crit = crit, 
-                tol_abs = tol.abs, tol_rel = tol.rel, maxit = maxit, 
-                adjmaxit = adjmaxit, K = K, crit_cv = crit.cv, 
+                C = C, lam = lam, path = path, tau = tau, rho = rho, 
+                mu = mu, tau_inc = tau.inc, tau_dec = tau.dec, 
+                crit = crit, tol_abs = tol.abs, tol_rel = tol.rel, 
+                maxit = maxit, adjmaxit = adjmaxit, K = K, crit_cv = crit.cv, 
                 start = start, trace = trace)
             MIN.error = ADMM$min.error
             AVG.error = ADMM$avg.error
@@ -245,9 +246,10 @@ shrink = function(X = NULL, S = NULL, Y = NULL, A = diag(ncol(S)),
         
         # compute final estimate at best tuning parameters
         ADMM = ADMMc(S = S, A = A, B = B, C = C, initOmega = init, 
-            initZ2 = init, initY = init, lam = ADMM$lam, tau = tau, rho = rho, 
-            mu = mu, tau_inc = tau.inc, tau_dec = tau.dec, crit = crit, 
-            tol_abs = tol.abs, tol_rel = tol.rel, maxit = maxit)
+            initZ2 = init, initY = init, lam = ADMM$lam, tau = tau, 
+            rho = rho, mu = mu, tau_inc = tau.inc, tau_dec = tau.dec, 
+            crit = crit, tol_abs = tol.abs, tol_rel = tol.rel, 
+            maxit = maxit)
         
         
     } else {
@@ -258,9 +260,10 @@ shrink = function(X = NULL, S = NULL, Y = NULL, A = diag(ncol(S)),
         }
         
         ADMM = ADMMc(S = S, A = A, B = B, C = C, initOmega = init, 
-            initZ2 = init, initY = init, lam = lam, tau = tau, rho = rho, 
-            mu = mu, tau_inc = tau.inc, tau_dec = tau.dec, crit = crit, 
-            tol_abs = tol.abs, tol_rel = tol.rel, maxit = maxit)
+            initZ2 = init, initY = init, lam = lam, tau = tau, 
+            rho = rho, mu = mu, tau_inc = tau.inc, tau_dec = tau.dec, 
+            crit = crit, tol_abs = tol.abs, tol_rel = tol.rel, 
+            maxit = maxit)
         
     }
     

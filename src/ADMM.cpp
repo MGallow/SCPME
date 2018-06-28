@@ -97,9 +97,11 @@ List ADMMc(const arma::mat &S, const arma::mat &A, const arma::mat &B, const arm
   // allocate memory
   bool criterion = true;
   int p = S.n_cols, iter = 0;
-  double s, r, eps1, eps2, lik, lik2, sgn, logdet;
+  double s, r, eps1, eps2, lik, lik2, sgn, logdet, sqrt;
   s = r = eps1 = eps2 = lik = lik2 = sgn = logdet = 0;
-  arma::mat Z(initZ), Z2(initZ), Y(initY), Omega(initOmega), G;
+  arma::mat Z(initZ), Z2(initZ), Y(initY), Omega(initOmega), G, AOB, BZA, BYA;
+  sqrt = std::sqrt(C.n_cols*C.n_rows);
+  AOB = A*Omega*B;
 
   
   // loop until convergence
@@ -110,7 +112,7 @@ List ADMMc(const arma::mat &S, const arma::mat &A, const arma::mat &B, const arm
     Z = Z2;
     
     // compute G (1)
-    G = rho*A.t()*(A*Omega*B - Z - C + Y/rho)*B.t();
+    G = rho*A.t()*(AOB - Z - C + Y/rho)*B.t();
     
     // ridge equation (2)
     // gather eigen values (spectral decomposition)
@@ -118,16 +120,18 @@ List ADMMc(const arma::mat &S, const arma::mat &A, const arma::mat &B, const arm
     
     // penalty equation (3)
     // soft-thresholding
-    Z2 = rho*(A*Omega*B - C) + Y;
+    AOB = A*Omega*B;
+    Z2 = rho*(AOB - C) + Y;
     softmatrixc(Z2, lam);
     Z2 /= rho;
     
     // update Y (4)
-    Y += rho*(A*Omega*B - Z2 - C);
+    Y += rho*(AOB - Z2 - C);
     
     // calculate new rho
-    s = arma::norm(rho*(Z2 - Z), "fro");
-    r = arma::norm(Omega - Z2, "fro");
+    BZA = B*(Z2 - Z).t()*A;
+    s = arma::norm(rho*(BZA + BZA.t())/2, "fro");
+    r = arma::norm(AOB - Z2 - C, "fro");
     if (r > mu*s){
       rho *= tau_inc;
     }
@@ -147,8 +151,9 @@ List ADMMc(const arma::mat &S, const arma::mat &A, const arma::mat &B, const arm
     } else {
       
       // ADMM criterion
-      eps1 = p*tol_abs + tol_rel*std::max(arma::norm(Omega, "fro"), arma::norm(Z2, "fro"));
-      eps2 = p*tol_abs + tol_rel*arma::norm(Y, "fro");
+      BYA = B*Y.t()*A;
+      eps1 = sqrt*tol_abs + tol_rel*std::max(std::max(arma::norm(AOB, "fro"), arma::norm(Z2, "fro")), arma::norm(C, "fro"));
+      eps2 = p*tol_abs + tol_rel*arma::norm((BYA + BYA.t())/2, "fro");
       criterion = (r >= eps1 || s >= eps2);
       
     }

@@ -5,12 +5,12 @@
 \title{Shrinking characteristics of precision matrix estimators}
 \usage{
 shrink(X = NULL, S = NULL, Y = NULL, A = diag(ncol(S)),
-  B = diag(ncol(S)), C = diag(ncol(S)), nlam = 10, lam.min.ratio = 0.01,
-  lam = NULL, path = FALSE, rho = 2, mu = 10, tau.inc = 2,
-  tau.dec = 2, crit = c("ADMM", "loglik"), tol.abs = 1e-04,
-  tol.rel = 1e-04, maxit = 10000, adjmaxit = NULL, K = 5,
-  crit.cv = c("MSE", "loglik", "AIC", "BIC"), start = c("warm", "cold"),
-  cores = 1, trace = c("progress", "print", "none"))
+  B = diag(ncol(S)), C = matrix(0, ncol = ncol(B), nrow = ncol(A)),
+  nlam = 10, lam.min.ratio = 0.01, lam = NULL, path = FALSE, rho = 2,
+  mu = 10, tau.inc = 2, tau.dec = 2, crit = c("ADMM", "loglik"),
+  tol.abs = 1e-04, tol.rel = 1e-04, maxit = 10000, adjmaxit = NULL,
+  K = 5, crit.cv = c("MSE", "loglik", "AIC", "BIC"), start = c("warm",
+  "cold"), cores = 1, trace = c("progress", "print", "none"))
 }
 \arguments{
 \item{X}{option to provide a nxp data matrix. Each row corresponds to a single observation and each column contains n observations of a single feature/variable.}
@@ -23,7 +23,7 @@ shrink(X = NULL, S = NULL, Y = NULL, A = diag(ncol(S)),
 
 \item{B}{option to provide user-specified matrix for penalty term. This matrix must have p rows. Defaults to identity matrix.}
 
-\item{C}{option to provide user-specified matrix for penalty term. This matrix must have nrow(A) rows and ncol(B) columns. Defaults to identity matrix.}
+\item{C}{option to provide user-specified matrix for penalty term. This matrix must have nrow(A) rows and ncol(B) columns. Defaults to zero matrix.}
 
 \item{nlam}{number of \code{lam} tuning parameters for penalty term generated from \code{lam.min.ratio} and \code{lam.max} (automatically generated). Defaults to 10.}
 
