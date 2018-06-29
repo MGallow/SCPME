@@ -27,7 +27,7 @@ shrink(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)),
 
 \item{nlam}{number of \code{lam} tuning parameters for penalty term generated from \code{lam.min.ratio} and \code{lam.max} (automatically generated). Defaults to 10.}
 
-\item{lam.min.ratio}{smallest \code{lam} value provided as a fraction of \code{lam.max}. The function will automatically generate \code{nlam} tuning parameters from \code{lam.min.ratio*lam.max} to \code{lam.max} in log10 scale. \code{lam.max} is calculated to be the smallest \code{lam} such that all off-diagonal entries in \code{Omega} are equal to zero (\code{alpha} = 1). Defaults to 1e-2.}
+\item{lam.min.ratio}{smallest \code{lam} value provided as a fraction of \code{lam.max}. The function will automatically generate \code{nlam} tuning parameters from \code{lam.min.ratio*lam.max} to \code{lam.max} in log10 scale. \code{lam.max} is calculated to be the smallest \code{lam} such that all off-diagonal entries in \code{Omega} are equal to zero. Defaults to 1e-2.}
 
 \item{lam}{option to provide positive tuning parameters for penalty term. This will cause \code{nlam} and \code{lam.min.ratio} to be disregarded. If a vector of parameters is provided, they should be in increasing order. Defaults to NULL.}
 
@@ -60,8 +60,6 @@ shrink(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)),
 \item{cores}{option to run CV in parallel. Defaults to \code{cores = 1}.}
 
 \item{trace}{option to display progress of CV. Choose one of \code{progress} to print a progress bar, \code{print} to print completed tuning parameters, or \code{none}.}
-
-\item{alpha}{elastic net mixing parameter contained in [0, 1]. \code{0 = ridge, 1 = lasso}. If a vector of parameters is provided, they should be in increasing order. Defaults to grid of values \code{seq(0, 1, 0.2)}.}
 }
 \value{
 returns class object \code{ADMMsigma} which includes:
