@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Parallel CV (uses CV_ADMMc) — CVP_ADMM • ADMMsigma</title>
+<title>Parallel CV (uses CV_ADMMc) — CVP_ADMM • shrink</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -48,16 +48,6 @@
 <![endif]-->
 
 
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-84680750-3"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-84680750-3');
-</script>
-
   </head>
 
   <body>
@@ -72,8 +62,8 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">ADMMsigma</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">2.0</span>
+        <a class="navbar-link" href="../index.html">shrink</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">1.0</span>
       </span>
     </div>
 
@@ -87,30 +77,6 @@
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/Tutorial.html">Tutorial</a>
-    </li>
-    <li>
-      <a href="../articles/Details.html">Details</a>
-    </li>
-    <li>
-      <a href="../articles/Simulations.html">Simulations</a>
-    </li>
-    <li>
-      <a href="../articles/Benchmark.html">Benchmark</a>
-    </li>
-    <li>
-      <a href="../reference/index.html">Functions</a>
-    </li>
-  </ul>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Related Packages
      
     <span class="caret"></span>
@@ -118,6 +84,9 @@
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="https://mgallow.github.io/Omega/">Omega</a>
+    </li>
+    <li>
+      <a href="https://mgallow.github.io/ADMMsigma/">ADMMsigma</a>
     </li>
     <li>
       <a href="https://mgallow.github.io/GLASSOO/">GLASSOO</a>
@@ -137,7 +106,7 @@
   </a>
 </li>
 <li>
-  <a href="https://github.com/MGallow/ADMMsigma/">
+  <a href="https://github.com/MGallow/shrink/">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -162,7 +131,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Parallel CV (uses CV_ADMMc)</h1>
-    <small class="dont-index">Source: <a href='https://github.com/MGallow/ADMMsigma/blob/master/R/Parallel.R'><code>R/Parallel.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/MGallow/shrink/blob/master/R/parallel.R'><code>R/parallel.R</code></a></small>
     <div class="hidden name"><code>CVP_ADMM.Rd</code></div>
     </div>
 
@@ -172,12 +141,12 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>CVP_ADMM</span>(<span class='kw'>X</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>lam</span> <span class='kw'>=</span> <span class='fl'>10</span>^<span class='fu'>seq</span>(-<span class='fl'>2</span>, <span class='fl'>2</span>, <span class='fl'>0.2</span>), <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fu'>seq</span>(<span class='fl'>0</span>, <span class='fl'>1</span>, <span class='fl'>0.2</span>),
-  <span class='kw'>diagonal</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>rho</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>mu</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>tau.inc</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>tau.dec</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>crit</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"ADMM"</span>, <span class='st'>"loglik"</span>), <span class='kw'>tol.abs</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>, <span class='kw'>tol.rel</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>,
-  <span class='kw'>maxit</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>adjmaxit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>K</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>crit.cv</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"loglik"</span>, <span class='st'>"AIC"</span>,
-  <span class='st'>"BIC"</span>), <span class='kw'>start</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"warm"</span>, <span class='st'>"cold"</span>), <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>trace</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"progress"</span>,
-  <span class='st'>"print"</span>, <span class='st'>"none"</span>))</pre>
+    <pre class="usage"><span class='fu'>CVP_ADMM</span>(<span class='no'>X</span>, <span class='kw'>Y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>A</span> <span class='kw'>=</span> <span class='fu'>diag</span>(<span class='fu'>ncol</span>(<span class='no'>X</span>)), <span class='kw'>B</span> <span class='kw'>=</span> <span class='fu'>diag</span>(<span class='fu'>ncol</span>(<span class='no'>X</span>)),
+  <span class='kw'>C</span> <span class='kw'>=</span> <span class='fu'>diag</span>(<span class='fu'>ncol</span>(<span class='no'>X</span>)), <span class='kw'>lam</span> <span class='kw'>=</span> <span class='fl'>10</span>^<span class='fu'>seq</span>(-<span class='fl'>2</span>, <span class='fl'>2</span>, <span class='fl'>0.2</span>), <span class='kw'>tau</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>rho</span> <span class='kw'>=</span> <span class='fl'>2</span>,
+  <span class='kw'>mu</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>tau.inc</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>tau.dec</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>crit</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"ADMM"</span>, <span class='st'>"loglik"</span>),
+  <span class='kw'>tol.abs</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>, <span class='kw'>tol.rel</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>, <span class='kw'>maxit</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>adjmaxit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>K</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>crit.cv</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"MSE"</span>, <span class='st'>"loglik"</span>, <span class='st'>"AIC"</span>, <span class='st'>"BIC"</span>), <span class='kw'>start</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"warm"</span>,
+  <span class='st'>"cold"</span>), <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>trace</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"progress"</span>, <span class='st'>"print"</span>, <span class='st'>"none"</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -187,16 +156,28 @@
       <td><p>nxp data matrix. Each row corresponds to a single observation and each column contains n observations of a single feature/variable.</p></td>
     </tr>
     <tr>
+      <th>Y</th>
+      <td><p>option to provide nxr response matrix. Each row corresponds to a single response and each column contains n response of a single feature/response.</p></td>
+    </tr>
+    <tr>
+      <th>A</th>
+      <td><p>option to provide user-specified matrix for penalty term. This matrix must have p columns. Defaults to identity matrix.</p></td>
+    </tr>
+    <tr>
+      <th>B</th>
+      <td><p>option to provide user-specified matrix for penalty term. This matrix must have p rows. Defaults to identity matrix.</p></td>
+    </tr>
+    <tr>
+      <th>C</th>
+      <td><p>option to provide user-specified matrix for penalty term. This matrix must have nrow(A) rows and ncol(B) columns. Defaults to identity matrix.</p></td>
+    </tr>
+    <tr>
       <th>lam</th>
       <td><p>positive tuning parameters for elastic net penalty. If a vector of parameters is provided, they should be in increasing order. Defaults to grid of values <code>10^seq(-2, 2, 0.2)</code>.</p></td>
     </tr>
     <tr>
-      <th>alpha</th>
-      <td><p>elastic net mixing parameter contained in [0, 1]. <code>0 = ridge, 1 = lasso</code>. If a vector of parameters is provided, they should be in increasing order. Defaults to grid of values <code>seq(-1, 1, 0.2)</code>.</p></td>
-    </tr>
-    <tr>
-      <th>diagonal</th>
-      <td><p>option to penalize the diagonal elements of the estimated precision matrix (\(\Omega\)). Defaults to <code>FALSE</code>.</p></td>
+      <th>tau</th>
+      <td><p>optional constant used to ensure positive definiteness in Q matrix in algorithm</p></td>
     </tr>
     <tr>
       <th>rho</th>
@@ -232,7 +213,7 @@
     </tr>
     <tr>
       <th>adjmaxit</th>
-      <td><p>adjusted maximum number of iterations. During cross validation this option allows the user to adjust the maximum number of iterations after the first <code>lam</code> tuning parameter has converged (for each <code>alpha</code>). This option is intended to be paired with <code>warm</code> starts and allows for 'one-step' estimators. Defaults to NULL.</p></td>
+      <td><p>adjusted maximum number of iterations. During cross validation this option allows the user to adjust the maximum number of iterations after the first <code>lam</code> tuning parameter has converged. This option is intended to be paired with <code>warm</code> starts and allows for 'one-step' estimators. Defaults to NULL.</p></td>
     </tr>
     <tr>
       <th>K</th>
@@ -240,7 +221,7 @@
     </tr>
     <tr>
       <th>crit.cv</th>
-      <td><p>cross validation criterion (<code>loglik</code>, <code>AIC</code>, or <code>BIC</code>). Defaults to <code>loglik</code>.</p></td>
+      <td><p>cross validation criterion (<code>MSE</code>, <code>loglik</code>, <code>AIC</code>, or <code>BIC</code>). Defaults to <code>MSE</code>.</p></td>
     </tr>
     <tr>
       <th>start</th>
@@ -260,7 +241,6 @@
 
     <p>returns list of returns which includes:</p>
 <dt>lam</dt><dd><p>optimal tuning parameter.</p></dd>
-<dt>alpha</dt><dd><p>optimal tuning parameter.</p></dd>
 <dt>min.error</dt><dd><p>minimum average cross validation error (cv.crit) for optimal parameters.</p></dd>
 <dt>avg.error</dt><dd><p>average cross validation error (cv.crit) across all folds.</p></dd>
 <dt>cv.error</dt><dd><p>cross validation errors (cv.crit).</p></dd>

@@ -1,12 +1,8 @@
-pandoc: '2.2'
+pandoc: 2.2.1
 pkgdown: 1.1.0
 pkgdown_sha: ~
-articles:
-  Benchmark: Benchmark.html
-  Details: Details.html
-  Simulations: Simulations.html
-  Tutorial: Tutorial.html
+articles: []
 urls:
-  reference: https://mgallow.github.io/ADMMsigma//reference
-  article: https://mgallow.github.io/ADMMsigma//articles
+  reference: https://mgallow.github.io/shrink//reference
+  article: https://mgallow.github.io/shrink//articles
 

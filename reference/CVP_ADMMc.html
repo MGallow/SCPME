@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>CV (no folds) ADMM penalized precision matrix estimation (c++) — CVP_ADMMc • ADMMsigma</title>
+<title>CV (no folds) ADMM penalized precision matrix estimation (c++) — CVP_ADMMc • shrink</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -34,7 +34,7 @@
   
 <meta property="og:title" content="CV (no folds) ADMM penalized precision matrix estimation (c++) — CVP_ADMMc" />
 
-<meta property="og:description" content="Cross validation (no folds) function for ADMMsigma. This function is to be used with CVP_ADMM." />
+<meta property="og:description" content="Cross validation (no folds) function for shrink. This function is to be used with CVP_ADMM." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -47,16 +47,6 @@
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 
-
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-84680750-3"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-84680750-3');
-</script>
 
   </head>
 
@@ -72,8 +62,8 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">ADMMsigma</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">2.0</span>
+        <a class="navbar-link" href="../index.html">shrink</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">1.0</span>
       </span>
     </div>
 
@@ -87,30 +77,6 @@
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/Tutorial.html">Tutorial</a>
-    </li>
-    <li>
-      <a href="../articles/Details.html">Details</a>
-    </li>
-    <li>
-      <a href="../articles/Simulations.html">Simulations</a>
-    </li>
-    <li>
-      <a href="../articles/Benchmark.html">Benchmark</a>
-    </li>
-    <li>
-      <a href="../reference/index.html">Functions</a>
-    </li>
-  </ul>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Related Packages
      
     <span class="caret"></span>
@@ -118,6 +84,9 @@
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="https://mgallow.github.io/Omega/">Omega</a>
+    </li>
+    <li>
+      <a href="https://mgallow.github.io/ADMMsigma/">ADMMsigma</a>
     </li>
     <li>
       <a href="https://mgallow.github.io/GLASSOO/">GLASSOO</a>
@@ -137,7 +106,7 @@
   </a>
 </li>
 <li>
-  <a href="https://github.com/MGallow/ADMMsigma/">
+  <a href="https://github.com/MGallow/shrink/">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -162,47 +131,59 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>CV (no folds) ADMM penalized precision matrix estimation (c++)</h1>
-    <small class="dont-index">Source: <a href='https://github.com/MGallow/ADMMsigma/blob/master/R/RcppExports.R'><code>R/RcppExports.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/MGallow/shrink/blob/master/R/RcppExports.R'><code>R/RcppExports.R</code></a></small>
     <div class="hidden name"><code>CVP_ADMMc.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Cross validation (no folds) function for ADMMsigma. This function is to be used with CVP_ADMM.</p>
+    <p>Cross validation (no folds) function for shrink. This function is to be used with CVP_ADMM.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>CVP_ADMMc</span>(<span class='no'>n</span>, <span class='no'>S_train</span>, <span class='no'>S_valid</span>, <span class='no'>lam</span>, <span class='no'>alpha</span>, <span class='kw'>diagonal</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>rho</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>mu</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>tau_inc</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>tau_dec</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>crit</span> <span class='kw'>=</span> <span class='st'>"ADMM"</span>, <span class='kw'>tol_abs</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>,
-  <span class='kw'>tol_rel</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>, <span class='kw'>maxit</span> <span class='kw'>=</span> <span class='fl'>10000L</span>, <span class='kw'>adjmaxit</span> <span class='kw'>=</span> <span class='fl'>10000L</span>,
-  <span class='kw'>crit_cv</span> <span class='kw'>=</span> <span class='st'>"loglik"</span>, <span class='kw'>start</span> <span class='kw'>=</span> <span class='st'>"warm"</span>, <span class='kw'>trace</span> <span class='kw'>=</span> <span class='st'>"progress"</span>)</pre>
+    <pre class="usage"><span class='fu'>CVP_ADMMc</span>(<span class='no'>X_train</span>, <span class='no'>X_valid</span>, <span class='no'>Y_train</span>, <span class='no'>Y_valid</span>, <span class='no'>A</span>, <span class='no'>B</span>, <span class='no'>C</span>, <span class='no'>lam</span>, <span class='kw'>tau</span> <span class='kw'>=</span> <span class='fl'>10</span>,
+  <span class='kw'>rho</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>mu</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>tau_inc</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>tau_dec</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>crit</span> <span class='kw'>=</span> <span class='st'>"ADMM"</span>,
+  <span class='kw'>tol_abs</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>, <span class='kw'>tol_rel</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>, <span class='kw'>maxit</span> <span class='kw'>=</span> <span class='fl'>10000L</span>, <span class='kw'>adjmaxit</span> <span class='kw'>=</span> <span class='fl'>10000L</span>,
+  <span class='kw'>crit_cv</span> <span class='kw'>=</span> <span class='st'>"MSE"</span>, <span class='kw'>start</span> <span class='kw'>=</span> <span class='st'>"warm"</span>, <span class='kw'>trace</span> <span class='kw'>=</span> <span class='st'>"progress"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>n</th>
-      <td><p>sample size for X_valid (used to calculate crit_cv)</p></td>
+      <th>X_train</th>
+      <td><p>nxp training data matrix.</p></td>
     </tr>
     <tr>
-      <th>S_train</th>
-      <td><p>pxp sample covariance matrix for training data (denominator n).</p></td>
+      <th>X_valid</th>
+      <td><p>(n - q)xp validation data matrix matrix.</p></td>
     </tr>
     <tr>
-      <th>S_valid</th>
-      <td><p>pxp sample covariance matrix for validation data (denominator n).</p></td>
+      <th>Y_train</th>
+      <td><p>nxr training response matrix.</p></td>
+    </tr>
+    <tr>
+      <th>Y_valid</th>
+      <td><p>(n - q)xr validation response matrix.</p></td>
+    </tr>
+    <tr>
+      <th>A</th>
+      <td><p>option to provide user-specified matrix for penalty term. This matrix must have p columns. Defaults to identity matrix.</p></td>
+    </tr>
+    <tr>
+      <th>B</th>
+      <td><p>option to provide user-specified matrix for penalty term. This matrix must have p rows. Defaults to identity matrix.</p></td>
+    </tr>
+    <tr>
+      <th>C</th>
+      <td><p>option to provide user-specified matrix for penalty term. This matrix must have nrow(A) rows and ncol(B) columns. Defaults to identity matrix.</p></td>
     </tr>
     <tr>
       <th>lam</th>
       <td><p>positive tuning parameters for elastic net penalty. If a vector of parameters is provided, they should be in increasing order.</p></td>
     </tr>
     <tr>
-      <th>alpha</th>
-      <td><p>elastic net mixing parameter contained in [0, 1]. <code>0 = ridge, 1 = lasso</code>. If a vector of parameters is provided, they should be in increasing order.</p></td>
-    </tr>
-    <tr>
-      <th>diagonal</th>
-      <td><p>option to penalize the diagonal elements of the estimated precision matrix (\(\Omega\)). Defaults to <code>FALSE</code>.</p></td>
+      <th>tau</th>
+      <td><p>optional constant used to ensure positive definiteness in Q matrix in algorithm</p></td>
     </tr>
     <tr>
       <th>rho</th>
@@ -238,11 +219,11 @@
     </tr>
     <tr>
       <th>adjmaxit</th>
-      <td><p>adjusted maximum number of iterations. During cross validation this option allows the user to adjust the maximum number of iterations after the first <code>lam</code> tuning parameter has converged (for each <code>alpha</code>). This option is intended to be paired with <code>warm</code> starts and allows for "one-step" estimators. Defaults to 1e4.</p></td>
+      <td><p>adjusted maximum number of iterations. During cross validation this option allows the user to adjust the maximum number of iterations after the first <code>lam</code> tuning parameter has converged. This option is intended to be paired with <code>warm</code> starts and allows for 'one-step' estimators. Defaults to 1e4.</p></td>
     </tr>
     <tr>
       <th>crit_cv</th>
-      <td><p>cross validation criterion (<code>loglik</code>, <code>AIC</code>, or <code>BIC</code>). Defaults to <code>loglik</code>.</p></td>
+      <td><p>cross validation criterion (<code>MSE</code>, <code>loglik</code>, <code>AIC</code>, or <code>BIC</code>). Defaults to <code>MSE</code>.</p></td>
     </tr>
     <tr>
       <th>start</th>
