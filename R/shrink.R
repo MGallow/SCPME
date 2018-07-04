@@ -27,7 +27,8 @@
 #' @param B option to provide user-specified matrix for penalty term. This matrix must have p rows. Defaults to identity matrix.
 #' @param C option to provide user-specified matrix for penalty term. This matrix must have nrow(A) rows and ncol(B) columns. Defaults to zero matrix.
 #' @param nlam number of \code{lam} tuning parameters for penalty term generated from \code{lam.min.ratio} and \code{lam.max} (automatically generated). Defaults to 10.
-#' @param lam.min.ratio smallest \code{lam} value provided as a fraction of \code{lam.max}. The function will automatically generate \code{nlam} tuning parameters from \code{lam.min.ratio*lam.max} to \code{lam.max} in log10 scale. \code{lam.max} is calculated to be the smallest \code{lam} such that all off-diagonal entries in \code{Omega} are equal to zero. Defaults to 1e-2.
+#' @param lam.max option to specify the maximum \code{lam} tuning parameter. Defaults to NULL.
+#' @param lam.min.ratio smallest \code{lam} value provided as a fraction of \code{lam.max}. The function will automatically generate \code{nlam} tuning parameters from \code{lam.min.ratio*lam.max} to \code{lam.max} in log10 scale. If \code{lam.max = NULL}, \code{lam.max} is calculated to be the smallest \code{lam} such that all off-diagonal entries in \code{Omega} are equal to zero. Defaults to 1e-2.
 #' @param lam option to provide positive tuning parameters for penalty term. This will cause \code{nlam} and \code{lam.min.ratio} to be disregarded. If a vector of parameters is provided, they should be in increasing order. Defaults to NULL.
 #' @param path option to return the regularization path. This option should be used with extreme care if the dimension is large. If set to TRUE, cores must be set to 1 and errors and optimal tuning parameters will based on the full sample. Defaults to FALSE.
 #' @param rho initial step size for ADMM algorithm.
@@ -82,12 +83,12 @@
 # we define the ADMM covariance estimation function
 shrink = function(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)), 
     B = diag(ncol(S)), C = matrix(0, ncol = ncol(B), nrow = ncol(A)), 
-    nlam = 10, lam.min.ratio = 0.01, lam = NULL, path = FALSE, 
-    rho = 2, mu = 10, tau.inc = 2, tau.dec = 2, crit = c("ADMM", 
-        "loglik"), tol.abs = 1e-04, tol.rel = 1e-04, maxit = 10000, 
-    adjmaxit = NULL, K = 5, crit.cv = c("MSE", "loglik", "AIC", 
-        "BIC"), start = c("warm", "cold"), cores = 1, trace = c("progress", 
-        "print", "none")) {
+    nlam = 10, lam.max = NULL, lam.min.ratio = 0.01, lam = NULL, 
+    path = FALSE, rho = 2, mu = 10, tau.inc = 2, tau.dec = 2, 
+    crit = c("ADMM", "loglik"), tol.abs = 1e-04, tol.rel = 1e-04, 
+    maxit = 10000, adjmaxit = NULL, K = 5, crit.cv = c("MSE", 
+        "loglik", "AIC", "BIC"), start = c("warm", "cold"), cores = 1, 
+    trace = c("progress", "print", "none")) {
     
     
     # checks
@@ -187,7 +188,9 @@ shrink = function(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)),
         }
         
         # calculate lam.max and lam.min
-        lam.max = max(abs(S - diag(S)))
+        if (is.null(lam.max)) {
+            lam.max = max(abs(S - diag(S)))
+        }
         lam.min = lam.min.ratio * lam.max
         
         # calculate grid of lambda values
@@ -332,7 +335,7 @@ print.shrink = function(x, ...) {
     # print Omega if dim <= 10
     if (nrow(x$Z) <= 10) {
         cat("\nOmega:\n")
-        print.default(round(x$Z, 5))
+        print.default(round(x$Omega, 5))
     } else {
         cat("\n(...output suppressed due to large dimension!)\n")
     }

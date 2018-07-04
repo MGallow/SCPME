@@ -186,7 +186,7 @@ List CV_ADMMc(const arma::mat &X, const arma::mat &S, const arma::mat &Y, const 
         
         // save estimate if path = TRUE
         if (path){
-          Path.slice(i) = as<arma::mat>(ADMM["Z2"]);
+          Path.slice(i) = as<arma::mat>(ADMM["Omega"]);
         }
         
         // update progress bar
