@@ -14,7 +14,7 @@
 #' @keywords internal
 #'
 RIDGEc <- function(S, lam) {
-    .Call('_shrink_RIDGEc', PACKAGE = 'shrink', S, lam)
+    .Call('_SCPME_RIDGEc', PACKAGE = 'SCPME', S, lam)
 }
 
 #' @title Penalized precision matrix estimation via ADMM (c++)
@@ -65,7 +65,7 @@ RIDGEc <- function(S, lam) {
 #' @keywords internal
 #'
 ADMMc <- function(S, A, B, C, initOmega, initZ2, initY, lam, tau = 10, rho = 2, mu = 10, tau_inc = 2, tau_dec = 2, crit = "ADMM", tol_abs = 1e-4, tol_rel = 1e-4, maxit = 1e4L) {
-    .Call('_shrink_ADMMc', PACKAGE = 'shrink', S, A, B, C, initOmega, initZ2, initY, lam, tau, rho, mu, tau_inc, tau_dec, crit, tol_abs, tol_rel, maxit)
+    .Call('_SCPME_ADMMc', PACKAGE = 'SCPME', S, A, B, C, initOmega, initZ2, initY, lam, tau, rho, mu, tau_inc, tau_dec, crit, tol_abs, tol_rel, maxit)
 }
 
 #' @title K fold (c++)
@@ -111,7 +111,7 @@ NULL
 #' @keywords internal
 #'
 CV_ADMMc <- function(X, S, Y, A, B, C, lam, path = FALSE, tau = 10, rho = 2, mu = 10, tau_inc = 2, tau_dec = 2, crit = "ADMM", tol_abs = 1e-4, tol_rel = 1e-4, maxit = 1e4L, adjmaxit = 1e4L, K = 5L, crit_cv = "MSE", start = "warm", trace = "progress") {
-    .Call('_shrink_CV_ADMMc', PACKAGE = 'shrink', X, S, Y, A, B, C, lam, path, tau, rho, mu, tau_inc, tau_dec, crit, tol_abs, tol_rel, maxit, adjmaxit, K, crit_cv, start, trace)
+    .Call('_SCPME_CV_ADMMc', PACKAGE = 'SCPME', X, S, Y, A, B, C, lam, path, tau, rho, mu, tau_inc, tau_dec, crit, tol_abs, tol_rel, maxit, adjmaxit, K, crit_cv, start, trace)
 }
 
 #' @title CV (no folds) ADMM penalized precision matrix estimation (c++)
@@ -144,6 +144,6 @@ CV_ADMMc <- function(X, S, Y, A, B, C, lam, path = FALSE, tau = 10, rho = 2, mu 
 #' @keywords internal
 #'
 CVP_ADMMc <- function(X_train, X_valid, Y_train, Y_valid, A, B, C, lam, tau = 10, rho = 2, mu = 10, tau_inc = 2, tau_dec = 2, crit = "ADMM", tol_abs = 1e-4, tol_rel = 1e-4, maxit = 1e4L, adjmaxit = 1e4L, crit_cv = "MSE", start = "warm", trace = "progress") {
-    .Call('_shrink_CVP_ADMMc', PACKAGE = 'shrink', X_train, X_valid, Y_train, Y_valid, A, B, C, lam, tau, rho, mu, tau_inc, tau_dec, crit, tol_abs, tol_rel, maxit, adjmaxit, crit_cv, start, trace)
+    .Call('_SCPME_CVP_ADMMc', PACKAGE = 'SCPME', X_train, X_valid, Y_train, Y_valid, A, B, C, lam, tau, rho, mu, tau_inc, tau_dec, crit, tol_abs, tol_rel, maxit, adjmaxit, crit_cv, start, trace)
 }
 

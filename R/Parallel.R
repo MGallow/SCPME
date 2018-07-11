@@ -1,7 +1,7 @@
 ## Matt Galloway
 
 
-#' @title Parallel CV (uses CV_ADMMc)
+#' @title Parallel CV (uses CVP_ADMMc)
 #' @description Parallel implementation of cross validation.
 #'
 #' @param X nxp data matrix. Each row corresponds to a single observation and each column contains n observations of a single feature/variable.
@@ -34,13 +34,14 @@
 #' 
 #' @keywords internal
 
-# we define the CV_ADMMc function
+# we define the CVP_ADMM function
 CVP_ADMM = function(X, Y = NULL, A = diag(ncol(X)), B = diag(ncol(X)), 
-    C = diag(ncol(X)), lam = 10^seq(-2, 2, 0.2), tau = 10, rho = 2, 
-    mu = 10, tau.inc = 2, tau.dec = 2, crit = c("ADMM", "loglik"), 
-    tol.abs = 1e-04, tol.rel = 1e-04, maxit = 1000, adjmaxit = NULL, 
-    K = 5, crit.cv = c("MSE", "loglik", "AIC", "BIC"), start = c("warm", 
-        "cold"), cores = 1, trace = c("progress", "print", "none")) {
+    C = diag(ncol(X)), lam = 10^seq(-2, 2, 0.2), tau = 10, 
+    rho = 2, mu = 10, tau.inc = 2, tau.dec = 2, crit = c("ADMM", 
+        "loglik"), tol.abs = 1e-04, tol.rel = 1e-04, 
+    maxit = 1000, adjmaxit = NULL, K = 5, crit.cv = c("MSE", 
+        "loglik", "AIC", "BIC"), start = c("warm", "cold"), 
+    cores = 1, trace = c("progress", "print", "none")) {
     
     # match values
     crit = match.arg(crit)
@@ -52,7 +53,8 @@ CVP_ADMM = function(X, Y = NULL, A = diag(ncol(X)), B = diag(ncol(X)),
     # make cluster and register cluster
     num_cores = detectCores()
     if (cores > num_cores) {
-        cat("\nOnly detected", paste(num_cores, "cores...", sep = " "))
+        cat("\nOnly detected", paste(num_cores, "cores...", 
+            sep = " "))
     }
     if (cores > K) {
         cat("\nNumber of cores exceeds K... setting cores = K")
@@ -69,7 +71,8 @@ CVP_ADMM = function(X, Y = NULL, A = diag(ncol(X)), B = diag(ncol(X)),
     CV = foreach(k = 1:K, .packages = "shrink", .combine = "cbind", 
         .inorder = FALSE) %dopar% {
         
-        leave.out = ind[(1 + floor((k - 1) * n/K)):floor(k * n/K)]
+        leave.out = ind[(1 + floor((k - 1) * n/K)):floor(k * 
+            n/K)]
         
         # training set
         X.train = X[-leave.out, , drop = FALSE]
@@ -94,12 +97,13 @@ CVP_ADMM = function(X, Y = NULL, A = diag(ncol(X)), B = diag(ncol(X)),
         }
         
         # run foreach loop on CVP_ADMMc
-        CVP_ADMMc(X_train = X.train, X_valid = X.valid, Y_train = Y.train, 
-            Y_valid = Y.valid, A = A, B = B, C = C, lam = lam, 
-            tau = tau, rho = rho, mu = mu, tau_inc = tau.inc, 
-            tau_dec = tau.dec, crit = crit, tol_abs = tol.abs, 
-            tol_rel = tol.rel, maxit = maxit, adjmaxit = adjmaxit, 
-            crit_cv = crit.cv, start = start, trace = trace)
+        CVP_ADMMc(X_train = X.train, X_valid = X.valid, 
+            Y_train = Y.train, Y_valid = Y.valid, A = A, 
+            B = B, C = C, lam = lam, tau = tau, rho = rho, 
+            mu = mu, tau_inc = tau.inc, tau_dec = tau.dec, 
+            crit = crit, tol_abs = tol.abs, tol_rel = tol.rel, 
+            maxit = maxit, adjmaxit = adjmaxit, crit_cv = crit.cv, 
+            start = start, trace = trace)
         
     }
     

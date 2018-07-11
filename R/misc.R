@@ -1,4 +1,4 @@
-#' @useDynLib shrink
+#' @useDynLib SCPME
 #' @importFrom Rcpp sourceCpp
 #' @importFrom grDevices colorRampPalette
 #' @importFrom stats cov

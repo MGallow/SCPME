@@ -1,9 +1,9 @@
-shrink
+SCPME
 ================
 
 [![Build
-Status](https://travis-ci.org/MGallow/shrink.svg?branch=master)](https://travis-ci.org/MGallow/shrink)
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/shrink)](https://cran.r-project.org/package=shrink)
+Status](https://travis-ci.org/MGallow/shrink.svg?branch=master)](https://travis-ci.org/MGallow/SCPME)
+[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/SCPME)](https://cran.r-project.org/package=SCPME)
 
 ## Overview
 
@@ -16,7 +16,7 @@ algorithm.
 
 <p align="center">
 
-<img src = "https://github.com/MGallow/shrink/raw/master/vignettes/images/gif.gif"/>
+<img src = "https://github.com/MGallow/SCPME/raw/master/vignettes/images/gif.gif"/>
 
 </p>
 
@@ -28,8 +28,8 @@ be found below:
   - `plot.shrink()` produces a heat map or line graph for cross
     validation errors
 
-See [vignette](https://mgallow.github.io/ADMMsigma/) or
-[manual](https://github.com/MGallow/ADMMsigma/blob/master/ADMMsigma.pdf).
+See [vignette](https://mgallow.github.io/SCPME/) or
+[manual](https://github.com/MGallow/ADMMsigma/blob/master/SCPME.pdf).
 
 ## Installation
 
@@ -40,14 +40,14 @@ devtools::install_github("MGallow/shrink")
 ```
 
 If there are any issues/bugs, please let me know:
-[github](https://github.com/MGallow/shrink/issues). You can also contact
+[github](https://github.com/MGallow/SCPME/issues). You can also contact
 me via my [website](https://mgallow.github.io/). Pull requests are
 welcome\!
 
 ## Usage
 
 ``` r
-library(shrink)
+library(SCPME)
 set.seed(123)
 
 # let's generate some data!

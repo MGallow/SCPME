@@ -2,8 +2,8 @@ pandoc: 1.19.2.1
 pkgdown: 1.0.0
 pkgdown_sha: ~
 
-title: shrink
-url: https://mgallow.github.io/shrink/
+title: SCPME
+url: https://mgallow.github.io/SCPME/
 template:
   params:
     bootswatch: flatly
@@ -42,7 +42,7 @@ navbar:
       href: news/index.html
     - icon: fa-github fa-lg
       #text: "Github"
-      href: https://github.com/MGallow/shrink/
+      href: https://github.com/MGallow/SCPME/
     - icon: fa-user fa-lg
       text: "MGallow"
       href: https://mgallow.github.io/

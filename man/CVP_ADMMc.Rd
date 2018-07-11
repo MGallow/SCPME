@@ -44,7 +44,7 @@ CVP_ADMMc(X_train, X_valid, Y_train, Y_valid, A, B, C, lam, tau = 10,
 
 \item{maxit}{maximum number of iterations. Defaults to 1e4.}
 
-\item{adjmaxit}{adjusted maximum number of iterations. During cross validation this option allows the user to adjust the maximum number of iterations after the first \code{lam} tuning parameter has converged. This option is intended to be paired with \code{warm} starts and allows for "one-step" estimators. Defaults to 1e4.}
+\item{adjmaxit}{adjusted maximum number of iterations. During cross validation this option allows the user to adjust the maximum number of iterations after the first \code{lam} tuning parameter has converged. This option is intended to be paired with \code{warm} starts and allows for 'one-step' estimators. Defaults to 1e4.}
 
 \item{crit_cv}{cross validation criterion (\code{MSE}, \code{loglik}, \code{AIC}, or \code{BIC}). Defaults to \code{MSE}.}
 

@@ -1,3 +1,3 @@
-# shrink 1.0
+# SCPME 1.0
 
-No major changes since shrink 1.0!
+No major changes since SCPME 1.0!

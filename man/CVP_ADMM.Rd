@@ -2,7 +2,7 @@
 % Please edit documentation in R/parallel.R
 \name{CVP_ADMM}
 \alias{CVP_ADMM}
-\title{Parallel CV (uses CV_ADMMc)}
+\title{Parallel CV (uses CVP_ADMMc)}
 \usage{
 CVP_ADMM(X, Y = NULL, A = diag(ncol(X)), B = diag(ncol(X)),
   C = diag(ncol(X)), lam = 10^seq(-2, 2, 0.2), tau = 10, rho = 2,

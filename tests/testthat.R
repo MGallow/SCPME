@@ -1,4 +1,4 @@
 library(testthat)
-library(shrink)
+library(SCPME)
 
-test_check("shrink")
+test_check("SCPME")

@@ -8,7 +8,7 @@ using namespace Rcpp;
 
 // RIDGEc
 arma::mat RIDGEc(const arma::mat& S, double lam);
-RcppExport SEXP _shrink_RIDGEc(SEXP SSEXP, SEXP lamSEXP) {
+RcppExport SEXP _SCPME_RIDGEc(SEXP SSEXP, SEXP lamSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -20,7 +20,7 @@ END_RCPP
 }
 // ADMMc
 List ADMMc(const arma::mat& S, const arma::mat& A, const arma::mat& B, const arma::mat& C, const arma::mat& initOmega, const arma::mat& initZ2, const arma::mat& initY, const double lam, const double tau, double rho, const double mu, const double tau_inc, const double tau_dec, std::string crit, const double tol_abs, const double tol_rel, const int maxit);
-RcppExport SEXP _shrink_ADMMc(SEXP SSEXP, SEXP ASEXP, SEXP BSEXP, SEXP CSEXP, SEXP initOmegaSEXP, SEXP initZ2SEXP, SEXP initYSEXP, SEXP lamSEXP, SEXP tauSEXP, SEXP rhoSEXP, SEXP muSEXP, SEXP tau_incSEXP, SEXP tau_decSEXP, SEXP critSEXP, SEXP tol_absSEXP, SEXP tol_relSEXP, SEXP maxitSEXP) {
+RcppExport SEXP _SCPME_ADMMc(SEXP SSEXP, SEXP ASEXP, SEXP BSEXP, SEXP CSEXP, SEXP initOmegaSEXP, SEXP initZ2SEXP, SEXP initYSEXP, SEXP lamSEXP, SEXP tauSEXP, SEXP rhoSEXP, SEXP muSEXP, SEXP tau_incSEXP, SEXP tau_decSEXP, SEXP critSEXP, SEXP tol_absSEXP, SEXP tol_relSEXP, SEXP maxitSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -47,7 +47,7 @@ END_RCPP
 }
 // CV_ADMMc
 List CV_ADMMc(const arma::mat& X, const arma::mat& S, const arma::mat& Y, const arma::mat& A, const arma::mat& B, const arma::mat& C, const arma::colvec& lam, bool path, double tau, double rho, const double mu, const double tau_inc, const double tau_dec, std::string crit, const double tol_abs, const double tol_rel, int maxit, int adjmaxit, int K, std::string crit_cv, std::string start, std::string trace);
-RcppExport SEXP _shrink_CV_ADMMc(SEXP XSEXP, SEXP SSEXP, SEXP YSEXP, SEXP ASEXP, SEXP BSEXP, SEXP CSEXP, SEXP lamSEXP, SEXP pathSEXP, SEXP tauSEXP, SEXP rhoSEXP, SEXP muSEXP, SEXP tau_incSEXP, SEXP tau_decSEXP, SEXP critSEXP, SEXP tol_absSEXP, SEXP tol_relSEXP, SEXP maxitSEXP, SEXP adjmaxitSEXP, SEXP KSEXP, SEXP crit_cvSEXP, SEXP startSEXP, SEXP traceSEXP) {
+RcppExport SEXP _SCPME_CV_ADMMc(SEXP XSEXP, SEXP SSEXP, SEXP YSEXP, SEXP ASEXP, SEXP BSEXP, SEXP CSEXP, SEXP lamSEXP, SEXP pathSEXP, SEXP tauSEXP, SEXP rhoSEXP, SEXP muSEXP, SEXP tau_incSEXP, SEXP tau_decSEXP, SEXP critSEXP, SEXP tol_absSEXP, SEXP tol_relSEXP, SEXP maxitSEXP, SEXP adjmaxitSEXP, SEXP KSEXP, SEXP crit_cvSEXP, SEXP startSEXP, SEXP traceSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -79,7 +79,7 @@ END_RCPP
 }
 // CVP_ADMMc
 arma::mat CVP_ADMMc(const arma::mat& X_train, const arma::mat& X_valid, const arma::mat& Y_train, const arma::mat& Y_valid, const arma::mat& A, const arma::mat& B, const arma::mat& C, const arma::colvec& lam, const double tau, double rho, const double mu, const double tau_inc, const double tau_dec, std::string crit, const double tol_abs, const double tol_rel, int maxit, int adjmaxit, std::string crit_cv, std::string start, std::string trace);
-RcppExport SEXP _shrink_CVP_ADMMc(SEXP X_trainSEXP, SEXP X_validSEXP, SEXP Y_trainSEXP, SEXP Y_validSEXP, SEXP ASEXP, SEXP BSEXP, SEXP CSEXP, SEXP lamSEXP, SEXP tauSEXP, SEXP rhoSEXP, SEXP muSEXP, SEXP tau_incSEXP, SEXP tau_decSEXP, SEXP critSEXP, SEXP tol_absSEXP, SEXP tol_relSEXP, SEXP maxitSEXP, SEXP adjmaxitSEXP, SEXP crit_cvSEXP, SEXP startSEXP, SEXP traceSEXP) {
+RcppExport SEXP _SCPME_CVP_ADMMc(SEXP X_trainSEXP, SEXP X_validSEXP, SEXP Y_trainSEXP, SEXP Y_validSEXP, SEXP ASEXP, SEXP BSEXP, SEXP CSEXP, SEXP lamSEXP, SEXP tauSEXP, SEXP rhoSEXP, SEXP muSEXP, SEXP tau_incSEXP, SEXP tau_decSEXP, SEXP critSEXP, SEXP tol_absSEXP, SEXP tol_relSEXP, SEXP maxitSEXP, SEXP adjmaxitSEXP, SEXP crit_cvSEXP, SEXP startSEXP, SEXP traceSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -110,14 +110,14 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_shrink_RIDGEc", (DL_FUNC) &_shrink_RIDGEc, 2},
-    {"_shrink_ADMMc", (DL_FUNC) &_shrink_ADMMc, 17},
-    {"_shrink_CV_ADMMc", (DL_FUNC) &_shrink_CV_ADMMc, 22},
-    {"_shrink_CVP_ADMMc", (DL_FUNC) &_shrink_CVP_ADMMc, 21},
+    {"_SCPME_RIDGEc", (DL_FUNC) &_SCPME_RIDGEc, 2},
+    {"_SCPME_ADMMc", (DL_FUNC) &_SCPME_ADMMc, 17},
+    {"_SCPME_CV_ADMMc", (DL_FUNC) &_SCPME_CV_ADMMc, 22},
+    {"_SCPME_CVP_ADMMc", (DL_FUNC) &_SCPME_CVP_ADMMc, 21},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_shrink(DllInfo *dll) {
+RcppExport void R_init_SCPME(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

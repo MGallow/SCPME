@@ -10,7 +10,7 @@ src/*.dll
 .Rdata
 .rdb
 .rdx
-ADMMsigma.Rproj
+SPMCE.Rproj
 inst/doc
 docs
 vignettes/Tutorial_cache/

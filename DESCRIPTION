@@ -1,4 +1,4 @@
-Package: shrink
+Package: SCPME
 Type: Package
 Title: Shrinking Characteristics of Precision Matrix Estimators
 Version: 1.0
@@ -6,8 +6,8 @@ Date: 2018-07-10
 Authors@R: person("Matt", "Galloway", email = "gall0441@umn.edu",
                   role = c("aut", "cre"))
 Description: An implementation of the methods described in "Shrinking Characteristics of Precision Matrix Estimators" by Aaron J. Molstad, Ph.D and Adam J. Rothman, Ph.D. The manuscript can be found here: https://arxiv.org/pdf/1704.04820.pdf .
-URL: https://github.com/MGallow/shrink
-BugReports: https://github.com/MGallow/shrink/issues
+URL: https://github.com/MGallow/SCPME
+BugReports: https://github.com/MGallow/SCPME/issues
 License: GPL (>= 2)
 ByteCompile: TRUE
 NeedsCompilation: yes

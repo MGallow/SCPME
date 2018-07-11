@@ -1,5 +1,5 @@
 ---
-title: "shrink"
+title: "SCPME"
 output: github_document
   
 ---
@@ -8,15 +8,15 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-[![Build Status](https://travis-ci.org/MGallow/shrink.svg?branch=master)](https://travis-ci.org/MGallow/shrink)
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/shrink)](https://cran.r-project.org/package=shrink)
+[![Build Status](https://travis-ci.org/MGallow/shrink.svg?branch=master)](https://travis-ci.org/MGallow/SCPME)
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/SCPME)](https://cran.r-project.org/package=SCPME)
 
 ## Overview
 
 `shrink` is an implementation of the methods described in "Shrinking Characteristics of Precision Matrix Estimators" [pdf](https://arxiv.org/pdf/1704.04820.pdf). It estimates a penalized precision matrix via a modified alternating direction method of multipliers (ADMM) algorithm.
 
 <p align="center">
-  <img src = "https://github.com/MGallow/shrink/raw/master/vignettes/images/gif.gif"/>
+  <img src = "https://github.com/MGallow/SCPME/raw/master/vignettes/images/gif.gif"/>
 </p>
 
 A (possibly incomplete) list of functions contained in the package can be found below:
@@ -25,7 +25,7 @@ A (possibly incomplete) list of functions contained in the package can be found 
 
 * `plot.shrink()` produces a heat map or line graph for cross validation errors
 
-See [vignette](https://mgallow.github.io/ADMMsigma/) or [manual](https://github.com/MGallow/ADMMsigma/blob/master/ADMMsigma.pdf).
+See [vignette](https://mgallow.github.io/SCPME/) or [manual](https://github.com/MGallow/ADMMsigma/blob/master/SCPME.pdf).
 
 ## Installation
 
@@ -35,12 +35,12 @@ See [vignette](https://mgallow.github.io/ADMMsigma/) or [manual](https://github.
 devtools::install_github("MGallow/shrink")
 ```
 
-If there are any issues/bugs, please let me know: [github](https://github.com/MGallow/shrink/issues). You can also contact me via my [website](https://mgallow.github.io/). Pull requests are welcome!
+If there are any issues/bugs, please let me know: [github](https://github.com/MGallow/SCPME/issues). You can also contact me via my [website](https://mgallow.github.io/). Pull requests are welcome!
 
 ## Usage
 
 ```{r, message = FALSE}
-library(shrink)
+library(SCPME)
 set.seed(123)
 
 # let's generate some data!

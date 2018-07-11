@@ -99,7 +99,7 @@ where \eqn{\lambda > 0} and we define
 }
 \details{
 For details on the implementation of 'shrink', see the vignette
-\url{https://mgallow.github.io/shrink/}.
+\url{https://mgallow.github.io/SCPME/}.
 }
 \examples{
 # NEED TO COMPLETE
