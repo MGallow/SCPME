@@ -35,10 +35,11 @@
 #' @keywords internal
 
 # we define the CVP_ADMM function
-CVP_ADMM = function(X, Y = NULL, A = diag(ncol(X)), B = diag(ncol(X)), C = diag(ncol(X)), 
-    lam = 10^seq(-2, 2, 0.2), tau = 10, rho = 2, mu = 10, tau.rho = 2, iter.rho = 10, 
-    crit = c("ADMM", "loglik"), tol.abs = 1e-04, tol.rel = 1e-04, maxit = 1000, 
-    adjmaxit = NULL, K = 5, crit.cv = c("MSE", "loglik", "AIC", "BIC"), start = c("warm", 
+CVP_ADMM = function(X, Y = NULL, A = diag(ncol(X)), B = diag(ncol(X)), 
+    C = diag(ncol(X)), lam = 10^seq(-2, 2, 0.2), tau = 10, rho = 2, 
+    mu = 10, tau.rho = 2, iter.rho = 10, crit = c("ADMM", "loglik"), 
+    tol.abs = 1e-04, tol.rel = 1e-04, maxit = 1000, adjmaxit = NULL, 
+    K = 5, crit.cv = c("MSE", "loglik", "AIC", "BIC"), start = c("warm", 
         "cold"), cores = 1, trace = c("progress", "print", "none")) {
     
     # match values
@@ -65,41 +66,42 @@ CVP_ADMM = function(X, Y = NULL, A = diag(ncol(X)), B = diag(ncol(X)), C = diag(
     n = nrow(X)
     ind = sample(n)
     k = NULL
-    CV = foreach(k = 1:K, .packages = "shrink", .combine = "cbind", .inorder = FALSE) %dopar% 
-        {
+    CV = foreach(k = 1:K, .packages = "shrink", .combine = "cbind", 
+        .inorder = FALSE) %dopar% {
+        
+        leave.out = ind[(1 + floor((k - 1) * n/K)):floor(k * n/K)]
+        
+        # training set
+        X.train = X[-leave.out, , drop = FALSE]
+        X_bar = apply(X.train, 2, mean)
+        X.train = scale(X.train, center = X_bar, scale = FALSE)
+        
+        # validation set
+        X.valid = X[leave.out, , drop = FALSE]
+        X.valid = scale(X.valid, center = X_bar, scale = FALSE)
+        
+        # training/validation for Y, if necessary
+        if (crit.cv == "MSE") {
             
-            leave.out = ind[(1 + floor((k - 1) * n/K)):floor(k * n/K)]
+            Y.train = Y[-leave.out, , drop = FALSE]
+            Y.valid = Y[leave.out, , drop = FALSE]
             
-            # training set
-            X.train = X[-leave.out, , drop = FALSE]
-            X_bar = apply(X.train, 2, mean)
-            X.train = scale(X.train, center = X_bar, scale = FALSE)
+        } else {
             
-            # validation set
-            X.valid = X[leave.out, , drop = FALSE]
-            X.valid = scale(X.valid, center = X_bar, scale = FALSE)
-            
-            # training/validation for Y, if necessary
-            if (crit.cv == "MSE") {
-                
-                Y.train = Y[-leave.out, , drop = FALSE]
-                Y.valid = Y[leave.out, , drop = FALSE]
-                
-            } else {
-                
-                Y.train = matrix(0)
-                Y.valid = matrix(0)
-                
-            }
-            
-            # run foreach loop on CVP_ADMMc
-            CVP_ADMMc(X_train = X.train, X_valid = X.valid, Y_train = Y.train, 
-                Y_valid = Y.valid, A = A, B = B, C = C, lam = lam, tau = tau, 
-                rho = rho, mu = mu, tau_rho = tau.rho, iter_rho = iter.rho, 
-                crit = crit, tol_abs = tol.abs, tol_rel = tol.rel, maxit = maxit, 
-                adjmaxit = adjmaxit, crit_cv = crit.cv, start = start, trace = trace)
+            Y.train = matrix(0)
+            Y.valid = matrix(0)
             
         }
+        
+        # run foreach loop on CVP_ADMMc
+        CVP_ADMMc(X_train = X.train, X_valid = X.valid, Y_train = Y.train, 
+            Y_valid = Y.valid, A = A, B = B, C = C, lam = lam, 
+            tau = tau, rho = rho, mu = mu, tau_rho = tau.rho, 
+            iter_rho = iter.rho, crit = crit, tol_abs = tol.abs, 
+            tol_rel = tol.rel, maxit = maxit, adjmaxit = adjmaxit, 
+            crit_cv = crit.cv, start = start, trace = trace)
+        
+    }
     
     # determine optimal tuning parameters
     AVG = as.matrix(apply(CV, 1, mean))
@@ -111,7 +113,8 @@ CVP_ADMM = function(X, Y = NULL, A = diag(ncol(X)), B = diag(ncol(X)), C = diag(
     stopCluster(cluster)
     
     # return best lam and alpha values
-    return(list(lam = best_lam, min.error = error, avg.error = AVG, cv.error = CV))
+    return(list(lam = best_lam, min.error = error, avg.error = AVG, 
+        cv.error = CV))
     
 }
 

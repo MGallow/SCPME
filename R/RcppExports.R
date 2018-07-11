@@ -64,8 +64,8 @@ RIDGEc <- function(S, lam) {
 #' 
 #' @keywords internal
 #'
-ADMMc <- function(S, A, B, C, initOmega, initZ2, initY, lam, tau = 10, rho = 2, mu = 10, tau_rho = 2, iter_rho = 10L, crit = "ADMM", tol_abs = 1e-4, tol_rel = 1e-4, maxit = 1e4L) {
-    .Call('_SCPME_ADMMc', PACKAGE = 'SCPME', S, A, B, C, initOmega, initZ2, initY, lam, tau, rho, mu, tau_rho, iter_rho, crit, tol_abs, tol_rel, maxit)
+ADMMc <- function(S, A, B, C, initOmega, initZ, initY, lam, tau = 10, rho = 2, mu = 10, tau_rho = 2, iter_rho = 10L, crit = "ADMM", tol_abs = 1e-4, tol_rel = 1e-4, maxit = 1e4L) {
+    .Call('_SCPME_ADMMc', PACKAGE = 'SCPME', S, A, B, C, initOmega, initZ, initY, lam, tau, rho, mu, tau_rho, iter_rho, crit, tol_abs, tol_rel, maxit)
 }
 
 #' @title K fold (c++)

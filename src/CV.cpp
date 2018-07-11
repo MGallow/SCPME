@@ -81,8 +81,8 @@ List CV_ADMMc(const arma::mat &X, const arma::mat &S, const arma::mat &Y, const 
   // initialization
   int n, r = Y.n_cols, p = S.n_cols, l = lam.n_rows, initmaxit = maxit;
   double sgn = 0, logdet = 0, initrho = rho, lam_;
-  arma::mat X_train, X_valid, Y_train, Y_valid, S_train(S), S_valid(S), Omega, initOmega, initZ2, initY;
-  arma::mat zeros(p, p, arma::fill::zeros), zerosC(C.n_rows, C.n_cols, arma::fill::zeros), CV_errors(l, K, arma::fill::zeros);
+  arma::mat X_train, X_valid, Y_train, Y_valid, S_train(S), S_valid(S), Omega, initOmega, initZ, initY;
+  arma::mat CV_errors(l, K, arma::fill::zeros);
   arma::colvec CV_error, zerosl(l, arma::fill::zeros); arma::rowvec X_bar;
   arma::uvec index, index_; arma::vec folds; arma::cube Path;
   Progress progress(l*K, trace == "progress");
@@ -110,8 +110,10 @@ List CV_ADMMc(const arma::mat &X, const arma::mat &S, const arma::mat &Y, const 
   for (int k = 0; k < K; k++){
     
     // re-initialize values for each fold
-    CV_error = zerosl; maxit = initmaxit;
-    initOmega = zeros; initZ2 = initY = zerosC; rho = initrho;
+    CV_error = zerosl; maxit = initmaxit; rho = initrho;
+    initOmega = arma::diagmat(1/arma::diagvec(S));
+    initZ = A*initOmega*B - C;
+    initY = arma::zeros<arma::mat>(C.n_rows, C.n_cols);
       
     if (K > 1) {
       
@@ -150,14 +152,14 @@ List CV_ADMMc(const arma::mat &X, const arma::mat &S, const arma::mat &Y, const 
         lam_ = lam[i];
         
         // compute the ridge-penalized likelihood precision matrix estimator at the ith value in lam:
-        List ADMM = ADMMc(S_train, A, B, C, initOmega, initZ2, initY, lam_, tau, rho, mu, tau_rho, iter_rho, crit, tol_abs, tol_rel, maxit);
+        List ADMM = ADMMc(S_train, A, B, C, initOmega, initZ, initY, lam_, tau, rho, mu, tau_rho, iter_rho, crit, tol_abs, tol_rel, maxit);
         Omega = as<arma::mat>(ADMM["Omega"]);
         
         if (start == "warm"){
           
           // option to save initial values for warm starts
           initOmega = as<arma::mat>(ADMM["Omega"]);
-          initZ2 = as<arma::mat>(ADMM["Z2"]);
+          initZ = as<arma::mat>(ADMM["Z"]);
           initY = as<arma::mat>(ADMM["Y"]);
           rho = as<double>(ADMM["rho"]);
           maxit = adjmaxit;

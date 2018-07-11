@@ -46,15 +46,18 @@ arma::mat CVP_ADMMc(const arma::mat &X_train, const arma::mat &X_valid, const ar
   // initialization
   int n = X_valid.n_rows, r = Y_valid.n_cols, l = lam.n_rows;
   double sgn = 0, logdet = 0, lam_;
-  arma::mat S_train, S_valid, Omega, initOmega, initZ2, initY; arma::colvec nzeros;
-  initOmega = initZ2 = initY = arma::zeros<arma::mat>(X_train.n_cols, X_train.n_cols);
-  initZ2 = initY = arma::zeros<arma::mat>(A.n_rows, B.n_cols);
+  arma::mat S_train, S_valid, Omega, initOmega, initZ, initY; arma::colvec nzeros;
   arma::mat CV_error(l, 1, arma::fill::zeros);
   Progress progress(l, trace == "progress");
   
   // calculate sample covariances
   S_train = arma::cov(X_train, 1);
   S_valid = arma::cov(X_valid, 1);
+  
+  // initial estimates
+  initOmega = arma::diagmat(1/arma::diagvec(S_train));
+  initZ = A*initOmega*B - C;
+  initY = arma::zeros<arma::mat>(C.n_rows, C.n_cols);
   
   // loop over all tuning parameters
   for (int i = 0; i < l; i++){
@@ -63,14 +66,14 @@ arma::mat CVP_ADMMc(const arma::mat &X_train, const arma::mat &X_valid, const ar
     lam_ = lam[i];
     
     // compute the penalized likelihood precision matrix estimator at the ith value in lam:
-    List ADMM = ADMMc(S_train, A, B, C, initOmega, initZ2, initY, lam_, tau, rho, mu, tau_rho, iter_rho, crit, tol_abs, tol_rel, maxit);
+    List ADMM = ADMMc(S_train, A, B, C, initOmega, initZ, initY, lam_, tau, rho, mu, tau_rho, iter_rho, crit, tol_abs, tol_rel, maxit);
     Omega = as<arma::mat>(ADMM["Omega"]);
     
     if (start == "warm"){
       
       // option to save initial values for warm starts
       initOmega = as<arma::mat>(ADMM["Omega"]);
-      initZ2 = as<arma::mat>(ADMM["Z2"]);
+      initZ = as<arma::mat>(ADMM["Z"]);
       initY = as<arma::mat>(ADMM["Y"]);
       rho = as<double>(ADMM["rho"]);
       maxit = adjmaxit;

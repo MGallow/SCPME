@@ -92,14 +92,14 @@ arma::mat RIDGEc(const arma::mat &S, double lam){
 //' @keywords internal
 //'
 // [[Rcpp::export]]
-List ADMMc(const arma::mat &S, const arma::mat &A, const arma::mat &B, const arma::mat &C, const arma::mat &initOmega, const arma::mat &initZ2, const arma::mat &initY, const double lam, const double tau = 10, double rho = 2, const double mu = 10, const double tau_rho = 2, const int iter_rho = 10, std::string crit = "ADMM", const double tol_abs = 1e-4, const double tol_rel = 1e-4, const int maxit = 1e4){
+List ADMMc(const arma::mat &S, const arma::mat &A, const arma::mat &B, const arma::mat &C, const arma::mat &initOmega, const arma::mat &initZ, const arma::mat &initY, const double lam, const double tau = 10, double rho = 2, const double mu = 10, const double tau_rho = 2, const int iter_rho = 10, std::string crit = "ADMM", const double tol_abs = 1e-4, const double tol_rel = 1e-4, const int maxit = 1e4){
   
   // allocate memory
   bool criterion = true;
   int p = S.n_cols, iter = 0;
   double s, r, eps1, eps2, lik, lik2, sgn, logdet, sqrt;
   s = r = eps1 = eps2 = lik = lik2 = sgn = logdet = 0;
-  arma::mat Z(initZ2), Z2(initZ2), Y(initY), Omega(initOmega), G, AOB, ACB, BZA, BYA;
+  arma::mat Z(initZ), Z2(initZ), Y(initY), Omega(initOmega), G, AOB, ACB, BZA, BYA;
   sqrt = std::sqrt(C.n_cols*C.n_rows);
   AOB = A*Omega*B;
   ACB = A.t()*C*B.t();
@@ -178,7 +178,7 @@ List ADMMc(const arma::mat &S, const arma::mat &A, const arma::mat &B, const arm
   return List::create(Named("Iterations") = iter,
                       Named("lam") = lam,
                       Named("Omega") = Omega,
-                      Named("Z2") = Z2,
+                      Named("Z") = Z2,
                       Named("Y") = Y,
                       Named("rho") = rho);
   
