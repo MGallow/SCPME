@@ -222,6 +222,7 @@ shrink = function(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)),
     # perform cross validation, if necessary
     initOmega = diag(diag(S)^(-1))
     init = A %*% initOmega %*% B - C
+    zeros = matrix(0, nrow = nrow(C), ncol = ncol(C))
     if ((length(lam) > 1) && (!is.null(X) || path)) {
         
         # run CV in parallel?
@@ -265,7 +266,7 @@ shrink = function(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)),
         
         # compute final estimate at best tuning parameters
         ADMM = ADMMc(S = S, A = A, B = B, C = C, initOmega = initOmega, 
-            initZ = init, initY = init, lam = ADMM$lam, tau = tau, 
+            initZ = init, initY = zeros, lam = ADMM$lam, tau = tau, 
             rho = rho, mu = mu, tau_rho = tau.rho, iter_rho = iter.rho, 
             crit = crit, tol_abs = tol.abs, tol_rel = tol.rel, 
             maxit = maxit)
@@ -279,7 +280,7 @@ shrink = function(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)),
         }
         
         ADMM = ADMMc(S = S, A = A, B = B, C = C, initOmega = initOmega, 
-            initZ = init, initY = init, lam = lam, tau = tau, 
+            initZ = init, initY = zeros, lam = lam, tau = tau, 
             rho = rho, mu = mu, tau_rho = tau.rho, iter_rho = iter.rho, 
             crit = crit, tol_abs = tol.abs, tol_rel = tol.rel, 
             maxit = maxit)
