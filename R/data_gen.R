@@ -40,9 +40,10 @@ data_gen = function(n, p, r = 1, sparsity = 0.5, Sigma = c("tridiag",
         nrow = p, ncol = r)
     
     # generate data X
-    SigmaX = switch(SigmaX, tridiag = tridiag(p = p, n = n, 
-        ...), dense = dense(p = p, n = n, ...), denseQR = denseQR(p = p, 
-        n = n, ...), compound = compound(p = p, n = n))
+    SigmaX = switch(SigmaX, tridiag = tridiag(p = p, 
+        n = n, ...), dense = dense(p = p, n = n, ...), 
+        denseQR = denseQR(p = p, n = n, ...), compound = compound(p = p, 
+            n = n))
     X = SigmaX$X
     
     SigmaX = SigmaX$S
@@ -189,8 +190,7 @@ denseQR = function(p = 8, num = 5, n = NULL) {
     eigen = c(rep(1000, num), rep(1, p - num))
     
     # randomly generate orthogonal basis (via QR)
-    Q = matrix(rnorm(p * p), nrow = p, ncol = p) %>% qr %>% 
-        qr.Q
+    Q = qr.Q(qr(matrix(rnorm(p * p), nrow = p, ncol = p)))
     
     # generate matrix
     S = Q %*% diag(eigen) %*% t(Q)
