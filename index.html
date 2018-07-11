@@ -5,18 +5,24 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shrinking characteristics of precision matrix estimators • shrink</title>
+<title>Shrinking Characteristics of Precision Matrix Estimators • shrink</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><link href="extra.css" rel="stylesheet">
-<meta property="og:title" content="Shrinking characteristics of precision matrix estimators">
-<meta property="og:description" content='This package is an implementation of the methods described in "Shrinking Characteristics of Precision Matrix Estimators" by Aaron J. Molstad, Ph.D and Adam J. Rothman, Ph.D. The manuscript can be found here: https://arxiv.org/pdf/1704.04820.pdf .'>
+<meta property="og:title" content="Shrinking Characteristics of Precision Matrix Estimators">
+<meta property="og:description" content='An implementation of the methods described in "Shrinking Characteristics of Precision Matrix Estimators" by Aaron J. Molstad, Ph.D and Adam J. Rothman, Ph.D. The manuscript can be found here: https://arxiv.org/pdf/1704.04820.pdf .'>
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<![endif]--><!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=UA-84680750-8"></script><script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-84680750-8');
+</script>
 </head>
 <body>
     <div class="container template-article">
@@ -99,7 +105,164 @@
 
     
     
-<p>This package is an implementation of the methods described in “Shrinking Characteristics of Precision Matrix Estimators” <a href="https://arxiv.org/pdf/1704.04820.pdf">pdf</a></p>
+
+<div id="overview" class="section level2">
+<h2 class="hasAnchor">
+<a href="#overview" class="anchor"></a>Overview</h2>
+<p><code>shrink</code> is an implementation of the methods described in “Shrinking Characteristics of Precision Matrix Estimators” <a href="https://arxiv.org/pdf/1704.04820.pdf">pdf</a>. It estimates a penalized precision matrix via a modified alternating direction method of multipliers (ADMM) algorithm.</p>
+<p align="center">
+<img src="https://github.com/MGallow/shrink/raw/master/vignettes/images/gif.gif"></p>
+<p>A (possibly incomplete) list of functions contained in the package can be found below:</p>
+<ul>
+<li><p><code><a href="reference/shrink.html">shrink()</a></code> computes the estimated precision matrix</p></li>
+<li><p><code><a href="reference/plot.shrink.html">plot.shrink()</a></code> produces a heat map or line graph for cross validation errors</p></li>
+</ul>
+<p>See <a href="https://mgallow.github.io/ADMMsigma/">vignette</a> or <a href="https://github.com/MGallow/ADMMsigma/blob/master/ADMMsigma.pdf">manual</a>.</p>
+</div>
+<div id="installation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#installation" class="anchor"></a>Installation</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># The easiest way to install is from GitHub:</span></a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="co"># install.packages("devtools")</span></a>
+<a class="sourceLine" id="cb1-3" data-line-number="3">devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"MGallow/shrink"</span>)</a></code></pre></div>
+<p>If there are any issues/bugs, please let me know: <a href="https://github.com/MGallow/shrink/issues">github</a>. You can also contact me via my <a href="https://mgallow.github.io/">website</a>. Pull requests are welcome!</p>
+</div>
+<div id="usage" class="section level2">
+<h2 class="hasAnchor">
+<a href="#usage" class="anchor"></a>Usage</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">library</span>(shrink)</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">set.seed</span>(<span class="dv">123</span>)</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co"># let's generate some data!</span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co"># specify marginal covariance of X</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co"># note that the inverse is tri-diagonal (sparse)</span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8">Sxx =<span class="st"> </span><span class="kw">matrix</span>(<span class="fl">0.7</span>, <span class="dt">nrow =</span> <span class="dv">5</span>, <span class="dt">ncol =</span> <span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>){</a>
+<a class="sourceLine" id="cb2-10" data-line-number="10">  <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>){</a>
+<a class="sourceLine" id="cb2-11" data-line-number="11">    Sxx[i, j] =<span class="st"> </span>Sxx[i, j]<span class="op">^</span><span class="kw">abs</span>(i <span class="op">-</span><span class="st"> </span>j)</a>
+<a class="sourceLine" id="cb2-12" data-line-number="12">  }</a>
+<a class="sourceLine" id="cb2-13" data-line-number="13">}</a>
+<a class="sourceLine" id="cb2-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb2-15" data-line-number="15"><span class="co"># now randomly generate some 100 observations of X</span></a>
+<a class="sourceLine" id="cb2-16" data-line-number="16">Z =<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">rnorm</span>(<span class="dv">100</span><span class="op">*</span><span class="dv">5</span>), <span class="dt">nrow =</span> <span class="dv">100</span>, <span class="dt">ncol =</span> <span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb2-17" data-line-number="17">out =<span class="st"> </span><span class="kw">eigen</span>(Sxx, <span class="dt">symmetric =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb2-18" data-line-number="18">Sxx.sqrt =<span class="st"> </span>out<span class="op">$</span>vectors <span class="op">%*%</span><span class="st"> </span><span class="kw">diag</span>(out<span class="op">$</span>values<span class="op">^</span><span class="fl">0.5</span>) <span class="op">%*%</span><span class="st"> </span><span class="kw">t</span>(out<span class="op">$</span>vectors)</a>
+<a class="sourceLine" id="cb2-19" data-line-number="19">X =<span class="st"> </span>Z <span class="op">%*%</span><span class="st"> </span>Sxx.sqrt</a>
+<a class="sourceLine" id="cb2-20" data-line-number="20"></a>
+<a class="sourceLine" id="cb2-21" data-line-number="21"><span class="co"># randomly generate regression coefficients</span></a>
+<a class="sourceLine" id="cb2-22" data-line-number="22">betas =<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">rnorm</span>(<span class="dv">5</span>, <span class="dv">0</span>, <span class="kw">sqrt</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">5</span>)), <span class="dt">nrow =</span> <span class="dv">5</span>, <span class="dt">ncol =</span> <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb2-23" data-line-number="23"></a>
+<a class="sourceLine" id="cb2-24" data-line-number="24"><span class="co"># we will also assume a sparse matrix here</span></a>
+<a class="sourceLine" id="cb2-25" data-line-number="25">betas =<span class="st"> </span>betas<span class="op">*</span><span class="kw">matrix</span>(<span class="kw">rbinom</span>(<span class="dv">5</span>, <span class="dv">1</span>, <span class="dt">prob =</span> <span class="fl">0.5</span>), <span class="dt">nrow =</span> <span class="dv">5</span>, <span class="dt">ncol =</span> <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb2-26" data-line-number="26"></a>
+<a class="sourceLine" id="cb2-27" data-line-number="27"><span class="co"># now we randomly generate Y</span></a>
+<a class="sourceLine" id="cb2-28" data-line-number="28">Y =<span class="st"> </span>X <span class="op">%*%</span><span class="st"> </span>betas <span class="op">+</span><span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">100</span>)</a>
+<a class="sourceLine" id="cb2-29" data-line-number="29"></a>
+<a class="sourceLine" id="cb2-30" data-line-number="30"></a>
+<a class="sourceLine" id="cb2-31" data-line-number="31"></a>
+<a class="sourceLine" id="cb2-32" data-line-number="32"><span class="co"># print marginal sample precision matrix for X</span></a>
+<a class="sourceLine" id="cb2-33" data-line-number="33"><span class="co"># this is perhaps a bad estimate (not sparse)</span></a>
+<a class="sourceLine" id="cb2-34" data-line-number="34">Sample =<span class="st"> </span>(<span class="kw">nrow</span>(X) <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)<span class="op">/</span><span class="kw">nrow</span>(X)<span class="op">*</span><span class="kw">cov</span>(X)</a>
+<a class="sourceLine" id="cb2-35" data-line-number="35"><span class="kw">round</span>(<span class="kw">qr.solve</span>(Sample), <span class="dv">5</span>)</a></code></pre></div>
+<pre><code>##          [,1]     [,2]     [,3]     [,4]     [,5]
+## [1,]  2.32976 -1.55033  0.22105 -0.08607  0.24309
+## [2,] -1.55033  3.27561 -1.68026 -0.14277  0.18949
+## [3,]  0.22105 -1.68026  3.19897 -1.25158 -0.11016
+## [4,] -0.08607 -0.14277 -1.25158  2.76790 -1.37226
+## [5,]  0.24309  0.18949 -0.11016 -1.37226  2.05377</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># estimate preicison matrix (omega) assuming sparsity</span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co"># note that this is simply lasso penalized preicision matrix</span></a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="kw"><a href="reference/shrink.html">shrink</a></span>(X, <span class="dt">lam =</span> <span class="fl">0.5</span>)</a></code></pre></div>
+<pre><code>## Matrix Y not detected... will use loglik for crit.cv instead!</code></pre>
+<pre><code>## 
+## Call: shrink(X = X, lam = 0.5)
+## 
+## Iterations: 14
+## 
+## Tuning parameters:
+##       log10(lam)  lam
+## [1,]      -0.301  0.5
+## 
+## Log-likelihood: -325.34961
+## 
+## Omega:
+##          [,1]     [,2]     [,3]     [,4]     [,5]
+## [1,]  0.80258 -0.00363 -0.00002 -0.00003 -0.00001
+## [2,] -0.00363  0.74592 -0.03755 -0.00002 -0.00004
+## [3,] -0.00002 -0.03755  0.75451 -0.04662  0.00001
+## [4,] -0.00003 -0.00002 -0.04662  0.69268 -0.05671
+## [5,] -0.00001 -0.00004  0.00001 -0.05671  0.71739</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># what if we instead assumed sparsity in beta?</span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="co"># recall that beta is a product of marginal precision of X and cov(X, Y)</span></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="kw"><a href="reference/shrink.html">shrink</a></span>(X, Y, <span class="dt">B =</span> <span class="kw">cov</span>(X, Y), <span class="dt">nlam =</span> <span class="dv">20</span>, <span class="dt">lam.max =</span> <span class="kw">max</span>(<span class="kw">abs</span>(<span class="kw">t</span>(X) <span class="op">%*%</span><span class="st"> </span>Y)))</a></code></pre></div>
+<pre><code>## 
+## Call: shrink(X = X, Y = Y, B = cov(X, Y), nlam = 20, lam.max = max(abs(t(X) %*% 
+##     Y)))
+## 
+## Iterations: 25
+## 
+## Tuning parameters:
+##       log10(lam)    lam
+## [1,]      -0.164  0.686
+## 
+## Log-likelihood: -115.58565
+## 
+## Omega:
+##          [,1]     [,2]     [,3]     [,4]     [,5]
+## [1,]  1.69602 -1.13833  0.19624  0.30270 -0.02760
+## [2,] -1.13833  2.97473 -1.58959 -0.40033  0.30833
+## [3,]  0.19624 -1.58959  3.09219 -1.22341 -0.10923
+## [4,]  0.30270 -0.40033 -1.22341  2.50158 -1.17438
+## [5,] -0.02760  0.30833 -0.10923 -1.17438  1.98885</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="co"># we could also assume sparsity in beta AND omega</span></a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="kw"><a href="reference/shrink.html">shrink</a></span>(X, Y, <span class="dt">B =</span> <span class="kw">cbind</span>(<span class="kw">cov</span>(X, Y), <span class="kw">diag</span>(<span class="kw">ncol</span>(X))), <span class="dt">nlam =</span> <span class="dv">20</span>, <span class="dt">lam.max =</span> <span class="dv">10</span>, <span class="dt">lam.min.ratio =</span> <span class="fl">1e-4</span>)</a></code></pre></div>
+<pre><code>## 
+## Call: shrink(X = X, Y = Y, B = cbind(cov(X, Y), diag(ncol(X))), nlam = 20, 
+##     lam.max = 10, lam.min.ratio = 1e-04)
+## 
+## Iterations: 29
+## 
+## Tuning parameters:
+##       log10(lam)    lam
+## [1,]      -1.105  0.078
+## 
+## Log-likelihood: -171.52139
+## 
+## Omega:
+##          [,1]     [,2]     [,3]     [,4]     [,5]
+## [1,]  1.54834 -0.70518  0.00008  0.00002  0.01828
+## [2,] -0.70518  1.84090 -0.76744 -0.08973 -0.00006
+## [3,]  0.00008 -0.76744  1.90009 -0.69543 -0.02743
+## [4,]  0.00002 -0.08973 -0.69543  1.70299 -0.72951
+## [5,]  0.01828 -0.00006 -0.02743 -0.72951  1.42057</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="co"># produce CV heat map for shrink</span></a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">(<span class="dt">shrink =</span> <span class="kw"><a href="reference/shrink.html">shrink</a></span>(X, Y, <span class="dt">B =</span> <span class="kw">cov</span>(X, Y), <span class="dt">nlam =</span> <span class="dv">20</span>, <span class="dt">lam.max =</span> <span class="kw">max</span>(<span class="kw">abs</span>(<span class="kw">t</span>(X) <span class="op">%*%</span><span class="st"> </span>Y))))</a></code></pre></div>
+<pre><code>## 
+## Call: shrink(X = X, Y = Y, B = cov(X, Y), nlam = 20, lam.max = max(abs(t(X) %*% 
+##     Y)))
+## 
+## Iterations: 25
+## 
+## Tuning parameters:
+##       log10(lam)    lam
+## [1,]      -0.164  0.686
+## 
+## Log-likelihood: -115.58565
+## 
+## Omega:
+##          [,1]     [,2]     [,3]     [,4]     [,5]
+## [1,]  1.69602 -1.13833  0.19624  0.30270 -0.02760
+## [2,] -1.13833  2.97473 -1.58959 -0.40033  0.30833
+## [3,]  0.19624 -1.58959  3.09219 -1.22341 -0.10923
+## [4,]  0.30270 -0.40033 -1.22341  2.50158 -1.17438
+## [5,] -0.02760  0.30833 -0.10923 -1.17438  1.98885</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw">plot</span>(shrink, <span class="dt">type =</span> <span class="st">"heatmap"</span>)</a></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="co"># produce line graph for CV errors for shrink</span></a>
+<a class="sourceLine" id="cb14-2" data-line-number="2"><span class="kw">plot</span>(shrink, <span class="dt">type =</span> <span class="st">"line"</span>)</a></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-2-2.png" width="700"></p>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -127,7 +290,14 @@
 </ul>
 </div>
 
-      </div>
+      <div class="dev-status">
+<h2>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://travis-ci.org/MGallow/shrink"><img src="https://travis-ci.org/MGallow/shrink.svg?branch=master" alt="Build Status"></a></li>
+<li><a href="https://cran.r-project.org/package=shrink"><img src="http://www.r-pkg.org/badges/version/shrink" alt="CRAN_Status_Badge"></a></li>
+</ul>
+</div>
+</div>
 
 </div>
 

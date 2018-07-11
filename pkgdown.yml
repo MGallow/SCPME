@@ -1,7 +1,7 @@
 pandoc: 2.2.1
 pkgdown: 1.1.0
 pkgdown_sha: ~
-articles: []
+articles: {}
 urls:
   reference: https://mgallow.github.io/shrink//reference
   article: https://mgallow.github.io/shrink//articles
