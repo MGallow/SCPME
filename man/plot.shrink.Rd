@@ -19,5 +19,18 @@
 Produces a plot for the cross validation errors, if available.
 }
 \examples{
-# NEED TO COMPLETE
+# generate some data
+data = data_gen(n = 100, p = 5, r = 1)
+
+# lasso penalized beta (print estimated omega)
+(shrink = shrink(X = data$X, Y = data$Y, B = cov(data$X, data$Y)), lam.max = max(abs(t(data$X) \%*\% data$Y)))
+
+# print estimated beta
+shrink$Z
+
+# create heatmap of CV errors
+plot(shrink, type = 'heatmap')
+
+# create line graph of CV errors
+plot(shrink)
 }

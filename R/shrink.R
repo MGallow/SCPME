@@ -78,18 +78,27 @@
 #' @export
 #' 
 #' @examples
-#' # NEED TO COMPLETE
+#' # generate some data
+#' data = data_gen(n = 100, p = 5, r = 1)
+#' 
+#' # lasso penalized omega (glasso)
+#' shrink(X = data$X, Y = data$Y)
+#' 
+#' # lasso penalized beta (print estimated omega)
+#' (shrink = shrink(X = data$X, Y = data$Y, B = cov(data$X, data$Y)), lam.max = max(abs(t(data$X) %*% data$Y)))
+#' 
+#' # print estimated beta
+#' shrink$Z
 
 # we define the ADMM covariance estimation function
 shrink = function(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)), 
-    B = diag(ncol(S)), C = matrix(0, ncol = ncol(B), 
-        nrow = ncol(A)), nlam = 10, lam.max = NULL, lam.min.ratio = 0.01, 
-    lam = NULL, path = FALSE, rho = 2, mu = 10, tau.inc = 2, 
-    tau.dec = 2, crit = c("ADMM", "loglik"), tol.abs = 1e-04, 
-    tol.rel = 1e-04, maxit = 10000, adjmaxit = NULL, 
-    K = 5, crit.cv = c("MSE", "loglik", "AIC", "BIC"), 
-    start = c("warm", "cold"), cores = 1, trace = c("progress", 
-        "print", "none")) {
+    B = diag(ncol(S)), C = matrix(0, ncol = ncol(B), nrow = ncol(A)), 
+    nlam = 10, lam.max = NULL, lam.min.ratio = 0.01, lam = NULL, 
+    path = FALSE, rho = 2, mu = 10, tau.inc = 2, tau.dec = 2, 
+    crit = c("ADMM", "loglik"), tol.abs = 1e-04, tol.rel = 1e-04, 
+    maxit = 10000, adjmaxit = NULL, K = 5, crit.cv = c("MSE", 
+        "loglik", "AIC", "BIC"), start = c("warm", "cold"), 
+    cores = 1, trace = c("progress", "print", "none")) {
     
     
     # checks
@@ -126,7 +135,13 @@ shrink = function(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)),
         cat("Parallelization not possible when producing solution path. Setting cores = 1...\n\n")
         cores = 1
     }
-    K = ifelse(path, 1, K)
+    if (path) {
+        if (crit.cv == "MSE") {
+            cat("MSE crit.cv not available when path == TRUE... setting crit.cv == loglik")
+            crit.cv = "loglik"
+        }
+        K = 1
+    }
     if (cores > K) {
         cat("Number of cores exceeds K... setting cores = K\n\n")
         cores = K
@@ -196,8 +211,7 @@ shrink = function(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)),
         lam.min = lam.min.ratio * lam.max
         
         # calculate grid of lambda values
-        lam = 10^seq(log10(lam.min), log10(lam.max), 
-            length = nlam)
+        lam = 10^seq(log10(lam.min), log10(lam.max), length = nlam)
         
     } else {
         
@@ -364,7 +378,20 @@ print.shrink = function(x, ...) {
 #' @param ... additional arguments.
 #' @export
 #' @examples
-#' # NEED TO COMPLETE
+#' # generate some data
+#' data = data_gen(n = 100, p = 5, r = 1)
+#' 
+#' # lasso penalized beta (print estimated omega)
+#' (shrink = shrink(X = data$X, Y = data$Y, B = cov(data$X, data$Y)), lam.max = max(abs(t(data$X) %*% data$Y)))
+#' 
+#' # print estimated beta
+#' shrink$Z
+#' 
+#' # create heatmap of CV errors
+#' plot(shrink, type = 'heatmap')
+#' 
+#' # create line graph of CV errors
+#' plot(shrink)
 
 plot.shrink = function(x, type = c("line", "heatmap"), 
     footnote = TRUE, ...) {
@@ -385,10 +412,9 @@ plot.shrink = function(x, type = c("line", "heatmap"),
         # produce line graph
         graph = ggplot(summarise(group_by(cv, lam), Means = mean(Errors)), 
             aes(log10(lam), Means)) + geom_jitter(width = 0.2, 
-            color = "navy blue") + theme_minimal() + 
-            geom_line(color = "red") + labs(title = "Cross-Validation Errors", 
-            y = "Error") + geom_vline(xintercept = x$Tuning[1], 
-            linetype = "dotted")
+            color = "navy blue") + theme_minimal() + geom_line(color = "red") + 
+            labs(title = "Cross-Validation Errors", y = "Error") + 
+            geom_vline(xintercept = x$Tuning[1], linetype = "dotted")
         
     } else {
         
@@ -403,9 +429,9 @@ plot.shrink = function(x, type = c("line", "heatmap"),
         bluetowhite <- c("#000E29", "white")
         
         # produce ggplot heat map
-        graph = ggplot(cv, aes(alpha, log10(lam))) + 
-            geom_raster(aes(fill = Errors)) + scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), 
-            guide = "none") + theme_minimal() + labs(title = "Heatmap of Cross-Validation Errors") + 
+        graph = ggplot(cv, aes(alpha, log10(lam))) + geom_raster(aes(fill = Errors)) + 
+            scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), 
+                guide = "none") + theme_minimal() + labs(title = "Heatmap of Cross-Validation Errors") + 
             theme(axis.title.x = element_blank(), axis.text.x = element_blank(), 
                 axis.ticks.x = element_blank())
         

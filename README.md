@@ -25,6 +25,8 @@ be found below:
 
   - `shrink()` computes the estimated precision matrix
 
+  - `data_gen()` data generation function (for convenience)
+
   - `plot.shrink()` produces a heat map or line graph for cross
     validation errors
 
@@ -119,58 +121,8 @@ shrink(X, lam = 0.5)
     ## [5,] -0.00001 -0.00004  0.00001 -0.05671  0.71739
 
 ``` r
-# what if we instead assumed sparsity in beta?
+# what if we instead assumed sparsity in beta? (print estimated omega)
 # recall that beta is a product of marginal precision of X and cov(X, Y)
-shrink(X, Y, B = cov(X, Y), nlam = 20, lam.max = max(abs(t(X) %*% Y)))
-```
-
-    ## 
-    ## Call: shrink(X = X, Y = Y, B = cov(X, Y), nlam = 20, lam.max = max(abs(t(X) %*% 
-    ##     Y)))
-    ## 
-    ## Iterations: 25
-    ## 
-    ## Tuning parameters:
-    ##       log10(lam)    lam
-    ## [1,]      -0.164  0.686
-    ## 
-    ## Log-likelihood: -115.58565
-    ## 
-    ## Omega:
-    ##          [,1]     [,2]     [,3]     [,4]     [,5]
-    ## [1,]  1.69602 -1.13833  0.19624  0.30270 -0.02760
-    ## [2,] -1.13833  2.97473 -1.58959 -0.40033  0.30833
-    ## [3,]  0.19624 -1.58959  3.09219 -1.22341 -0.10923
-    ## [4,]  0.30270 -0.40033 -1.22341  2.50158 -1.17438
-    ## [5,] -0.02760  0.30833 -0.10923 -1.17438  1.98885
-
-``` r
-# we could also assume sparsity in beta AND omega
-shrink(X, Y, B = cbind(cov(X, Y), diag(ncol(X))), nlam = 20, lam.max = 10, lam.min.ratio = 1e-4)
-```
-
-    ## 
-    ## Call: shrink(X = X, Y = Y, B = cbind(cov(X, Y), diag(ncol(X))), nlam = 20, 
-    ##     lam.max = 10, lam.min.ratio = 1e-04)
-    ## 
-    ## Iterations: 29
-    ## 
-    ## Tuning parameters:
-    ##       log10(lam)    lam
-    ## [1,]      -1.105  0.078
-    ## 
-    ## Log-likelihood: -171.52139
-    ## 
-    ## Omega:
-    ##          [,1]     [,2]     [,3]     [,4]     [,5]
-    ## [1,]  1.54834 -0.70518  0.00008  0.00002  0.01828
-    ## [2,] -0.70518  1.84090 -0.76744 -0.08973 -0.00006
-    ## [3,]  0.00008 -0.76744  1.90009 -0.69543 -0.02743
-    ## [4,]  0.00002 -0.08973 -0.69543  1.70299 -0.72951
-    ## [5,]  0.01828 -0.00006 -0.02743 -0.72951  1.42057
-
-``` r
-# produce CV heat map for shrink
 (shrink = shrink(X, Y, B = cov(X, Y), nlam = 20, lam.max = max(abs(t(X) %*% Y))))
 ```
 
@@ -195,6 +147,56 @@ shrink(X, Y, B = cbind(cov(X, Y), diag(ncol(X))), nlam = 20, lam.max = 10, lam.m
     ## [5,] -0.02760  0.30833 -0.10923 -1.17438  1.98885
 
 ``` r
+# print estimated beta
+shrink$Z
+```
+
+    ##              [,1]
+    ## [1,] -0.228281131
+    ## [2,]  0.076127418
+    ## [3,]  0.003126976
+    ## [4,]  0.162514189
+    ## [5,]  0.000000000
+
+``` r
+# we could also assume sparsity in beta AND omega (print estimated omega)
+(shrink2 = shrink(X, Y, B = cbind(cov(X, Y), diag(ncol(X))), nlam = 20, lam.max = 10, lam.min.ratio = 1e-4))
+```
+
+    ## 
+    ## Call: shrink(X = X, Y = Y, B = cbind(cov(X, Y), diag(ncol(X))), nlam = 20, 
+    ##     lam.max = 10, lam.min.ratio = 1e-04)
+    ## 
+    ## Iterations: 29
+    ## 
+    ## Tuning parameters:
+    ##       log10(lam)    lam
+    ## [1,]      -1.105  0.078
+    ## 
+    ## Log-likelihood: -171.52139
+    ## 
+    ## Omega:
+    ##          [,1]     [,2]     [,3]     [,4]     [,5]
+    ## [1,]  1.54834 -0.70518  0.00008  0.00002  0.01828
+    ## [2,] -0.70518  1.84090 -0.76744 -0.08973 -0.00006
+    ## [3,]  0.00008 -0.76744  1.90009 -0.69543 -0.02743
+    ## [4,]  0.00002 -0.08973 -0.69543  1.70299 -0.72951
+    ## [5,]  0.01828 -0.00006 -0.02743 -0.72951  1.42057
+
+``` r
+# print estimated beta
+shrink2$Z[,1, drop = FALSE]
+```
+
+    ##             [,1]
+    ## [1,] -0.26572905
+    ## [2,]  0.08308531
+    ## [3,]  0.04632600
+    ## [4,]  0.17530014
+    ## [5,]  0.01228189
+
+``` r
+# produce CV heat map for shrink
 plot(shrink, type = "heatmap")
 ```
 

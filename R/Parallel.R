@@ -38,10 +38,10 @@
 CVP_ADMM = function(X, Y = NULL, A = diag(ncol(X)), B = diag(ncol(X)), 
     C = diag(ncol(X)), lam = 10^seq(-2, 2, 0.2), tau = 10, 
     rho = 2, mu = 10, tau.inc = 2, tau.dec = 2, crit = c("ADMM", 
-        "loglik"), tol.abs = 1e-04, tol.rel = 1e-04, 
-    maxit = 1000, adjmaxit = NULL, K = 5, crit.cv = c("MSE", 
-        "loglik", "AIC", "BIC"), start = c("warm", "cold"), 
-    cores = 1, trace = c("progress", "print", "none")) {
+        "loglik"), tol.abs = 1e-04, tol.rel = 1e-04, maxit = 1000, 
+    adjmaxit = NULL, K = 5, crit.cv = c("MSE", "loglik", 
+        "AIC", "BIC"), start = c("warm", "cold"), cores = 1, 
+    trace = c("progress", "print", "none")) {
     
     # match values
     crit = match.arg(crit)

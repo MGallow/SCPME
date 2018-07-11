@@ -23,6 +23,8 @@ A (possibly incomplete) list of functions contained in the package can be found 
 
 * `shrink()` computes the estimated precision matrix
 
+* `data_gen()` data generation function (for convenience)
+
 * `plot.shrink()` produces a heat map or line graph for cross validation errors
 
 See [vignette](https://mgallow.github.io/SCPME/) or [manual](https://github.com/MGallow/ADMMsigma/blob/master/SCPME.pdf).
@@ -80,15 +82,20 @@ round(qr.solve(Sample), 5)
 # note that this is simply lasso penalized preicision matrix
 shrink(X, lam = 0.5)
 
-# what if we instead assumed sparsity in beta?
+# what if we instead assumed sparsity in beta? (print estimated omega)
 # recall that beta is a product of marginal precision of X and cov(X, Y)
-shrink(X, Y, B = cov(X, Y), nlam = 20, lam.max = max(abs(t(X) %*% Y)))
+(shrink = shrink(X, Y, B = cov(X, Y), nlam = 20, lam.max = max(abs(t(X) %*% Y))))
 
-# we could also assume sparsity in beta AND omega
-shrink(X, Y, B = cbind(cov(X, Y), diag(ncol(X))), nlam = 20, lam.max = 10, lam.min.ratio = 1e-4)
+# print estimated beta
+shrink$Z
+
+# we could also assume sparsity in beta AND omega (print estimated omega)
+(shrink2 = shrink(X, Y, B = cbind(cov(X, Y), diag(ncol(X))), nlam = 20, lam.max = 10, lam.min.ratio = 1e-4))
+
+# print estimated beta
+shrink2$Z[,1, drop = FALSE]
 
 # produce CV heat map for shrink
-(shrink = shrink(X, Y, B = cov(X, Y), nlam = 20, lam.max = max(abs(t(X) %*% Y))))
 plot(shrink, type = "heatmap")
 
 # produce line graph for CV errors for shrink
