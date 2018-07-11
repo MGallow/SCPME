@@ -3,6 +3,6 @@ pkgdown: 1.1.0
 pkgdown_sha: ~
 articles: {}
 urls:
-  reference: https://mgallow.github.io/shrink//reference
-  article: https://mgallow.github.io/shrink//articles
+  reference: https://mgallow.github.io/SCPME//reference
+  article: https://mgallow.github.io/SCPME//articles
 
