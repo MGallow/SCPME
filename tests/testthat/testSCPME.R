@@ -30,16 +30,16 @@ expect_error(shrink(S = S, crit.cv = "loglik", lam = 0.1), NA)
 expect_warning(shrink(S = S, crit.cv = "loglik", lam = 0.1), NA)
 
 # parallel CV
-expect_error(shrink(X, crit.cv = "loglik", cores = 2), NA)
-expect_warning(shrink(X, crit.cv = "loglik", cores = 2), NA)
+#expect_error(shrink(X, crit.cv = "loglik", cores = 2), NA)
+#expect_warning(shrink(X, crit.cv = "loglik", cores = 2), NA)
 
 # adjmaxit
 expect_error(shrink(X, crit.cv = "loglik", adjmaxit = 2), NA)
 expect_warning(shrink(X, crit.cv = "loglik", adjmaxit = 2), NA)
 
 # parallel adjmaxit
-expect_error(shrink(X, crit.cv = "loglik", adjmaxit = 2, cores = 2), NA)
-expect_warning(shrink(X, crit.cv = "loglik", adjmaxit = 2, cores = 2), NA)
+#expect_error(shrink(X, crit.cv = "loglik", adjmaxit = 2, cores = 2), NA)
+#expect_warning(shrink(X, crit.cv = "loglik", adjmaxit = 2, cores = 2), NA)
 
 # path
 expect_error(shrink(X, crit.cv = "loglik", path = TRUE), NA)
