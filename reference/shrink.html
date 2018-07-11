@@ -172,7 +172,7 @@ following optimization problem:</p><dl class='dl-horizontal'>
     <pre class="usage"><span class='fu'>shrink</span>(<span class='kw'>X</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>S</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>A</span> <span class='kw'>=</span> <span class='fu'>diag</span>(<span class='fu'>ncol</span>(<span class='no'>S</span>)),
   <span class='kw'>B</span> <span class='kw'>=</span> <span class='fu'>diag</span>(<span class='fu'>ncol</span>(<span class='no'>S</span>)), <span class='kw'>C</span> <span class='kw'>=</span> <span class='fu'>matrix</span>(<span class='fl'>0</span>, <span class='kw'>ncol</span> <span class='kw'>=</span> <span class='fu'>ncol</span>(<span class='no'>B</span>), <span class='kw'>nrow</span> <span class='kw'>=</span> <span class='fu'>ncol</span>(<span class='no'>A</span>)),
   <span class='kw'>nlam</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>lam.max</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>lam.min.ratio</span> <span class='kw'>=</span> <span class='fl'>0.01</span>, <span class='kw'>lam</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>path</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>rho</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>mu</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>tau.inc</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>tau.dec</span> <span class='kw'>=</span> <span class='fl'>2</span>,
+  <span class='kw'>path</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>rho</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>mu</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>tau.rho</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>iter.rho</span> <span class='kw'>=</span> <span class='fl'>10</span>,
   <span class='kw'>crit</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"ADMM"</span>, <span class='st'>"loglik"</span>), <span class='kw'>tol.abs</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>, <span class='kw'>tol.rel</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>,
   <span class='kw'>maxit</span> <span class='kw'>=</span> <span class='fl'>10000</span>, <span class='kw'>adjmaxit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>K</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>crit.cv</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"MSE"</span>, <span class='st'>"loglik"</span>,
   <span class='st'>"AIC"</span>, <span class='st'>"BIC"</span>), <span class='kw'>start</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"warm"</span>, <span class='st'>"cold"</span>), <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>,
@@ -234,12 +234,12 @@ following optimization problem:</p><dl class='dl-horizontal'>
       <td><p>factor for primal and residual norms in the ADMM algorithm. This will be used to adjust the step size <code>rho</code> after each iteration.</p></td>
     </tr>
     <tr>
-      <th>tau.inc</th>
-      <td><p>factor in which to increase step size <code>rho</code></p></td>
+      <th>tau.rho</th>
+      <td><p>factor in which to increase/decrease step size <code>rho</code></p></td>
     </tr>
     <tr>
-      <th>tau.dec</th>
-      <td><p>factor in which to decrease step size <code>rho</code></p></td>
+      <th>iter.rho</th>
+      <td><p>step size <code>rho</code> will be updated every <code>iter.rho</code> steps</p></td>
     </tr>
     <tr>
       <th>crit</th>
@@ -330,45 +330,45 @@ following optimization problem:</p><dl class='dl-horizontal'>
 <span class='fu'>shrink</span>(<span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>X</span>, <span class='kw'>Y</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>Y</span>)</div><div class='output co'>#&gt; 
 #&gt; Call: shrink(X = data$X, Y = data$Y)
 #&gt; 
-#&gt; Iterations: 18
+#&gt; Iterations: 35
 #&gt; 
 #&gt; Tuning parameters:
 #&gt;       log10(lam)    lam
 #&gt; [1,]      -0.961  0.109
 #&gt; 
-#&gt; Log-likelihood: -197.31988
+#&gt; Log-likelihood: -197.32208
 #&gt; 
 #&gt; Omega:
 #&gt;          [,1]     [,2]     [,3]     [,4]     [,5]
-#&gt; [1,]  1.21360 -0.71955 -0.08708 -0.03360 -0.04089
-#&gt; [2,] -0.71955  1.80947 -0.65666 -0.00031 -0.01773
-#&gt; [3,] -0.08708 -0.65666  1.84872 -0.78464 -0.00010
-#&gt; [4,] -0.03360 -0.00031 -0.78464  1.62470 -0.62725
-#&gt; [5,] -0.04089 -0.01773 -0.00010 -0.62725  1.31727</div><div class='input'>
+#&gt; [1,]  1.21330 -0.71870 -0.08759 -0.03385 -0.04072
+#&gt; [2,] -0.71870  1.80718 -0.65504  0.00008 -0.01832
+#&gt; [3,] -0.08759 -0.65504  1.84610 -0.78335  0.00005
+#&gt; [4,] -0.03385  0.00008 -0.78335  1.62321 -0.62688
+#&gt; [5,] -0.04072 -0.01832  0.00005 -0.62688  1.31703</div><div class='input'>
 <span class='co'># lasso penalized beta (print estimated omega)</span>
 (<span class='no'>shrink</span> <span class='kw'>=</span> <span class='fu'>shrink</span>(<span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>X</span>, <span class='kw'>Y</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>Y</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='fu'>cov</span>(<span class='no'>data</span>$<span class='no'>X</span>, <span class='no'>data</span>$<span class='no'>Y</span>), <span class='kw'>lam.max</span> <span class='kw'>=</span> <span class='fu'>max</span>(<span class='fu'>abs</span>(<span class='fu'>t</span>(<span class='no'>data</span>$<span class='no'>X</span>) <span class='kw'>%*%</span> <span class='no'>data</span>$<span class='no'>Y</span>))))</div><div class='output co'>#&gt; 
 #&gt; Call: shrink(X = data$X, Y = data$Y, B = cov(data$X, data$Y), lam.max = max(abs(t(data$X) %*% 
 #&gt;     data$Y)))
 #&gt; 
-#&gt; Iterations: 41
+#&gt; Iterations: 51
 #&gt; 
 #&gt; Tuning parameters:
 #&gt;       log10(lam)    lam
 #&gt; [1,]       0.144  1.394
 #&gt; 
-#&gt; Log-likelihood: -114.06033
+#&gt; Log-likelihood: -112.07216
 #&gt; 
 #&gt; Omega:
 #&gt;          [,1]     [,2]     [,3]     [,4]     [,5]
-#&gt; [1,]  1.90326 -1.47901 -0.00924 -0.00988 -0.10872
-#&gt; [2,] -1.47901  3.06360 -1.79539  0.50420 -0.02668
-#&gt; [3,] -0.00924 -1.79539  3.17909 -1.62115  0.20543
-#&gt; [4,] -0.00988  0.50420 -1.62115  2.78021 -1.31774
-#&gt; [5,] -0.10872 -0.02668  0.20543 -1.31774  1.96807</div><div class='input'>
+#&gt; [1,]  1.94960 -1.57484  0.09717 -0.07222 -0.09481
+#&gt; [2,] -1.57484  3.29786 -2.08265  0.70613 -0.09583
+#&gt; [3,]  0.09717 -2.08265  3.56294 -1.91565  0.32109
+#&gt; [4,] -0.07222  0.70613 -1.91565  3.02773 -1.42659
+#&gt; [5,] -0.09481 -0.09583  0.32109 -1.42659  2.02175</div><div class='input'>
 <span class='co'># print estimated beta</span>
 <span class='no'>shrink</span>$<span class='no'>Z</span></div><div class='output co'>#&gt;            [,1]
 #&gt; [1,]  0.0000000
-#&gt; [2,] -0.2276075
+#&gt; [2,] -0.2287597
 #&gt; [3,]  0.0000000
 #&gt; [4,]  0.0000000
 #&gt; [5,]  0.0000000</div></pre>

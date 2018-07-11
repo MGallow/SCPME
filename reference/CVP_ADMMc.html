@@ -152,7 +152,7 @@
     </div>
 
     <pre class="usage"><span class='fu'>CVP_ADMMc</span>(<span class='no'>X_train</span>, <span class='no'>X_valid</span>, <span class='no'>Y_train</span>, <span class='no'>Y_valid</span>, <span class='no'>A</span>, <span class='no'>B</span>, <span class='no'>C</span>, <span class='no'>lam</span>, <span class='kw'>tau</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-  <span class='kw'>rho</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>mu</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>tau_inc</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>tau_dec</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>crit</span> <span class='kw'>=</span> <span class='st'>"ADMM"</span>,
+  <span class='kw'>rho</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>mu</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>tau_rho</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>iter_rho</span> <span class='kw'>=</span> <span class='fl'>10L</span>, <span class='kw'>crit</span> <span class='kw'>=</span> <span class='st'>"ADMM"</span>,
   <span class='kw'>tol_abs</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>, <span class='kw'>tol_rel</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>, <span class='kw'>maxit</span> <span class='kw'>=</span> <span class='fl'>10000L</span>, <span class='kw'>adjmaxit</span> <span class='kw'>=</span> <span class='fl'>10000L</span>,
   <span class='kw'>crit_cv</span> <span class='kw'>=</span> <span class='st'>"MSE"</span>, <span class='kw'>start</span> <span class='kw'>=</span> <span class='st'>"warm"</span>, <span class='kw'>trace</span> <span class='kw'>=</span> <span class='st'>"progress"</span>)</pre>
     
@@ -204,12 +204,12 @@
       <td><p>factor for primal and residual norms in the ADMM algorithm. This will be used to adjust the step size <code>rho</code> after each iteration.</p></td>
     </tr>
     <tr>
-      <th>tau_inc</th>
-      <td><p>factor in which to increase step size <code>rho</code></p></td>
+      <th>tau_rho</th>
+      <td><p>factor in which to increase/decrease step size <code>rho</code></p></td>
     </tr>
     <tr>
-      <th>tau_dec</th>
-      <td><p>factor in which to decrease step size <code>rho</code></p></td>
+      <th>iter_rho</th>
+      <td><p>step size <code>rho</code> will be updated every <code>iter.rho</code> steps</p></td>
     </tr>
     <tr>
       <th>crit</th>

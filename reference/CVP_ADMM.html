@@ -153,7 +153,7 @@
 
     <pre class="usage"><span class='fu'>CVP_ADMM</span>(<span class='no'>X</span>, <span class='kw'>Y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>A</span> <span class='kw'>=</span> <span class='fu'>diag</span>(<span class='fu'>ncol</span>(<span class='no'>X</span>)), <span class='kw'>B</span> <span class='kw'>=</span> <span class='fu'>diag</span>(<span class='fu'>ncol</span>(<span class='no'>X</span>)),
   <span class='kw'>C</span> <span class='kw'>=</span> <span class='fu'>diag</span>(<span class='fu'>ncol</span>(<span class='no'>X</span>)), <span class='kw'>lam</span> <span class='kw'>=</span> <span class='fl'>10</span>^<span class='fu'>seq</span>(-<span class='fl'>2</span>, <span class='fl'>2</span>, <span class='fl'>0.2</span>), <span class='kw'>tau</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>rho</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>mu</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>tau.inc</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>tau.dec</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>crit</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"ADMM"</span>, <span class='st'>"loglik"</span>),
+  <span class='kw'>mu</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>tau.rho</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>iter.rho</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>crit</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"ADMM"</span>, <span class='st'>"loglik"</span>),
   <span class='kw'>tol.abs</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>, <span class='kw'>tol.rel</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>, <span class='kw'>maxit</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>adjmaxit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>K</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>crit.cv</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"MSE"</span>, <span class='st'>"loglik"</span>, <span class='st'>"AIC"</span>, <span class='st'>"BIC"</span>), <span class='kw'>start</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"warm"</span>,
   <span class='st'>"cold"</span>), <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>trace</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"progress"</span>, <span class='st'>"print"</span>, <span class='st'>"none"</span>))</pre>
@@ -198,12 +198,12 @@
       <td><p>factor for primal and residual norms in the ADMM algorithm. This will be used to adjust the step size <code>rho</code> after each iteration.</p></td>
     </tr>
     <tr>
-      <th>tau.inc</th>
-      <td><p>factor in which to increase step size <code>rho</code></p></td>
+      <th>tau.rho</th>
+      <td><p>factor in which to increase/decrease step size <code>rho</code></p></td>
     </tr>
     <tr>
-      <th>tau.dec</th>
-      <td><p>factor in which to decrease step size <code>rho</code></p></td>
+      <th>iter.rho</th>
+      <td><p>step size <code>rho</code> will be updated every <code>iter.rho</code> steps</p></td>
     </tr>
     <tr>
       <th>crit</th>
