@@ -9,7 +9,7 @@ Status](https://travis-ci.org/MGallow/shrink.svg?branch=master)](https://travis-
 
 `shrink` is an implementation of the methods described in “Shrinking
 Characteristics of Precision Matrix Estimators”
-[pdf](https://arxiv.org/pdf/1704.04820.pdf). It estimates a penalized
+[pdf](https://doi.org/10.1093/biomet/asy023). It estimates a penalized
 precision matrix via a modified alternating direction method of
 multipliers (ADMM)
 algorithm.
