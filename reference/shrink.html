@@ -336,39 +336,39 @@ following optimization problem:</p><dl class='dl-horizontal'>
 #&gt;       log10(lam)    lam
 #&gt; [1,]      -0.961  0.109
 #&gt; 
-#&gt; Log-likelihood: -197.32208
+#&gt; Log-likelihood: -197.32226
 #&gt; 
 #&gt; Omega:
 #&gt;          [,1]     [,2]     [,3]     [,4]     [,5]
-#&gt; [1,]  1.21330 -0.71870 -0.08759 -0.03385 -0.04072
-#&gt; [2,] -0.71870  1.80718 -0.65504  0.00008 -0.01832
-#&gt; [3,] -0.08759 -0.65504  1.84610 -0.78335  0.00005
-#&gt; [4,] -0.03385  0.00008 -0.78335  1.62321 -0.62688
-#&gt; [5,] -0.04072 -0.01832  0.00005 -0.62688  1.31703</div><div class='input'>
+#&gt; [1,]  1.21328 -0.71866 -0.08761 -0.03386 -0.04071
+#&gt; [2,] -0.71866  1.80710 -0.65498  0.00009 -0.01834
+#&gt; [3,] -0.08761 -0.65498  1.84601 -0.78331  0.00005
+#&gt; [4,] -0.03386  0.00009 -0.78331  1.62316 -0.62687
+#&gt; [5,] -0.04071 -0.01834  0.00005 -0.62687  1.31702</div><div class='input'>
 <span class='co'># lasso penalized beta (print estimated omega)</span>
 (<span class='no'>shrink</span> <span class='kw'>=</span> <span class='fu'>shrink</span>(<span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>X</span>, <span class='kw'>Y</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>Y</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='fu'>cov</span>(<span class='no'>data</span>$<span class='no'>X</span>, <span class='no'>data</span>$<span class='no'>Y</span>), <span class='kw'>lam.max</span> <span class='kw'>=</span> <span class='fu'>max</span>(<span class='fu'>abs</span>(<span class='fu'>t</span>(<span class='no'>data</span>$<span class='no'>X</span>) <span class='kw'>%*%</span> <span class='no'>data</span>$<span class='no'>Y</span>))))</div><div class='output co'>#&gt; 
 #&gt; Call: shrink(X = data$X, Y = data$Y, B = cov(data$X, data$Y), lam.max = max(abs(t(data$X) %*% 
 #&gt;     data$Y)))
 #&gt; 
-#&gt; Iterations: 51
+#&gt; Iterations: 42
 #&gt; 
 #&gt; Tuning parameters:
 #&gt;       log10(lam)    lam
 #&gt; [1,]       0.144  1.394
 #&gt; 
-#&gt; Log-likelihood: -112.07216
+#&gt; Log-likelihood: -112.43678
 #&gt; 
 #&gt; Omega:
 #&gt;          [,1]     [,2]     [,3]     [,4]     [,5]
-#&gt; [1,]  1.94960 -1.57484  0.09717 -0.07222 -0.09481
-#&gt; [2,] -1.57484  3.29786 -2.08265  0.70613 -0.09583
-#&gt; [3,]  0.09717 -2.08265  3.56294 -1.91565  0.32109
-#&gt; [4,] -0.07222  0.70613 -1.91565  3.02773 -1.42659
-#&gt; [5,] -0.09481 -0.09583  0.32109 -1.42659  2.02175</div><div class='input'>
+#&gt; [1,]  1.93642 -1.54912  0.06942 -0.05542 -0.09868
+#&gt; [2,] -1.54912  3.24092 -2.01577  0.65981 -0.08105
+#&gt; [3,]  0.06942 -2.01577  3.47859 -1.85319  0.29787
+#&gt; [4,] -0.05542  0.65981 -1.85319  2.97796 -1.40587
+#&gt; [5,] -0.09868 -0.08105  0.29787 -1.40587  2.01199</div><div class='input'>
 <span class='co'># print estimated beta</span>
 <span class='no'>shrink</span>$<span class='no'>Z</span></div><div class='output co'>#&gt;            [,1]
 #&gt; [1,]  0.0000000
-#&gt; [2,] -0.2287597
+#&gt; [2,] -0.2285735
 #&gt; [3,]  0.0000000
 #&gt; [4,]  0.0000000
 #&gt; [5,]  0.0000000</div></pre>

@@ -179,21 +179,21 @@
 <pre><code>## 
 ## Call: shrink(X = X, lam = 0.5)
 ## 
-## Iterations: 13
+## Iterations: 12
 ## 
 ## Tuning parameters:
 ##       log10(lam)  lam
 ## [1,]      -0.301  0.5
 ## 
-## Log-likelihood: -325.34773
+## Log-likelihood: -325.3482
 ## 
 ## Omega:
 ##          [,1]     [,2]     [,3]     [,4]     [,5]
-## [1,]  0.80293 -0.00365 -0.00001 -0.00002 -0.00001
-## [2,] -0.00365  0.74606 -0.03763 -0.00003 -0.00002
-## [3,] -0.00001 -0.03763  0.75469 -0.04669 -0.00001
-## [4,] -0.00002 -0.00003 -0.04669  0.69275 -0.05677
-## [5,] -0.00001 -0.00002 -0.00001 -0.05677  0.71748</code></pre>
+## [1,]  0.80300 -0.00364 -0.00001 -0.00002 -0.00001
+## [2,] -0.00364  0.74606 -0.03761 -0.00003 -0.00003
+## [3,] -0.00001 -0.03761  0.75469 -0.04667  0.00000
+## [4,] -0.00002 -0.00003 -0.04667  0.69273 -0.05675
+## [5,] -0.00001 -0.00003  0.00000 -0.05675  0.71747</code></pre>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># what if we instead assumed sparsity in beta? (print estimated omega)</span></a>
 <a class="sourceLine" id="cb7-2" data-line-number="2"><span class="co"># recall that beta is a product of marginal precision of X and cov(X, Y)</span></a>
 <a class="sourceLine" id="cb7-3" data-line-number="3">(<span class="dt">shrink =</span> <span class="kw"><a href="reference/shrink.html">shrink</a></span>(X, Y, <span class="dt">B =</span> <span class="kw">cov</span>(X, Y), <span class="dt">nlam =</span> <span class="dv">20</span>, <span class="dt">lam.max =</span> <span class="kw">max</span>(<span class="kw">abs</span>(<span class="kw">t</span>(X) <span class="op">%*%</span><span class="st"> </span>Y))))</a></code></pre></div>
@@ -207,22 +207,22 @@
 ##       log10(lam)    lam
 ## [1,]      -0.164  0.686
 ## 
-## Log-likelihood: -115.55264
+## Log-likelihood: -115.5529
 ## 
 ## Omega:
 ##          [,1]     [,2]     [,3]     [,4]     [,5]
-## [1,]  1.70341 -1.15617  0.21212  0.30167 -0.03065
-## [2,] -1.15617  3.01922 -1.63278 -0.39251  0.31256
-## [3,]  0.21212 -1.63278  3.14278 -1.24320 -0.10608
-## [4,]  0.30167 -0.39251 -1.24320  2.51995 -1.18369
-## [5,] -0.03065  0.31256 -0.10608 -1.18369  1.99547</code></pre>
+## [1,]  1.70349 -1.15616  0.21177  0.30210 -0.03083
+## [2,] -1.15616  3.01900 -1.63190 -0.39360  0.31324
+## [3,]  0.21177 -1.63190  3.14114 -1.24157 -0.10714
+## [4,]  0.30210 -0.39360 -1.24157  2.51875 -1.18298
+## [5,] -0.03083  0.31324 -0.10714 -1.18298  1.99496</code></pre>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="co"># print estimated beta</span></a>
 <a class="sourceLine" id="cb9-2" data-line-number="2">shrink<span class="op">$</span>Z</a></code></pre></div>
 <pre><code>##              [,1]
-## [1,] -0.228907398
-## [2,]  0.077842515
-## [3,]  0.001076215
-## [4,]  0.163327343
+## [1,] -0.228892594
+## [2,]  0.077791261
+## [3,]  0.001183488
+## [4,]  0.163244852
 ## [5,]  0.000000000</code></pre>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="co"># we could also assume sparsity in beta AND omega (print estimated omega)</span></a>
 <a class="sourceLine" id="cb11-2" data-line-number="2">(<span class="dt">shrink2 =</span> <span class="kw"><a href="reference/shrink.html">shrink</a></span>(X, Y, <span class="dt">B =</span> <span class="kw">cbind</span>(<span class="kw">cov</span>(X, Y), <span class="kw">diag</span>(<span class="kw">ncol</span>(X))), <span class="dt">nlam =</span> <span class="dv">20</span>, <span class="dt">lam.max =</span> <span class="dv">10</span>, <span class="dt">lam.min.ratio =</span> <span class="fl">1e-4</span>))</a></code></pre></div>
@@ -236,23 +236,23 @@
 ##       log10(lam)    lam
 ## [1,]      -1.105  0.078
 ## 
-## Log-likelihood: -171.52116
+## Log-likelihood: -171.52125
 ## 
 ## Omega:
 ##          [,1]     [,2]     [,3]     [,4]     [,5]
-## [1,]  1.54837 -0.70521  0.00007  0.00002  0.01828
-## [2,] -0.70521  1.84101 -0.76759 -0.08966 -0.00005
-## [3,]  0.00007 -0.76759  1.90036 -0.69562 -0.02737
-## [4,]  0.00002 -0.08966 -0.69562  1.70317 -0.72960
-## [5,]  0.01828 -0.00005 -0.02737 -0.72960  1.42062</code></pre>
+## [1,]  1.54836 -0.70520  0.00008  0.00002  0.01828
+## [2,] -0.70520  1.84097 -0.76753 -0.08969 -0.00006
+## [3,]  0.00008 -0.76753  1.90026 -0.69555 -0.02739
+## [4,]  0.00002 -0.08969 -0.69555  1.70310 -0.72957
+## [5,]  0.01828 -0.00006 -0.02739 -0.72957  1.42060</code></pre>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="co"># print estimated beta</span></a>
 <a class="sourceLine" id="cb13-2" data-line-number="2">shrink2<span class="op">$</span>Z[,<span class="dv">1</span>, drop =<span class="st"> </span><span class="ot">FALSE</span>]</a></code></pre></div>
 <pre><code>##             [,1]
-## [1,] -0.26573666
-## [2,]  0.08309223
-## [3,]  0.04632291
-## [4,]  0.17530720
-## [5,]  0.01227787</code></pre>
+## [1,] -0.26573352
+## [2,]  0.08308947
+## [3,]  0.04632391
+## [4,]  0.17530459
+## [5,]  0.01227942</code></pre>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="co"># produce CV heat map for shrink</span></a>
 <a class="sourceLine" id="cb15-2" data-line-number="2"><span class="kw">plot</span>(shrink, <span class="dt">type =</span> <span class="st">"heatmap"</span>)</a></code></pre></div>
 <p><img src="index_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>

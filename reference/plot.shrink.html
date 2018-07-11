@@ -186,28 +186,28 @@
 #&gt; Call: shrink(X = data$X, Y = data$Y, B = cov(data$X, data$Y), lam.max = max(abs(t(data$X) %*% 
 #&gt;     data$Y)))
 #&gt; 
-#&gt; Iterations: 33
+#&gt; Iterations: 26
 #&gt; 
 #&gt; Tuning parameters:
 #&gt;       log10(lam)    lam
 #&gt; [1,]       -0.36  0.436
 #&gt; 
-#&gt; Log-likelihood: -128.73683
+#&gt; Log-likelihood: -128.48303
 #&gt; 
 #&gt; Omega:
 #&gt;          [,1]     [,2]     [,3]     [,4]     [,5]
-#&gt; [1,]  1.62672 -1.03680 -0.11871 -0.07188 -0.06355
-#&gt; [2,] -1.03680  2.43747 -1.13686  0.16854 -0.25434
-#&gt; [3,] -0.11871 -1.13686  2.57937 -0.92485 -0.38020
-#&gt; [4,] -0.07188  0.16854 -0.92485  2.27985 -0.90611
-#&gt; [5,] -0.06355 -0.25434 -0.38020 -0.90611  1.85254</div><div class='input'>
+#&gt; [1,]  1.63392 -1.05031 -0.10946 -0.07576 -0.06284
+#&gt; [2,] -1.05031  2.46777 -1.16402  0.18325 -0.25770
+#&gt; [3,] -0.10946 -1.16402  2.61180 -0.94468 -0.37604
+#&gt; [4,] -0.07576  0.18325 -0.94468  2.30039 -0.91588
+#&gt; [5,] -0.06284 -0.25770 -0.37604 -0.91588  1.85976</div><div class='input'>
 <span class='co'># print estimated beta</span>
 <span class='no'>shrink</span>$<span class='no'>Z</span></div><div class='output co'>#&gt;            [,1]
-#&gt; [1,] 0.21239346
-#&gt; [2,] 0.14949230
+#&gt; [1,] 0.21230091
+#&gt; [2,] 0.14967305
 #&gt; [3,] 0.00000000
 #&gt; [4,] 0.00000000
-#&gt; [5,] 0.04306576</div><div class='input'>
+#&gt; [5,] 0.04311244</div><div class='input'>
 <span class='co'># create heatmap of CV errors</span>
 <span class='fu'>plot</span>(<span class='no'>shrink</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>'heatmap'</span>)</div><div class='img'><img src='plot.shrink-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># create line graph of CV errors</span>
