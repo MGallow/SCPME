@@ -7,7 +7,7 @@ url: https://mgallow.github.io/shrink/
 template:
   params:
     bootswatch: flatly
-    #ganalytics: UA-84680750-3
+    ganalytics: UA-84680750-8
 
 navbar:
   title: "shrink"
