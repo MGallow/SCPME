@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Plot shrink object — plot.shrink • SCPME</title>
+<title>Generate dense matrices — dense • SCPME</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -32,9 +32,9 @@
 
   <link href="../extra.css" rel="stylesheet">
   
-<meta property="og:title" content="Plot shrink object — plot.shrink" />
+<meta property="og:title" content="Generate dense matrices — dense" />
 
-<meta property="og:description" content="Produces a plot for the cross validation errors, if available." />
+<meta property="og:description" content="Generate p-dimensional matrices so that its inverse is dense." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -140,85 +140,43 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Plot shrink object</h1>
-    <small class="dont-index">Source: <a href='https://github.com/MGallow/SCPME/blob/master/R/shrink.R'><code>R/shrink.R</code></a></small>
-    <div class="hidden name"><code>plot.shrink.Rd</code></div>
+    <h1>Generate dense matrices</h1>
+    <small class="dont-index">Source: <a href='https://github.com/MGallow/SCPME/blob/master/R/data_gen.R'><code>R/data_gen.R</code></a></small>
+    <div class="hidden name"><code>dense.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Produces a plot for the cross validation errors, if available.</p>
+    <p>Generate p-dimensional matrices so that its inverse is dense.</p>
     
     </div>
 
-    <pre class="usage"><span class='co'># S3 method for shrink</span>
-<span class='fu'>plot</span>(<span class='no'>x</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"line"</span>, <span class='st'>"heatmap"</span>), <span class='kw'>footnote</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>dense</span>(<span class='kw'>p</span> <span class='kw'>=</span> <span class='fl'>8</span>, <span class='kw'>base</span> <span class='kw'>=</span> <span class='fl'>0.9</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>class object shrink.</p></td>
+      <th>p</th>
+      <td><p>desired dimension</p></td>
     </tr>
     <tr>
-      <th>type</th>
-      <td><p>produce either 'heatmap' or 'line' graph</p></td>
+      <th>base</th>
+      <td><p>base multiplier</p></td>
     </tr>
     <tr>
-      <th>footnote</th>
-      <td><p>option to print footnote of optimal values. Defaults to TRUE.</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>additional arguments.</p></td>
+      <th>n</th>
+      <td><p>option to generate n observations from covariance matrix S</p></td>
     </tr>
     </table>
     
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># generate some data</span>
-<span class='no'>data</span> <span class='kw'>=</span> <span class='fu'><a href='data_gen.html'>data_gen</a></span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>p</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>r</span> <span class='kw'>=</span> <span class='fl'>1</span>)
-
-<span class='co'># lasso penalized beta (print estimated omega)</span>
-(<span class='no'>shrink</span> <span class='kw'>=</span> <span class='fu'><a href='shrink.html'>shrink</a></span>(<span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>X</span>, <span class='kw'>Y</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>Y</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='fu'>cov</span>(<span class='no'>data</span>$<span class='no'>X</span>, <span class='no'>data</span>$<span class='no'>Y</span>), <span class='kw'>lam.max</span> <span class='kw'>=</span> <span class='fu'>max</span>(<span class='fu'>abs</span>(<span class='fu'>t</span>(<span class='no'>data</span>$<span class='no'>X</span>) <span class='kw'>%*%</span> <span class='no'>data</span>$<span class='no'>Y</span>))))</div><div class='output co'>#&gt; 
-#&gt; Call: shrink(X = data$X, Y = data$Y, B = cov(data$X, data$Y), lam.max = max(abs(t(data$X) %*% 
-#&gt;     data$Y)))
-#&gt; 
-#&gt; Iterations: 42
-#&gt; 
-#&gt; Tuning parameters:
-#&gt;       log10(lam)    lam
-#&gt; [1,]       0.307  2.026
-#&gt; 
-#&gt; Log-likelihood: -157.83202
-#&gt; 
-#&gt; Omega:
-#&gt;          [,1]     [,2]     [,3]     [,4]     [,5]
-#&gt; [1,]  1.43570 -0.90848 -0.20697 -0.05300 -0.12644
-#&gt; [2,] -0.90848  2.02739 -0.84951  0.03055 -0.26518
-#&gt; [3,] -0.20697 -0.84951  2.18953 -0.70545 -0.39137
-#&gt; [4,] -0.05300  0.03055 -0.70545  1.99653 -0.75468
-#&gt; [5,] -0.12644 -0.26518 -0.39137 -0.75468  1.69739</div><div class='input'>
-<span class='co'># print estimated beta</span>
-<span class='no'>shrink</span>$<span class='no'>Z</span></div><div class='output co'>#&gt;            [,1]
-#&gt; [1,] 0.14184398
-#&gt; [2,] 0.09690661
-#&gt; [3,] 0.00000000
-#&gt; [4,] 0.00000000
-#&gt; [5,] 0.00000000</div><div class='input'>
-<span class='co'># create heatmap of CV errors</span>
-<span class='fu'>plot</span>(<span class='no'>shrink</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>'heatmap'</span>)</div><div class='img'><img src='plot.shrink-1.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='co'># create line graph of CV errors</span>
-<span class='fu'>plot</span>(<span class='no'>shrink</span>)</div><div class='img'><img src='plot.shrink-2.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-            
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+                </ul>
 
   </div>
 </div>

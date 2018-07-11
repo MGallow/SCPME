@@ -115,6 +115,7 @@
 <p>A (possibly incomplete) list of functions contained in the package can be found below:</p>
 <ul>
 <li><p><code><a href="reference/shrink.html">shrink()</a></code> computes the estimated precision matrix</p></li>
+<li><p><code><a href="reference/data_gen.html">data_gen()</a></code> data generation function (for convenience)</p></li>
 <li><p><code><a href="reference/plot.shrink.html">plot.shrink()</a></code> produces a heat map or line graph for cross validation errors</p></li>
 </ul>
 <p>See <a href="https://mgallow.github.io/SCPME/">vignette</a> or <a href="https://github.com/MGallow/ADMMsigma/blob/master/SCPME.pdf">manual</a>.</p>
@@ -193,9 +194,9 @@
 ## [3,] -0.00002 -0.03755  0.75451 -0.04662  0.00001
 ## [4,] -0.00003 -0.00002 -0.04662  0.69268 -0.05671
 ## [5,] -0.00001 -0.00004  0.00001 -0.05671  0.71739</code></pre>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># what if we instead assumed sparsity in beta?</span></a>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># what if we instead assumed sparsity in beta? (print estimated omega)</span></a>
 <a class="sourceLine" id="cb7-2" data-line-number="2"><span class="co"># recall that beta is a product of marginal precision of X and cov(X, Y)</span></a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="kw"><a href="reference/shrink.html">shrink</a></span>(X, Y, <span class="dt">B =</span> <span class="kw">cov</span>(X, Y), <span class="dt">nlam =</span> <span class="dv">20</span>, <span class="dt">lam.max =</span> <span class="kw">max</span>(<span class="kw">abs</span>(<span class="kw">t</span>(X) <span class="op">%*%</span><span class="st"> </span>Y)))</a></code></pre></div>
+<a class="sourceLine" id="cb7-3" data-line-number="3">(<span class="dt">shrink =</span> <span class="kw"><a href="reference/shrink.html">shrink</a></span>(X, Y, <span class="dt">B =</span> <span class="kw">cov</span>(X, Y), <span class="dt">nlam =</span> <span class="dv">20</span>, <span class="dt">lam.max =</span> <span class="kw">max</span>(<span class="kw">abs</span>(<span class="kw">t</span>(X) <span class="op">%*%</span><span class="st"> </span>Y))))</a></code></pre></div>
 <pre><code>## 
 ## Call: shrink(X = X, Y = Y, B = cov(X, Y), nlam = 20, lam.max = max(abs(t(X) %*% 
 ##     Y)))
@@ -215,8 +216,16 @@
 ## [3,]  0.19624 -1.58959  3.09219 -1.22341 -0.10923
 ## [4,]  0.30270 -0.40033 -1.22341  2.50158 -1.17438
 ## [5,] -0.02760  0.30833 -0.10923 -1.17438  1.98885</code></pre>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="co"># we could also assume sparsity in beta AND omega</span></a>
-<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="kw"><a href="reference/shrink.html">shrink</a></span>(X, Y, <span class="dt">B =</span> <span class="kw">cbind</span>(<span class="kw">cov</span>(X, Y), <span class="kw">diag</span>(<span class="kw">ncol</span>(X))), <span class="dt">nlam =</span> <span class="dv">20</span>, <span class="dt">lam.max =</span> <span class="dv">10</span>, <span class="dt">lam.min.ratio =</span> <span class="fl">1e-4</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="co"># print estimated beta</span></a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">shrink<span class="op">$</span>Z</a></code></pre></div>
+<pre><code>##              [,1]
+## [1,] -0.228281131
+## [2,]  0.076127418
+## [3,]  0.003126976
+## [4,]  0.162514189
+## [5,]  0.000000000</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="co"># we could also assume sparsity in beta AND omega (print estimated omega)</span></a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">(<span class="dt">shrink2 =</span> <span class="kw"><a href="reference/shrink.html">shrink</a></span>(X, Y, <span class="dt">B =</span> <span class="kw">cbind</span>(<span class="kw">cov</span>(X, Y), <span class="kw">diag</span>(<span class="kw">ncol</span>(X))), <span class="dt">nlam =</span> <span class="dv">20</span>, <span class="dt">lam.max =</span> <span class="dv">10</span>, <span class="dt">lam.min.ratio =</span> <span class="fl">1e-4</span>))</a></code></pre></div>
 <pre><code>## 
 ## Call: shrink(X = X, Y = Y, B = cbind(cov(X, Y), diag(ncol(X))), nlam = 20, 
 ##     lam.max = 10, lam.min.ratio = 1e-04)
@@ -236,31 +245,19 @@
 ## [3,]  0.00008 -0.76744  1.90009 -0.69543 -0.02743
 ## [4,]  0.00002 -0.08973 -0.69543  1.70299 -0.72951
 ## [5,]  0.01828 -0.00006 -0.02743 -0.72951  1.42057</code></pre>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="co"># produce CV heat map for shrink</span></a>
-<a class="sourceLine" id="cb11-2" data-line-number="2">(<span class="dt">shrink =</span> <span class="kw"><a href="reference/shrink.html">shrink</a></span>(X, Y, <span class="dt">B =</span> <span class="kw">cov</span>(X, Y), <span class="dt">nlam =</span> <span class="dv">20</span>, <span class="dt">lam.max =</span> <span class="kw">max</span>(<span class="kw">abs</span>(<span class="kw">t</span>(X) <span class="op">%*%</span><span class="st"> </span>Y))))</a></code></pre></div>
-<pre><code>## 
-## Call: shrink(X = X, Y = Y, B = cov(X, Y), nlam = 20, lam.max = max(abs(t(X) %*% 
-##     Y)))
-## 
-## Iterations: 25
-## 
-## Tuning parameters:
-##       log10(lam)    lam
-## [1,]      -0.164  0.686
-## 
-## Log-likelihood: -115.58565
-## 
-## Omega:
-##          [,1]     [,2]     [,3]     [,4]     [,5]
-## [1,]  1.69602 -1.13833  0.19624  0.30270 -0.02760
-## [2,] -1.13833  2.97473 -1.58959 -0.40033  0.30833
-## [3,]  0.19624 -1.58959  3.09219 -1.22341 -0.10923
-## [4,]  0.30270 -0.40033 -1.22341  2.50158 -1.17438
-## [5,] -0.02760  0.30833 -0.10923 -1.17438  1.98885</code></pre>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw">plot</span>(shrink, <span class="dt">type =</span> <span class="st">"heatmap"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="co"># print estimated beta</span></a>
+<a class="sourceLine" id="cb13-2" data-line-number="2">shrink2<span class="op">$</span>Z[,<span class="dv">1</span>, drop =<span class="st"> </span><span class="ot">FALSE</span>]</a></code></pre></div>
+<pre><code>##             [,1]
+## [1,] -0.26572905
+## [2,]  0.08308531
+## [3,]  0.04632600
+## [4,]  0.17530014
+## [5,]  0.01228189</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="co"># produce CV heat map for shrink</span></a>
+<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="kw">plot</span>(shrink, <span class="dt">type =</span> <span class="st">"heatmap"</span>)</a></code></pre></div>
 <p><img src="index_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="co"># produce line graph for CV errors for shrink</span></a>
-<a class="sourceLine" id="cb14-2" data-line-number="2"><span class="kw">plot</span>(shrink, <span class="dt">type =</span> <span class="st">"line"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="co"># produce line graph for CV errors for shrink</span></a>
+<a class="sourceLine" id="cb16-2" data-line-number="2"><span class="kw">plot</span>(shrink, <span class="dt">type =</span> <span class="st">"line"</span>)</a></code></pre></div>
 <p><img src="index_files/figure-html/unnamed-chunk-2-2.png" width="700"></p>
 </div>
   </div>

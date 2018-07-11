@@ -323,8 +323,55 @@ following optimization problem:</p><dl class='dl-horizontal'>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'># NEED TO COMPLETE
-</div></pre>
+    <pre class="examples"><div class='input'><span class='co'># generate some data</span>
+<span class='no'>data</span> <span class='kw'>=</span> <span class='fu'><a href='data_gen.html'>data_gen</a></span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>p</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>r</span> <span class='kw'>=</span> <span class='fl'>1</span>)
+
+<span class='co'># lasso penalized omega (glasso)</span>
+<span class='fu'>shrink</span>(<span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>X</span>, <span class='kw'>Y</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>Y</span>)</div><div class='output co'>#&gt; 
+#&gt; Call: shrink(X = data$X, Y = data$Y)
+#&gt; 
+#&gt; Iterations: 18
+#&gt; 
+#&gt; Tuning parameters:
+#&gt;       log10(lam)    lam
+#&gt; [1,]      -0.961  0.109
+#&gt; 
+#&gt; Log-likelihood: -197.31988
+#&gt; 
+#&gt; Omega:
+#&gt;          [,1]     [,2]     [,3]     [,4]     [,5]
+#&gt; [1,]  1.21360 -0.71955 -0.08708 -0.03360 -0.04089
+#&gt; [2,] -0.71955  1.80947 -0.65666 -0.00031 -0.01773
+#&gt; [3,] -0.08708 -0.65666  1.84872 -0.78464 -0.00010
+#&gt; [4,] -0.03360 -0.00031 -0.78464  1.62470 -0.62725
+#&gt; [5,] -0.04089 -0.01773 -0.00010 -0.62725  1.31727</div><div class='input'>
+<span class='co'># lasso penalized beta (print estimated omega)</span>
+(<span class='no'>shrink</span> <span class='kw'>=</span> <span class='fu'>shrink</span>(<span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>X</span>, <span class='kw'>Y</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>Y</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='fu'>cov</span>(<span class='no'>data</span>$<span class='no'>X</span>, <span class='no'>data</span>$<span class='no'>Y</span>), <span class='kw'>lam.max</span> <span class='kw'>=</span> <span class='fu'>max</span>(<span class='fu'>abs</span>(<span class='fu'>t</span>(<span class='no'>data</span>$<span class='no'>X</span>) <span class='kw'>%*%</span> <span class='no'>data</span>$<span class='no'>Y</span>))))</div><div class='output co'>#&gt; 
+#&gt; Call: shrink(X = data$X, Y = data$Y, B = cov(data$X, data$Y), lam.max = max(abs(t(data$X) %*% 
+#&gt;     data$Y)))
+#&gt; 
+#&gt; Iterations: 41
+#&gt; 
+#&gt; Tuning parameters:
+#&gt;       log10(lam)    lam
+#&gt; [1,]       0.144  1.394
+#&gt; 
+#&gt; Log-likelihood: -114.06033
+#&gt; 
+#&gt; Omega:
+#&gt;          [,1]     [,2]     [,3]     [,4]     [,5]
+#&gt; [1,]  1.90326 -1.47901 -0.00924 -0.00988 -0.10872
+#&gt; [2,] -1.47901  3.06360 -1.79539  0.50420 -0.02668
+#&gt; [3,] -0.00924 -1.79539  3.17909 -1.62115  0.20543
+#&gt; [4,] -0.00988  0.50420 -1.62115  2.78021 -1.31774
+#&gt; [5,] -0.10872 -0.02668  0.20543 -1.31774  1.96807</div><div class='input'>
+<span class='co'># print estimated beta</span>
+<span class='no'>shrink</span>$<span class='no'>Z</span></div><div class='output co'>#&gt;            [,1]
+#&gt; [1,]  0.0000000
+#&gt; [2,] -0.2276075
+#&gt; [3,]  0.0000000
+#&gt; [4,]  0.0000000
+#&gt; [5,]  0.0000000</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

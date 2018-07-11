@@ -19,6 +19,18 @@
     <loc>https://mgallow.github.io/SCPME//reference/RIDGEc.html</loc>
   </url>
   <url>
+    <loc>https://mgallow.github.io/SCPME//reference/compound.html</loc>
+  </url>
+  <url>
+    <loc>https://mgallow.github.io/SCPME//reference/data_gen.html</loc>
+  </url>
+  <url>
+    <loc>https://mgallow.github.io/SCPME//reference/dense.html</loc>
+  </url>
+  <url>
+    <loc>https://mgallow.github.io/SCPME//reference/denseQR.html</loc>
+  </url>
+  <url>
     <loc>https://mgallow.github.io/SCPME//reference/plot.shrink.html</loc>
   </url>
   <url>
@@ -26,5 +38,8 @@
   </url>
   <url>
     <loc>https://mgallow.github.io/SCPME//reference/shrink.html</loc>
+  </url>
+  <url>
+    <loc>https://mgallow.github.io/SCPME//reference/tridiag.html</loc>
   </url>
 </urlset>
