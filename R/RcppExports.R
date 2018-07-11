@@ -35,8 +35,8 @@ RIDGEc <- function(S, lam) {
 #' @param rho initial step size for ADMM algorithm.
 #' @param tau optional constant used to ensure positive definiteness in Q matrix in algorithm
 #' @param mu factor for primal and residual norms in the ADMM algorithm. This will be used to adjust the step size \code{rho} after each iteration.
-#' @param tau_inc factor in which to increase step size \code{rho}.
-#' @param tau_dec factor in which to decrease step size \code{rho}.
+#' @param tau_rho factor in which to increase step size \code{rho}.
+#' @param iter_rho step size \code{rho} will be updated every \code{iter.rho} steps
 #' @param crit criterion for convergence (\code{ADMM} or \code{loglik}). If \code{crit = loglik} then iterations will stop when the relative change in log-likelihood is less than \code{tol.abs}. Default is \code{ADMM} and follows the procedure outlined in Boyd, et al.
 #' @param tol_abs absolute convergence tolerance. Defaults to 1e-4.
 #' @param tol_rel relative convergence tolerance. Defaults to 1e-4.
@@ -64,8 +64,8 @@ RIDGEc <- function(S, lam) {
 #' 
 #' @keywords internal
 #'
-ADMMc <- function(S, A, B, C, initOmega, initZ2, initY, lam, tau = 10, rho = 2, mu = 10, tau_inc = 2, tau_dec = 2, crit = "ADMM", tol_abs = 1e-4, tol_rel = 1e-4, maxit = 1e4L) {
-    .Call('_SCPME_ADMMc', PACKAGE = 'SCPME', S, A, B, C, initOmega, initZ2, initY, lam, tau, rho, mu, tau_inc, tau_dec, crit, tol_abs, tol_rel, maxit)
+ADMMc <- function(S, A, B, C, initOmega, initZ2, initY, lam, tau = 10, rho = 2, mu = 10, tau_rho = 2, iter_rho = 10L, crit = "ADMM", tol_abs = 1e-4, tol_rel = 1e-4, maxit = 1e4L) {
+    .Call('_SCPME_ADMMc', PACKAGE = 'SCPME', S, A, B, C, initOmega, initZ2, initY, lam, tau, rho, mu, tau_rho, iter_rho, crit, tol_abs, tol_rel, maxit)
 }
 
 #' @title K fold (c++)
@@ -90,8 +90,8 @@ NULL
 #' @param tau optional constant used to ensure positive definiteness in Q matrix in algorithm
 #' @param rho initial step size for ADMM algorithm.
 #' @param mu factor for primal and residual norms in the ADMM algorithm. This will be used to adjust the step size \code{rho} after each iteration.
-#' @param tau_inc factor in which to increase step size \code{rho}
-#' @param tau_dec factor in which to decrease step size \code{rho}
+#' @param tau_rho factor in which to increase/decrease step size \code{rho}
+#' @param iter_rho step size \code{rho} will be updated every \code{iter.rho} steps
 #' @param crit criterion for convergence (\code{ADMM} or \code{loglik}). If \code{crit = loglik} then iterations will stop when the relative change in log-likelihood is less than \code{tol.abs}. Default is \code{ADMM} and follows the procedure outlined in Boyd, et al.
 #' @param tol_rel relative convergence tolerance. Defaults to 1e-4.
 #' @param maxit maximum number of iterations. Defaults to 1e4.
@@ -110,8 +110,8 @@ NULL
 #' 
 #' @keywords internal
 #'
-CV_ADMMc <- function(X, S, Y, A, B, C, lam, path = FALSE, tau = 10, rho = 2, mu = 10, tau_inc = 2, tau_dec = 2, crit = "ADMM", tol_abs = 1e-4, tol_rel = 1e-4, maxit = 1e4L, adjmaxit = 1e4L, K = 5L, crit_cv = "MSE", start = "warm", trace = "progress") {
-    .Call('_SCPME_CV_ADMMc', PACKAGE = 'SCPME', X, S, Y, A, B, C, lam, path, tau, rho, mu, tau_inc, tau_dec, crit, tol_abs, tol_rel, maxit, adjmaxit, K, crit_cv, start, trace)
+CV_ADMMc <- function(X, S, Y, A, B, C, lam, path = FALSE, tau = 10, rho = 2, mu = 10, tau_rho = 2, iter_rho = 10L, crit = "ADMM", tol_abs = 1e-4, tol_rel = 1e-4, maxit = 1e4L, adjmaxit = 1e4L, K = 5L, crit_cv = "MSE", start = "warm", trace = "progress") {
+    .Call('_SCPME_CV_ADMMc', PACKAGE = 'SCPME', X, S, Y, A, B, C, lam, path, tau, rho, mu, tau_rho, iter_rho, crit, tol_abs, tol_rel, maxit, adjmaxit, K, crit_cv, start, trace)
 }
 
 #' @title CV (no folds) ADMM penalized precision matrix estimation (c++)
@@ -128,8 +128,8 @@ CV_ADMMc <- function(X, S, Y, A, B, C, lam, path = FALSE, tau = 10, rho = 2, mu 
 #' @param tau optional constant used to ensure positive definiteness in Q matrix in algorithm
 #' @param rho initial step size for ADMM algorithm.
 #' @param mu factor for primal and residual norms in the ADMM algorithm. This will be used to adjust the step size \code{rho} after each iteration.
-#' @param tau_inc factor in which to increase step size \code{rho}
-#' @param tau_dec factor in which to decrease step size \code{rho}
+#' @param tau_rho factor in which to increase/decrease step size \code{rho}
+#' @param iter_rho step size \code{rho} will be updated every \code{iter.rho} steps
 #' @param crit criterion for convergence (\code{ADMM} or \code{loglik}). If \code{crit = loglik} then iterations will stop when the relative change in log-likelihood is less than \code{tol.abs}. Default is \code{ADMM} and follows the procedure outlined in Boyd, et al.
 #' @param tol_abs absolute convergence tolerance. Defaults to 1e-4.
 #' @param tol_rel relative convergence tolerance. Defaults to 1e-4.
@@ -143,7 +143,7 @@ CV_ADMMc <- function(X, S, Y, A, B, C, lam, path = FALSE, tau = 10, rho = 2, mu 
 #' 
 #' @keywords internal
 #'
-CVP_ADMMc <- function(X_train, X_valid, Y_train, Y_valid, A, B, C, lam, tau = 10, rho = 2, mu = 10, tau_inc = 2, tau_dec = 2, crit = "ADMM", tol_abs = 1e-4, tol_rel = 1e-4, maxit = 1e4L, adjmaxit = 1e4L, crit_cv = "MSE", start = "warm", trace = "progress") {
-    .Call('_SCPME_CVP_ADMMc', PACKAGE = 'SCPME', X_train, X_valid, Y_train, Y_valid, A, B, C, lam, tau, rho, mu, tau_inc, tau_dec, crit, tol_abs, tol_rel, maxit, adjmaxit, crit_cv, start, trace)
+CVP_ADMMc <- function(X_train, X_valid, Y_train, Y_valid, A, B, C, lam, tau = 10, rho = 2, mu = 10, tau_rho = 2, iter_rho = 10L, crit = "ADMM", tol_abs = 1e-4, tol_rel = 1e-4, maxit = 1e4L, adjmaxit = 1e4L, crit_cv = "MSE", start = "warm", trace = "progress") {
+    .Call('_SCPME_CVP_ADMMc', PACKAGE = 'SCPME', X_train, X_valid, Y_train, Y_valid, A, B, C, lam, tau, rho, mu, tau_rho, iter_rho, crit, tol_abs, tol_rel, maxit, adjmaxit, crit_cv, start, trace)
 }
 

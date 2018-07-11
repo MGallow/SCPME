@@ -13,8 +13,8 @@
 #' @param tau optional constant used to ensure positive definiteness in Q matrix in algorithm
 #' @param rho initial step size for ADMM algorithm.
 #' @param mu factor for primal and residual norms in the ADMM algorithm. This will be used to adjust the step size \code{rho} after each iteration.
-#' @param tau.inc factor in which to increase step size \code{rho}
-#' @param tau.dec factor in which to decrease step size \code{rho}
+#' @param tau.rho factor in which to increase/decrease step size \code{rho}
+#' @param iter.rho step size \code{rho} will be updated every \code{iter.rho} steps
 #' @param crit criterion for convergence (\code{ADMM} or \code{loglik}). If \code{crit = loglik} then iterations will stop when the relative change in log-likelihood is less than \code{tol.abs}. Default is \code{ADMM} and follows the procedure outlined in Boyd, et al.
 #' @param tol.abs absolute convergence tolerance. Defaults to 1e-4.
 #' @param tol.rel relative convergence tolerance. Defaults to 1e-4.
@@ -35,13 +35,11 @@
 #' @keywords internal
 
 # we define the CVP_ADMM function
-CVP_ADMM = function(X, Y = NULL, A = diag(ncol(X)), B = diag(ncol(X)), 
-    C = diag(ncol(X)), lam = 10^seq(-2, 2, 0.2), tau = 10, 
-    rho = 2, mu = 10, tau.inc = 2, tau.dec = 2, crit = c("ADMM", 
-        "loglik"), tol.abs = 1e-04, tol.rel = 1e-04, 
-    maxit = 1000, adjmaxit = NULL, K = 5, crit.cv = c("MSE", 
-        "loglik", "AIC", "BIC"), start = c("warm", "cold"), 
-    cores = 1, trace = c("progress", "print", "none")) {
+CVP_ADMM = function(X, Y = NULL, A = diag(ncol(X)), B = diag(ncol(X)), C = diag(ncol(X)), 
+    lam = 10^seq(-2, 2, 0.2), tau = 10, rho = 2, mu = 10, tau.rho = 2, iter.rho = 10, 
+    crit = c("ADMM", "loglik"), tol.abs = 1e-04, tol.rel = 1e-04, maxit = 1000, 
+    adjmaxit = NULL, K = 5, crit.cv = c("MSE", "loglik", "AIC", "BIC"), start = c("warm", 
+        "cold"), cores = 1, trace = c("progress", "print", "none")) {
     
     # match values
     crit = match.arg(crit)
@@ -53,8 +51,7 @@ CVP_ADMM = function(X, Y = NULL, A = diag(ncol(X)), B = diag(ncol(X)),
     # make cluster and register cluster
     num_cores = detectCores()
     if (cores > num_cores) {
-        cat("\nOnly detected", paste(num_cores, "cores...", 
-            sep = " "))
+        cat("\nOnly detected", paste(num_cores, "cores...", sep = " "))
     }
     if (cores > K) {
         cat("\nNumber of cores exceeds K... setting cores = K")
@@ -68,44 +65,41 @@ CVP_ADMM = function(X, Y = NULL, A = diag(ncol(X)), B = diag(ncol(X)),
     n = nrow(X)
     ind = sample(n)
     k = NULL
-    CV = foreach(k = 1:K, .packages = "shrink", .combine = "cbind", 
-        .inorder = FALSE) %dopar% {
-        
-        leave.out = ind[(1 + floor((k - 1) * n/K)):floor(k * 
-            n/K)]
-        
-        # training set
-        X.train = X[-leave.out, , drop = FALSE]
-        X_bar = apply(X.train, 2, mean)
-        X.train = scale(X.train, center = X_bar, scale = FALSE)
-        
-        # validation set
-        X.valid = X[leave.out, , drop = FALSE]
-        X.valid = scale(X.valid, center = X_bar, scale = FALSE)
-        
-        # training/validation for Y, if necessary
-        if (crit.cv == "MSE") {
+    CV = foreach(k = 1:K, .packages = "shrink", .combine = "cbind", .inorder = FALSE) %dopar% 
+        {
             
-            Y.train = Y[-leave.out, , drop = FALSE]
-            Y.valid = Y[leave.out, , drop = FALSE]
+            leave.out = ind[(1 + floor((k - 1) * n/K)):floor(k * n/K)]
             
-        } else {
+            # training set
+            X.train = X[-leave.out, , drop = FALSE]
+            X_bar = apply(X.train, 2, mean)
+            X.train = scale(X.train, center = X_bar, scale = FALSE)
             
-            Y.train = matrix(0)
-            Y.valid = matrix(0)
+            # validation set
+            X.valid = X[leave.out, , drop = FALSE]
+            X.valid = scale(X.valid, center = X_bar, scale = FALSE)
+            
+            # training/validation for Y, if necessary
+            if (crit.cv == "MSE") {
+                
+                Y.train = Y[-leave.out, , drop = FALSE]
+                Y.valid = Y[leave.out, , drop = FALSE]
+                
+            } else {
+                
+                Y.train = matrix(0)
+                Y.valid = matrix(0)
+                
+            }
+            
+            # run foreach loop on CVP_ADMMc
+            CVP_ADMMc(X_train = X.train, X_valid = X.valid, Y_train = Y.train, 
+                Y_valid = Y.valid, A = A, B = B, C = C, lam = lam, tau = tau, 
+                rho = rho, mu = mu, tau_rho = tau.rho, iter_rho = iter.rho, 
+                crit = crit, tol_abs = tol.abs, tol_rel = tol.rel, maxit = maxit, 
+                adjmaxit = adjmaxit, crit_cv = crit.cv, start = start, trace = trace)
             
         }
-        
-        # run foreach loop on CVP_ADMMc
-        CVP_ADMMc(X_train = X.train, X_valid = X.valid, 
-            Y_train = Y.train, Y_valid = Y.valid, A = A, 
-            B = B, C = C, lam = lam, tau = tau, rho = rho, 
-            mu = mu, tau_inc = tau.inc, tau_dec = tau.dec, 
-            crit = crit, tol_abs = tol.abs, tol_rel = tol.rel, 
-            maxit = maxit, adjmaxit = adjmaxit, crit_cv = crit.cv, 
-            start = start, trace = trace)
-        
-    }
     
     # determine optimal tuning parameters
     AVG = as.matrix(apply(CV, 1, mean))
@@ -117,8 +111,7 @@ CVP_ADMM = function(X, Y = NULL, A = diag(ncol(X)), B = diag(ncol(X)),
     stopCluster(cluster)
     
     # return best lam and alpha values
-    return(list(lam = best_lam, min.error = error, avg.error = AVG, 
-        cv.error = CV))
+    return(list(lam = best_lam, min.error = error, avg.error = AVG, cv.error = CV))
     
 }
 

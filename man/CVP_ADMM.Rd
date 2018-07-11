@@ -6,7 +6,7 @@
 \usage{
 CVP_ADMM(X, Y = NULL, A = diag(ncol(X)), B = diag(ncol(X)),
   C = diag(ncol(X)), lam = 10^seq(-2, 2, 0.2), tau = 10, rho = 2,
-  mu = 10, tau.inc = 2, tau.dec = 2, crit = c("ADMM", "loglik"),
+  mu = 10, tau.rho = 2, iter.rho = 10, crit = c("ADMM", "loglik"),
   tol.abs = 1e-04, tol.rel = 1e-04, maxit = 1000, adjmaxit = NULL,
   K = 5, crit.cv = c("MSE", "loglik", "AIC", "BIC"), start = c("warm",
   "cold"), cores = 1, trace = c("progress", "print", "none"))
@@ -30,9 +30,9 @@ CVP_ADMM(X, Y = NULL, A = diag(ncol(X)), B = diag(ncol(X)),
 
 \item{mu}{factor for primal and residual norms in the ADMM algorithm. This will be used to adjust the step size \code{rho} after each iteration.}
 
-\item{tau.inc}{factor in which to increase step size \code{rho}}
+\item{tau.rho}{factor in which to increase/decrease step size \code{rho}}
 
-\item{tau.dec}{factor in which to decrease step size \code{rho}}
+\item{iter.rho}{step size \code{rho} will be updated every \code{iter.rho} steps}
 
 \item{crit}{criterion for convergence (\code{ADMM} or \code{loglik}). If \code{crit = loglik} then iterations will stop when the relative change in log-likelihood is less than \code{tol.abs}. Default is \code{ADMM} and follows the procedure outlined in Boyd, et al.}
 

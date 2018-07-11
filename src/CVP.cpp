@@ -25,8 +25,8 @@ using namespace Rcpp;
 //' @param tau optional constant used to ensure positive definiteness in Q matrix in algorithm
 //' @param rho initial step size for ADMM algorithm.
 //' @param mu factor for primal and residual norms in the ADMM algorithm. This will be used to adjust the step size \code{rho} after each iteration.
-//' @param tau_inc factor in which to increase step size \code{rho}
-//' @param tau_dec factor in which to decrease step size \code{rho}
+//' @param tau_rho factor in which to increase/decrease step size \code{rho}
+//' @param iter_rho step size \code{rho} will be updated every \code{iter.rho} steps
 //' @param crit criterion for convergence (\code{ADMM} or \code{loglik}). If \code{crit = loglik} then iterations will stop when the relative change in log-likelihood is less than \code{tol.abs}. Default is \code{ADMM} and follows the procedure outlined in Boyd, et al.
 //' @param tol_abs absolute convergence tolerance. Defaults to 1e-4.
 //' @param tol_rel relative convergence tolerance. Defaults to 1e-4.
@@ -41,7 +41,7 @@ using namespace Rcpp;
 //' @keywords internal
 //'
 // [[Rcpp::export]]
-arma::mat CVP_ADMMc(const arma::mat &X_train, const arma::mat &X_valid, const arma::mat &Y_train, const arma::mat &Y_valid, const arma::mat &A, const arma::mat &B, const arma::mat &C, const arma::colvec &lam, const double tau = 10, double rho = 2, const double mu = 10, const double tau_inc = 2, const double tau_dec = 2, std::string crit = "ADMM", const double tol_abs = 1e-4, const double tol_rel = 1e-4, int maxit = 1e4, int adjmaxit = 1e4, std::string crit_cv = "MSE", std::string start = "warm", std::string trace = "progress") {
+arma::mat CVP_ADMMc(const arma::mat &X_train, const arma::mat &X_valid, const arma::mat &Y_train, const arma::mat &Y_valid, const arma::mat &A, const arma::mat &B, const arma::mat &C, const arma::colvec &lam, const double tau = 10, double rho = 2, const double mu = 10, const double tau_rho = 2, const int iter_rho = 10, std::string crit = "ADMM", const double tol_abs = 1e-4, const double tol_rel = 1e-4, int maxit = 1e4, int adjmaxit = 1e4, std::string crit_cv = "MSE", std::string start = "warm", std::string trace = "progress") {
   
   // initialization
   int n = X_valid.n_rows, r = Y_valid.n_cols, l = lam.n_rows;
@@ -63,7 +63,7 @@ arma::mat CVP_ADMMc(const arma::mat &X_train, const arma::mat &X_valid, const ar
     lam_ = lam[i];
     
     // compute the penalized likelihood precision matrix estimator at the ith value in lam:
-    List ADMM = ADMMc(S_train, A, B, C, initOmega, initZ2, initY, lam_, tau, rho, mu, tau_inc, tau_dec, crit, tol_abs, tol_rel, maxit);
+    List ADMM = ADMMc(S_train, A, B, C, initOmega, initZ2, initY, lam_, tau, rho, mu, tau_rho, iter_rho, crit, tol_abs, tol_rel, maxit);
     Omega = as<arma::mat>(ADMM["Omega"]);
     
     if (start == "warm"){

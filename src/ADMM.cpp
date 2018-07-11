@@ -62,8 +62,8 @@ arma::mat RIDGEc(const arma::mat &S, double lam){
 //' @param rho initial step size for ADMM algorithm.
 //' @param tau optional constant used to ensure positive definiteness in Q matrix in algorithm
 //' @param mu factor for primal and residual norms in the ADMM algorithm. This will be used to adjust the step size \code{rho} after each iteration.
-//' @param tau_inc factor in which to increase step size \code{rho}.
-//' @param tau_dec factor in which to decrease step size \code{rho}.
+//' @param tau_rho factor in which to increase step size \code{rho}.
+//' @param iter_rho step size \code{rho} will be updated every \code{iter.rho} steps
 //' @param crit criterion for convergence (\code{ADMM} or \code{loglik}). If \code{crit = loglik} then iterations will stop when the relative change in log-likelihood is less than \code{tol.abs}. Default is \code{ADMM} and follows the procedure outlined in Boyd, et al.
 //' @param tol_abs absolute convergence tolerance. Defaults to 1e-4.
 //' @param tol_rel relative convergence tolerance. Defaults to 1e-4.
@@ -92,16 +92,17 @@ arma::mat RIDGEc(const arma::mat &S, double lam){
 //' @keywords internal
 //'
 // [[Rcpp::export]]
-List ADMMc(const arma::mat &S, const arma::mat &A, const arma::mat &B, const arma::mat &C, const arma::mat &initOmega, const arma::mat &initZ2, const arma::mat &initY, const double lam, const double tau = 10, double rho = 2, const double mu = 10, const double tau_inc = 2, const double tau_dec = 2, std::string crit = "ADMM", const double tol_abs = 1e-4, const double tol_rel = 1e-4, const int maxit = 1e4){
+List ADMMc(const arma::mat &S, const arma::mat &A, const arma::mat &B, const arma::mat &C, const arma::mat &initOmega, const arma::mat &initZ2, const arma::mat &initY, const double lam, const double tau = 10, double rho = 2, const double mu = 10, const double tau_rho = 2, const int iter_rho = 10, std::string crit = "ADMM", const double tol_abs = 1e-4, const double tol_rel = 1e-4, const int maxit = 1e4){
   
   // allocate memory
   bool criterion = true;
   int p = S.n_cols, iter = 0;
   double s, r, eps1, eps2, lik, lik2, sgn, logdet, sqrt;
   s = r = eps1 = eps2 = lik = lik2 = sgn = logdet = 0;
-  arma::mat Z(initZ2), Z2(initZ2), Y(initY), Omega(initOmega), G, AOB, BZA, BYA;
+  arma::mat Z(initZ2), Z2(initZ2), Y(initY), Omega(initOmega), G, AOB, ACB, BZA, BYA;
   sqrt = std::sqrt(C.n_cols*C.n_rows);
   AOB = A*Omega*B;
+  ACB = A.t()*C*B.t();
 
   
   // loop until convergence
@@ -112,7 +113,7 @@ List ADMMc(const arma::mat &S, const arma::mat &A, const arma::mat &B, const arm
     Z = Z2;
     
     // compute G (1)
-    G = rho*A.t()*(AOB - Z - C + Y/rho)*B.t();
+    G = rho*A.t()*(AOB - Z + Y/rho)*B.t() - rho*ACB;
     
     // ridge equation (2)
     // gather eigen values (spectral decomposition)
@@ -128,15 +129,28 @@ List ADMMc(const arma::mat &S, const arma::mat &A, const arma::mat &B, const arm
     // update Y (4)
     Y += rho*(AOB - Z2 - C);
     
-    // calculate new rho
+    // update dual and primal residuals
+    BYA = B*Y.t()*A;
     BZA = B*(Z2 - Z).t()*A;
     s = arma::norm(rho*(BZA + BZA.t())/2, "fro");
     r = arma::norm(AOB - Z2 - C, "fro");
-    if (r > mu*s){
-      rho *= tau_inc;
-    }
-    if (s > mu*r){
-      rho *= 1/tau_dec;
+    
+    // update dual and primal epsilons
+    eps1 = sqrt*tol_abs + tol_rel*std::max(std::max(arma::norm(AOB, "fro"), arma::norm(Z2, "fro")), arma::norm(C, "fro"));
+    eps2 = p*tol_abs + tol_rel*arma::norm((BYA + BYA.t())/2, "fro");
+    
+    // check rho update
+    if (iter % iter_rho == 0){
+      
+      // increase step size
+      if (r/eps1 > mu*s/eps2){
+        rho *= tau_rho;
+      }
+      
+      // decrease step size
+      if (s/eps2 > mu*r/eps1){
+        rho *= 1/tau_rho;
+      }
     }
     
     // stopping criterion
@@ -151,9 +165,6 @@ List ADMMc(const arma::mat &S, const arma::mat &A, const arma::mat &B, const arm
     } else {
       
       // ADMM criterion
-      BYA = B*Y.t()*A;
-      eps1 = sqrt*tol_abs + tol_rel*std::max(std::max(arma::norm(AOB, "fro"), arma::norm(Z2, "fro")), arma::norm(C, "fro"));
-      eps2 = p*tol_abs + tol_rel*arma::norm((BYA + BYA.t())/2, "fro");
       criterion = (r >= eps1 || s >= eps2);
       
     }

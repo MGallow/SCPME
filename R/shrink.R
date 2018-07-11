@@ -33,8 +33,8 @@
 #' @param path option to return the regularization path. This option should be used with extreme care if the dimension is large. If set to TRUE, cores must be set to 1 and errors and optimal tuning parameters will based on the full sample. Defaults to FALSE.
 #' @param rho initial step size for ADMM algorithm.
 #' @param mu factor for primal and residual norms in the ADMM algorithm. This will be used to adjust the step size \code{rho} after each iteration.
-#' @param tau.inc factor in which to increase step size \code{rho}
-#' @param tau.dec factor in which to decrease step size \code{rho}
+#' @param tau.rho factor in which to increase/decrease step size \code{rho}
+#' @param iter.rho step size \code{rho} will be updated every \code{iter.rho} steps
 #' @param crit criterion for convergence (\code{ADMM} or \code{loglik}). If \code{crit = loglik} then iterations will stop when the relative change in log-likelihood is less than \code{tol.abs}. Default is \code{ADMM} and follows the procedure outlined in Boyd, et al.
 #' @param tol.abs absolute convergence tolerance. Defaults to 1e-4.
 #' @param tol.rel relative convergence tolerance. Defaults to 1e-4.
@@ -91,14 +91,12 @@
 #' shrink$Z
 
 # we define the ADMM covariance estimation function
-shrink = function(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)), 
-    B = diag(ncol(S)), C = matrix(0, ncol = ncol(B), 
-        nrow = ncol(A)), nlam = 10, lam.max = NULL, lam.min.ratio = 0.01, 
-    lam = NULL, path = FALSE, rho = 2, mu = 10, tau.inc = 2, 
-    tau.dec = 2, crit = c("ADMM", "loglik"), tol.abs = 1e-04, 
-    tol.rel = 1e-04, maxit = 10000, adjmaxit = NULL, 
-    K = 5, crit.cv = c("MSE", "loglik", "AIC", "BIC"), 
-    start = c("warm", "cold"), cores = 1, trace = c("progress", 
+shrink = function(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)), B = diag(ncol(S)), 
+    C = matrix(0, ncol = ncol(B), nrow = ncol(A)), nlam = 10, lam.max = NULL, 
+    lam.min.ratio = 0.01, lam = NULL, path = FALSE, rho = 2, mu = 10, tau.rho = 2, 
+    iter.rho = 10, crit = c("ADMM", "loglik"), tol.abs = 1e-04, tol.rel = 1e-04, 
+    maxit = 10000, adjmaxit = NULL, K = 5, crit.cv = c("MSE", "loglik", "AIC", 
+        "BIC"), start = c("warm", "cold"), cores = 1, trace = c("progress", 
         "print", "none")) {
     
     
@@ -109,13 +107,12 @@ shrink = function(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)),
     if (!all(lam > 0)) {
         stop("lam must be positive!")
     }
-    if (!(all(c(rho, mu, tau.inc, tau.dec, tol.abs, tol.rel, 
-        maxit, adjmaxit, K, cores) > 0))) {
+    if (!(all(c(rho, mu, tau.rho, iter.rho, tol.abs, tol.rel, maxit, adjmaxit, 
+        K, cores) > 0))) {
         stop("Entry must be positive!")
     }
-    if (!(all(sapply(c(rho, mu, tau.inc, tau.dec, tol.abs, 
-        tol.rel, maxit, adjmaxit, K, cores, nlam, lam.min.ratio), 
-        length) <= 1))) {
+    if (!(all(sapply(c(rho, mu, tau.rho, iter.rho, tol.abs, tol.rel, maxit, 
+        adjmaxit, K, cores, nlam, lam.min.ratio), length) <= 1))) {
         stop("Entry must be single value!")
     }
     if (all(c(maxit, adjmaxit, K, cores)%%1 != 0)) {
@@ -124,8 +121,8 @@ shrink = function(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)),
     if (cores < 1) {
         stop("Number of cores must be positive!")
     }
-    if (((length(lam) > 1) & (!path || (crit.cv == "MSE"))) & 
-        (is.null(X) || is.null(Y))) {
+    if (((length(lam) > 1) & (!path || (crit.cv == "MSE"))) & (is.null(X) || 
+        is.null(Y))) {
         stop("Must provide entry for X and Y!")
     }
     if (is.null(Y) && (crit.cv == "MSE")) {
@@ -195,8 +192,7 @@ shrink = function(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)),
     
     # compute grid of lam values, if necessary
     if (is.null(lam)) {
-        if (!((lam.min.ratio <= 1) && (lam.min.ratio > 
-            0))) {
+        if (!((lam.min.ratio <= 1) && (lam.min.ratio > 0))) {
             cat("lam.min.ratio must be in (0, 1]... setting to 1e-2!\n\n")
             lam.min.ratio = 0.01
         }
@@ -212,8 +208,7 @@ shrink = function(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)),
         lam.min = lam.min.ratio * lam.max
         
         # calculate grid of lambda values
-        lam = 10^seq(log10(lam.min), log10(lam.max), 
-            length = nlam)
+        lam = 10^seq(log10(lam.min), log10(lam.max), length = nlam)
         
     } else {
         
@@ -231,13 +226,11 @@ shrink = function(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)),
         if (cores > 1) {
             
             # execute CVP_ADMM
-            ADMM = CVP_ADMM(X = X, Y = Y, A = A, B = B, 
-                C = C, lam = lam, tau = tau, rho = rho, 
-                mu = mu, tau.inc = tau.inc, tau.dec = tau.dec, 
-                crit = crit, tol.abs = tol.abs, tol.rel = tol.rel, 
-                maxit = maxit, adjmaxit = adjmaxit, K = K, 
-                crit.cv = crit.cv, start = start, cores = cores, 
-                trace = trace)
+            ADMM = CVP_ADMM(X = X, Y = Y, A = A, B = B, C = C, lam = lam, tau = tau, 
+                rho = rho, mu = mu, tau.rho = tau.rho, iter.rho = iter.rho, 
+                crit = crit, tol.abs = tol.abs, tol.rel = tol.rel, maxit = maxit, 
+                adjmaxit = adjmaxit, K = K, crit.cv = crit.cv, start = start, 
+                cores = cores, trace = trace)
             MIN.error = ADMM$min.error
             AVG.error = ADMM$avg.error
             CV.error = ADMM$cv.error
@@ -248,13 +241,11 @@ shrink = function(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)),
             if (is.null(X)) {
                 X = matrix(0)
             }
-            ADMM = CV_ADMMc(X = X, S = S, Y = Y, A = A, 
-                B = B, C = C, lam = lam, path = path, 
-                tau = tau, rho = rho, mu = mu, tau_inc = tau.inc, 
-                tau_dec = tau.dec, crit = crit, tol_abs = tol.abs, 
-                tol_rel = tol.rel, maxit = maxit, adjmaxit = adjmaxit, 
-                K = K, crit_cv = crit.cv, start = start, 
-                trace = trace)
+            ADMM = CV_ADMMc(X = X, S = S, Y = Y, A = A, B = B, C = C, lam = lam, 
+                path = path, tau = tau, rho = rho, mu = mu, tau_rho = tau.rho, 
+                iter_rho = iter.rho, crit = crit, tol_abs = tol.abs, tol_rel = tol.rel, 
+                maxit = maxit, adjmaxit = adjmaxit, K = K, crit_cv = crit.cv, 
+                start = start, trace = trace)
             MIN.error = ADMM$min.error
             AVG.error = ADMM$avg.error
             CV.error = ADMM$cv.error
@@ -263,17 +254,16 @@ shrink = function(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)),
         }
         
         # print warning if lam on boundary
-        if (((ADMM$lam == lam[1]) || ADMM$lam == lam[length(lam)]) && 
-            ((length(lam) != 1) && (!path))) {
+        if (((ADMM$lam == lam[1]) || ADMM$lam == lam[length(lam)]) && ((length(lam) != 
+            1) && (!path))) {
             cat("\nOptimal tuning parameter on boundary...!")
         }
         
         # compute final estimate at best tuning parameters
-        ADMM = ADMMc(S = S, A = A, B = B, C = C, initOmega = initOmega, 
-            initZ2 = init, initY = init, lam = ADMM$lam, 
-            tau = tau, rho = rho, mu = mu, tau_inc = tau.inc, 
-            tau_dec = tau.dec, crit = crit, tol_abs = tol.abs, 
-            tol_rel = tol.rel, maxit = maxit)
+        ADMM = ADMMc(S = S, A = A, B = B, C = C, initOmega = initOmega, initZ2 = init, 
+            initY = init, lam = ADMM$lam, tau = tau, rho = rho, mu = mu, tau_rho = tau.rho, 
+            iter_rho = iter.rho, crit = crit, tol_abs = tol.abs, tol_rel = tol.rel, 
+            maxit = maxit)
         
         
     } else {
@@ -283,18 +273,16 @@ shrink = function(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)),
             stop("Must set specify X, set path = TRUE, or provide single value for lam.")
         }
         
-        ADMM = ADMMc(S = S, A = A, B = B, C = C, initOmega = initOmega, 
-            initZ2 = init, initY = init, lam = lam, tau = tau, 
-            rho = rho, mu = mu, tau_inc = tau.inc, tau_dec = tau.dec, 
-            crit = crit, tol_abs = tol.abs, tol_rel = tol.rel, 
+        ADMM = ADMMc(S = S, A = A, B = B, C = C, initOmega = initOmega, initZ2 = init, 
+            initY = init, lam = lam, tau = tau, rho = rho, mu = mu, tau_rho = tau.rho, 
+            iter_rho = iter.rho, crit = crit, tol_abs = tol.abs, tol_rel = tol.rel, 
             maxit = maxit)
         
     }
     
     # compute penalized loglik
-    loglik = (-n/2) * (sum(ADMM$Omega * S) - determinant(ADMM$Omega, 
-        logarithm = TRUE)$modulus[1] + ADMM$lam * (sum(abs(A %*% 
-        ADMM$Omega %*% B - C))))
+    loglik = (-n/2) * (sum(ADMM$Omega * S) - determinant(ADMM$Omega, logarithm = TRUE)$modulus[1] + 
+        ADMM$lam * (sum(abs(A %*% ADMM$Omega %*% B - C))))
     
     
     # return values
@@ -304,12 +292,10 @@ shrink = function(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)),
         Path = NULL
     }
     
-    returns = list(Call = call, Iterations = ADMM$Iterations, 
-        Tuning = tuning, Lambdas = lam, maxit = maxit, 
-        Omega = ADMM$Omega, Sigma = qr.solve(ADMM$Omega), 
-        Path = Path, Z = ADMM$Z2, Y = ADMM$Y, rho = ADMM$rho, 
-        Loglik = loglik, MIN.error = MIN.error, AVG.error = AVG.error, 
-        CV.error = CV.error)
+    returns = list(Call = call, Iterations = ADMM$Iterations, Tuning = tuning, 
+        Lambdas = lam, maxit = maxit, Omega = ADMM$Omega, Sigma = qr.solve(ADMM$Omega), 
+        Path = Path, Z = ADMM$Z2, Y = ADMM$Y, rho = ADMM$rho, Loglik = loglik, 
+        MIN.error = MIN.error, AVG.error = AVG.error, CV.error = CV.error)
     
     class(returns) = "shrink"
     return(returns)
@@ -339,21 +325,20 @@ print.shrink = function(x, ...) {
     }
     
     # print call
-    cat("\nCall: ", paste(deparse(x$Call), sep = "\n", 
-        collapse = "\n"), "\n", sep = "")
+    cat("\nCall: ", paste(deparse(x$Call), sep = "\n", collapse = "\n"), "\n", 
+        sep = "")
     
     # print iterations
-    cat("\nIterations: ", paste(x$Iterations, sep = "\n", 
-        collapse = "\n"), "\n", sep = "")
+    cat("\nIterations: ", paste(x$Iterations, sep = "\n", collapse = "\n"), 
+        "\n", sep = "")
     
     # print optimal tuning parameters
     cat("\nTuning parameters:\n")
-    print.default(round(x$Tuning, 3), print.gap = 2L, 
-        quote = FALSE)
+    print.default(round(x$Tuning, 3), print.gap = 2L, quote = FALSE)
     
     # print loglik
-    cat("\nLog-likelihood: ", paste(round(x$Loglik, 5), 
-        sep = "\n", collapse = "\n"), "\n", sep = "")
+    cat("\nLog-likelihood: ", paste(round(x$Loglik, 5), sep = "\n", collapse = "\n"), 
+        "\n", sep = "")
     
     # print Omega if dim <= 10
     if (nrow(x$Z) <= 10) {
@@ -395,8 +380,7 @@ print.shrink = function(x, ...) {
 #' # create line graph of CV errors
 #' plot(shrink)
 
-plot.shrink = function(x, type = c("line", "heatmap"), 
-    footnote = TRUE, ...) {
+plot.shrink = function(x, type = c("line", "heatmap"), footnote = TRUE, ...) {
     
     # check
     type = match.arg(type)
@@ -408,33 +392,29 @@ plot.shrink = function(x, type = c("line", "heatmap"),
     if (type == "line") {
         
         # gather values to plot
-        cv = cbind(expand.grid(lam = x$Lambdas, alpha = 0), 
-            Errors = as.data.frame.table(x$CV.error)$Freq)
+        cv = cbind(expand.grid(lam = x$Lambdas, alpha = 0), Errors = as.data.frame.table(x$CV.error)$Freq)
         
         # produce line graph
         graph = ggplot(summarise(group_by(cv, lam), Means = mean(Errors)), 
-            aes(log10(lam), Means)) + geom_jitter(width = 0.2, 
-            color = "navy blue") + theme_minimal() + 
-            geom_line(color = "red") + labs(title = "Cross-Validation Errors", 
-            y = "Error") + geom_vline(xintercept = x$Tuning[1], 
-            linetype = "dotted")
+            aes(log10(lam), Means)) + geom_jitter(width = 0.2, color = "navy blue") + 
+            theme_minimal() + geom_line(color = "red") + labs(title = "Cross-Validation Errors", 
+            y = "Error") + geom_vline(xintercept = x$Tuning[1], linetype = "dotted")
         
     } else {
         
         # augment values for heat map (helps visually)
         lam = x$Lambdas
         cv = expand.grid(lam = lam, alpha = 0)
-        Errors = 1/(c(x$AVG.error) + abs(min(x$AVG.error)) + 
-            1)
+        Errors = 1/(c(x$AVG.error) + abs(min(x$AVG.error)) + 1)
         cv = cbind(cv, Errors)
         
         # design color palette
         bluetowhite <- c("#000E29", "white")
         
         # produce ggplot heat map
-        graph = ggplot(cv, aes(alpha, log10(lam))) + 
-            geom_raster(aes(fill = Errors)) + scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), 
-            guide = "none") + theme_minimal() + labs(title = "Heatmap of Cross-Validation Errors") + 
+        graph = ggplot(cv, aes(alpha, log10(lam))) + geom_raster(aes(fill = Errors)) + 
+            scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), 
+                guide = "none") + theme_minimal() + labs(title = "Heatmap of Cross-Validation Errors") + 
             theme(axis.title.x = element_blank(), axis.text.x = element_blank(), 
                 axis.ticks.x = element_blank())
         
@@ -443,8 +423,8 @@ plot.shrink = function(x, type = c("line", "heatmap"),
     if (footnote) {
         
         # produce with footnote
-        graph + labs(caption = paste("**Optimal: log10(lam) = ", 
-            round(x$Tuning[1], 3), sep = ""))
+        graph + labs(caption = paste("**Optimal: log10(lam) = ", round(x$Tuning[1], 
+            3), sep = ""))
         
     } else {
         

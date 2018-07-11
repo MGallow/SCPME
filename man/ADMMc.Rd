@@ -5,8 +5,8 @@
 \title{Penalized precision matrix estimation via ADMM (c++)}
 \usage{
 ADMMc(S, A, B, C, initOmega, initZ2, initY, lam, tau = 10, rho = 2,
-  mu = 10, tau_inc = 2, tau_dec = 2, crit = "ADMM", tol_abs = 1e-04,
-  tol_rel = 1e-04, maxit = 10000L)
+  mu = 10, tau_rho = 2, iter_rho = 10L, crit = "ADMM",
+  tol_abs = 1e-04, tol_rel = 1e-04, maxit = 10000L)
 }
 \arguments{
 \item{S}{pxp sample covariance matrix (denominator n).}
@@ -29,9 +29,9 @@ ADMMc(S, A, B, C, initOmega, initZ2, initY, lam, tau = 10, rho = 2,
 
 \item{mu}{factor for primal and residual norms in the ADMM algorithm. This will be used to adjust the step size \code{rho} after each iteration.}
 
-\item{tau_inc}{factor in which to increase step size \code{rho}.}
+\item{tau_rho}{factor in which to increase step size \code{rho}.}
 
-\item{tau_dec}{factor in which to decrease step size \code{rho}.}
+\item{iter_rho}{step size \code{rho} will be updated every \code{iter.rho} steps}
 
 \item{crit}{criterion for convergence (\code{ADMM} or \code{loglik}). If \code{crit = loglik} then iterations will stop when the relative change in log-likelihood is less than \code{tol.abs}. Default is \code{ADMM} and follows the procedure outlined in Boyd, et al.}
 
