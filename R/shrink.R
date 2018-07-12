@@ -42,7 +42,7 @@
 #' @param maxit maximum number of iterations. Defaults to 1e4.
 #' @param adjmaxit adjusted maximum number of iterations. During cross validation this option allows the user to adjust the maximum number of iterations after the first \code{lam} tuning parameter has converged (for each \code{alpha}). This option is intended to be paired with \code{warm} starts and allows for 'one-step' estimators. Defaults to NULL.
 #' @param K specify the number of folds for cross validation.
-#' @param crit.cv cross validation criterion (\code{MSE}, \code{loglik}, \code{AIC}, or \code{BIC}). Defaults to \code{MSE}.
+#' @param crit.cv cross validation criterion (\code{MSE}, \code{loglik}, \code{penloglik}, \code{AIC}, or \code{BIC}). Defaults to \code{MSE}.
 #' @param start specify \code{warm} or \code{cold} start for cross validation. Default is \code{warm}.
 #' @param cores option to run CV in parallel. Defaults to \code{cores = 1}.
 #' @param trace option to display progress of CV. Choose one of \code{progress} to print a progress bar, \code{print} to print completed tuning parameters, or \code{none}.
@@ -96,8 +96,8 @@ shrink = function(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)), B = diag(ncol
     C = matrix(0, ncol = ncol(B), nrow = ncol(A)), nlam = 10, lam.max = NULL, lam.min.ratio = 0.01, 
     lam = NULL, alpha = 1, path = FALSE, rho = 2, mu = 10, tau.rho = 2, iter.rho = 10, 
     crit = c("ADMM", "loglik"), tol.abs = 1e-04, tol.rel = 1e-04, maxit = 10000, adjmaxit = NULL, 
-    K = 5, crit.cv = c("MSE", "loglik", "AIC", "BIC"), start = c("warm", "cold"), cores = 1, 
-    trace = c("progress", "print", "none")) {
+    K = 5, crit.cv = c("MSE", "loglik", "penloglik", "AIC", "BIC"), start = c("warm", 
+        "cold"), cores = 1, trace = c("progress", "print", "none")) {
     
     
     # checks
@@ -256,7 +256,7 @@ shrink = function(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)), B = diag(ncol
         # print warning if lam on boundary
         if (((ADMM$lam == lam[1]) || ADMM$lam == lam[length(lam)]) && ((length(lam) != 
             1) && (!path))) {
-            cat("\nOptimal tuning parameter on boundary...!")
+            cat("\nOptimal tuning parameter on boundary...!\n")
         }
         
         # compute final estimate at best tuning parameters

@@ -8,9 +8,9 @@ CVP_ADMM(X, Y = NULL, A = diag(ncol(X)), B = diag(ncol(X)),
   C = diag(ncol(X)), lam = 10^seq(-2, 2, 0.2), alpha = 1, tau = 10,
   rho = 2, mu = 10, tau.rho = 2, iter.rho = 10, crit = c("ADMM",
   "loglik"), tol.abs = 1e-04, tol.rel = 1e-04, maxit = 1000,
-  adjmaxit = NULL, K = 5, crit.cv = c("MSE", "loglik", "AIC", "BIC"),
-  start = c("warm", "cold"), cores = 1, trace = c("progress", "print",
-  "none"))
+  adjmaxit = NULL, K = 5, crit.cv = c("MSE", "loglik", "penloglik", "AIC",
+  "BIC"), start = c("warm", "cold"), cores = 1, trace = c("progress",
+  "print", "none"))
 }
 \arguments{
 \item{X}{nxp data matrix. Each row corresponds to a single observation and each column contains n observations of a single feature/variable.}
@@ -49,7 +49,7 @@ CVP_ADMM(X, Y = NULL, A = diag(ncol(X)), B = diag(ncol(X)),
 
 \item{K}{specify the number of folds for cross validation.}
 
-\item{crit.cv}{cross validation criterion (\code{MSE}, \code{loglik}, \code{AIC}, or \code{BIC}). Defaults to \code{MSE}.}
+\item{crit.cv}{cross validation criterion (\code{MSE}, \code{loglik}, \code{penloglik}, \code{AIC}, or \code{BIC}). Defaults to \code{MSE}.}
 
 \item{start}{specify \code{warm} or \code{cold} start for cross validation. Default is \code{warm}.}
 

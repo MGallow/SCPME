@@ -99,7 +99,7 @@ NULL
 #' @param maxit maximum number of iterations. Defaults to 1e4.
 #' @param adjmaxit adjusted maximum number of iterations. During cross validation this option allows the user to adjust the maximum number of iterations after the first \code{lam} tuning parameter has converged. This option is intended to be paired with \code{warm} starts and allows for "one-step" estimators. Defaults to 1e4.
 #' @param K specify the number of folds for cross validation.
-#' @param crit_cv cross validation criterion (\code{loglik}, \code{AIC}, or \code{BIC}). Defaults to \code{loglik}.
+#' @param crit_cv cross validation criterion (\code{loglik}, \code{penloglik}, \code{AIC}, or \code{BIC}). Defaults to \code{loglik}.
 #' @param start specify \code{warm} or \code{cold} start for cross validation. Default is \code{warm}.
 #' @param trace option to display progress of CV. Choose one of \code{progress} to print a progress bar, \code{print} to print completed tuning parameters, or \code{none}.
 #' 
@@ -138,7 +138,7 @@ CV_ADMMc <- function(X, S, Y, A, B, C, lam, alpha = 1, path = FALSE, tau = 10, r
 #' @param tol_rel relative convergence tolerance. Defaults to 1e-4.
 #' @param maxit maximum number of iterations. Defaults to 1e4.
 #' @param adjmaxit adjusted maximum number of iterations. During cross validation this option allows the user to adjust the maximum number of iterations after the first \code{lam} tuning parameter has converged. This option is intended to be paired with \code{warm} starts and allows for "one-step" estimators. Defaults to 1e4.
-#' @param crit_cv cross validation criterion (\code{MSE}, \code{loglik}, \code{AIC}, or \code{BIC}). Defaults to \code{MSE}.
+#' @param crit_cv cross validation criterion (\code{MSE}, \code{loglik}, \code{penloglik} \code{AIC}, or \code{BIC}). Defaults to \code{MSE}.
 #' @param start specify \code{warm} or \code{cold} start for cross validation. Default is \code{warm}.
 #' @param trace option to display progress of CV. Choose one of \code{progress} to print a progress bar, \code{print} to print completed tuning parameters, or \code{none}.
 #' 

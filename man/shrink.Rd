@@ -10,8 +10,8 @@ shrink(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)),
   alpha = 1, path = FALSE, rho = 2, mu = 10, tau.rho = 2,
   iter.rho = 10, crit = c("ADMM", "loglik"), tol.abs = 1e-04,
   tol.rel = 1e-04, maxit = 10000, adjmaxit = NULL, K = 5,
-  crit.cv = c("MSE", "loglik", "AIC", "BIC"), start = c("warm", "cold"),
-  cores = 1, trace = c("progress", "print", "none"))
+  crit.cv = c("MSE", "loglik", "penloglik", "AIC", "BIC"), start = c("warm",
+  "cold"), cores = 1, trace = c("progress", "print", "none"))
 }
 \arguments{
 \item{X}{option to provide a nxp data matrix. Each row corresponds to a single observation and each column contains n observations of a single feature/variable.}
@@ -58,7 +58,7 @@ shrink(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)),
 
 \item{K}{specify the number of folds for cross validation.}
 
-\item{crit.cv}{cross validation criterion (\code{MSE}, \code{loglik}, \code{AIC}, or \code{BIC}). Defaults to \code{MSE}.}
+\item{crit.cv}{cross validation criterion (\code{MSE}, \code{loglik}, \code{penloglik}, \code{AIC}, or \code{BIC}). Defaults to \code{MSE}.}
 
 \item{start}{specify \code{warm} or \code{cold} start for cross validation. Default is \code{warm}.}
 

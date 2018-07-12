@@ -33,7 +33,7 @@ using namespace Rcpp;
 //' @param tol_rel relative convergence tolerance. Defaults to 1e-4.
 //' @param maxit maximum number of iterations. Defaults to 1e4.
 //' @param adjmaxit adjusted maximum number of iterations. During cross validation this option allows the user to adjust the maximum number of iterations after the first \code{lam} tuning parameter has converged. This option is intended to be paired with \code{warm} starts and allows for "one-step" estimators. Defaults to 1e4.
-//' @param crit_cv cross validation criterion (\code{MSE}, \code{loglik}, \code{AIC}, or \code{BIC}). Defaults to \code{MSE}.
+//' @param crit_cv cross validation criterion (\code{MSE}, \code{loglik}, \code{penloglik} \code{AIC}, or \code{BIC}). Defaults to \code{MSE}.
 //' @param start specify \code{warm} or \code{cold} start for cross validation. Default is \code{warm}.
 //' @param trace option to display progress of CV. Choose one of \code{progress} to print a progress bar, \code{print} to print completed tuning parameters, or \code{none}.
 //' 
@@ -85,17 +85,23 @@ arma::mat CVP_ADMMc(const arma::mat &X_train, const arma::mat &X_valid, const ar
     if (crit_cv == "MSE"){
       CV_error[i] = std::pow(arma::norm(Y_valid - X_valid*Omega*arma::cov(X_valid, Y_valid, 1), "fro"), 2)/(n*r);
       
-      // criterion loglik
+    // criterion loglik
     } else if (crit_cv == "loglik"){
       arma::log_det(logdet, sgn, Omega);
       CV_error[i] = (n/2)*(arma::accu(Omega % S_valid) - logdet);
       
-      // criterion AIC
+    // critertion penloglik
+    } else if (crit_cv == "penloglik"){
+      arma::log_det(logdet, sgn, Omega);
+      CV_error[i] = (n/2)*(arma::accu(Omega % S_valid) - logdet) + lam_*((1 - alpha)/2*arma::accu(arma::square(A*Omega*B - C)) + alpha*arma::accu(arma::abs(A*Omega*B - C)));
+      
+      
+    // criterion AIC
     } else if (crit_cv == "AIC"){
       arma::log_det(logdet, sgn, Omega);
       CV_error[i] = (n/2)*(arma::accu(Omega % S_valid) - logdet) + numzeros(Omega);
       
-      // criterion BIC
+    // criterion BIC
     } else {
       arma::log_det(logdet, sgn, Omega);
       CV_error[i] = (n/2)*(arma::accu(Omega % S_valid) - logdet) + numzeros(Omega)*std::log(n)/2;
@@ -105,7 +111,7 @@ arma::mat CVP_ADMMc(const arma::mat &X_train, const arma::mat &X_valid, const ar
     if (trace == "progress"){
       progress.increment();
       
-      // if not quiet, then print progress lambda
+    // if not quiet, then print progress lambda
     } else if (trace == "print"){
       Rcout << "Finished lam = " << lam[i] << "\n";
     }
