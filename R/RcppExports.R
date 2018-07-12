@@ -32,6 +32,7 @@ RIDGEc <- function(S, lam) {
 #' @param initZ initialization matrix for Z2
 #' @param initY initialization matrix for Y
 #' @param lam postive tuning parameter for elastic net penalty.
+#' @param alpha elastic net mixing parameter contained in [0, 1]. \code{0 = ridge, 1 = lasso}. Alpha must be a single value (cross validation across alpha not supported).
 #' @param rho initial step size for ADMM algorithm.
 #' @param tau optional constant used to ensure positive definiteness in Q matrix in algorithm
 #' @param mu factor for primal and residual norms in the ADMM algorithm. This will be used to adjust the step size \code{rho} after each iteration.
@@ -64,8 +65,8 @@ RIDGEc <- function(S, lam) {
 #' 
 #' @keywords internal
 #'
-ADMMc <- function(S, A, B, C, initOmega, initZ, initY, lam, tau = 10, rho = 2, mu = 10, tau_rho = 2, iter_rho = 10L, crit = "ADMM", tol_abs = 1e-4, tol_rel = 1e-4, maxit = 1e4L) {
-    .Call('_SCPME_ADMMc', PACKAGE = 'SCPME', S, A, B, C, initOmega, initZ, initY, lam, tau, rho, mu, tau_rho, iter_rho, crit, tol_abs, tol_rel, maxit)
+ADMMc <- function(S, A, B, C, initOmega, initZ, initY, lam, alpha = 1, tau = 10, rho = 2, mu = 10, tau_rho = 2, iter_rho = 10L, crit = "ADMM", tol_abs = 1e-4, tol_rel = 1e-4, maxit = 1e4L) {
+    .Call('_SCPME_ADMMc', PACKAGE = 'SCPME', S, A, B, C, initOmega, initZ, initY, lam, alpha, tau, rho, mu, tau_rho, iter_rho, crit, tol_abs, tol_rel, maxit)
 }
 
 #' @title K fold (c++)
@@ -83,6 +84,7 @@ NULL
 #' @param S option to provide a pxp sample covariance matrix (denominator n). If argument is \code{NULL} and \code{X} is provided instead then \code{S} will be computed automatically.
 #' @param Y option to provide nxr response matrix. Each row corresponds to a single response and each column contains n response of a single feature/response.
 #' @param lam positive tuning parameters for elastic net penalty. If a vector of parameters is provided, they should be in increasing order.
+#' @param alpha elastic net mixing parameter contained in [0, 1]. \code{0 = ridge, 1 = lasso}. Alpha must be a single value (cross validation across alpha not supported).
 #' @param A option to provide user-specified matrix for penalty term. This matrix must have p columns. Defaults to identity matrix.
 #' @param B option to provide user-specified matrix for penalty term. This matrix must have p rows. Defaults to identity matrix.
 #' @param C option to provide user-specified matrix for penalty term. This matrix must have nrow(A) rows and ncol(B) columns. Defaults to identity matrix.
@@ -110,8 +112,8 @@ NULL
 #' 
 #' @keywords internal
 #'
-CV_ADMMc <- function(X, S, Y, A, B, C, lam, path = FALSE, tau = 10, rho = 2, mu = 10, tau_rho = 2, iter_rho = 10L, crit = "ADMM", tol_abs = 1e-4, tol_rel = 1e-4, maxit = 1e4L, adjmaxit = 1e4L, K = 5L, crit_cv = "MSE", start = "warm", trace = "progress") {
-    .Call('_SCPME_CV_ADMMc', PACKAGE = 'SCPME', X, S, Y, A, B, C, lam, path, tau, rho, mu, tau_rho, iter_rho, crit, tol_abs, tol_rel, maxit, adjmaxit, K, crit_cv, start, trace)
+CV_ADMMc <- function(X, S, Y, A, B, C, lam, alpha = 1, path = FALSE, tau = 10, rho = 2, mu = 10, tau_rho = 2, iter_rho = 10L, crit = "ADMM", tol_abs = 1e-4, tol_rel = 1e-4, maxit = 1e4L, adjmaxit = 1e4L, K = 5L, crit_cv = "MSE", start = "warm", trace = "progress") {
+    .Call('_SCPME_CV_ADMMc', PACKAGE = 'SCPME', X, S, Y, A, B, C, lam, alpha, path, tau, rho, mu, tau_rho, iter_rho, crit, tol_abs, tol_rel, maxit, adjmaxit, K, crit_cv, start, trace)
 }
 
 #' @title CV (no folds) ADMM penalized precision matrix estimation (c++)
@@ -125,6 +127,7 @@ CV_ADMMc <- function(X, S, Y, A, B, C, lam, path = FALSE, tau = 10, rho = 2, mu 
 #' @param B option to provide user-specified matrix for penalty term. This matrix must have p rows. Defaults to identity matrix.
 #' @param C option to provide user-specified matrix for penalty term. This matrix must have nrow(A) rows and ncol(B) columns. Defaults to identity matrix.
 #' @param lam positive tuning parameters for elastic net penalty. If a vector of parameters is provided, they should be in increasing order.
+#' @param alpha elastic net mixing parameter contained in [0, 1]. \code{0 = ridge, 1 = lasso}. Alpha must be a single value (cross validation across alpha not supported).
 #' @param tau optional constant used to ensure positive definiteness in Q matrix in algorithm
 #' @param rho initial step size for ADMM algorithm.
 #' @param mu factor for primal and residual norms in the ADMM algorithm. This will be used to adjust the step size \code{rho} after each iteration.
@@ -143,7 +146,7 @@ CV_ADMMc <- function(X, S, Y, A, B, C, lam, path = FALSE, tau = 10, rho = 2, mu 
 #' 
 #' @keywords internal
 #'
-CVP_ADMMc <- function(X_train, X_valid, Y_train, Y_valid, A, B, C, lam, tau = 10, rho = 2, mu = 10, tau_rho = 2, iter_rho = 10L, crit = "ADMM", tol_abs = 1e-4, tol_rel = 1e-4, maxit = 1e4L, adjmaxit = 1e4L, crit_cv = "MSE", start = "warm", trace = "progress") {
-    .Call('_SCPME_CVP_ADMMc', PACKAGE = 'SCPME', X_train, X_valid, Y_train, Y_valid, A, B, C, lam, tau, rho, mu, tau_rho, iter_rho, crit, tol_abs, tol_rel, maxit, adjmaxit, crit_cv, start, trace)
+CVP_ADMMc <- function(X_train, X_valid, Y_train, Y_valid, A, B, C, lam, alpha = 1, tau = 10, rho = 2, mu = 10, tau_rho = 2, iter_rho = 10L, crit = "ADMM", tol_abs = 1e-4, tol_rel = 1e-4, maxit = 1e4L, adjmaxit = 1e4L, crit_cv = "MSE", start = "warm", trace = "progress") {
+    .Call('_SCPME_CVP_ADMMc', PACKAGE = 'SCPME', X_train, X_valid, Y_train, Y_valid, A, B, C, lam, alpha, tau, rho, mu, tau_rho, iter_rho, crit, tol_abs, tol_rel, maxit, adjmaxit, crit_cv, start, trace)
 }
 

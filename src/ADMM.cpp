@@ -59,6 +59,7 @@ arma::mat RIDGEc(const arma::mat &S, double lam){
 //' @param initZ initialization matrix for Z2
 //' @param initY initialization matrix for Y
 //' @param lam postive tuning parameter for elastic net penalty.
+//' @param alpha elastic net mixing parameter contained in [0, 1]. \code{0 = ridge, 1 = lasso}. Alpha must be a single value (cross validation across alpha not supported).
 //' @param rho initial step size for ADMM algorithm.
 //' @param tau optional constant used to ensure positive definiteness in Q matrix in algorithm
 //' @param mu factor for primal and residual norms in the ADMM algorithm. This will be used to adjust the step size \code{rho} after each iteration.
@@ -92,7 +93,7 @@ arma::mat RIDGEc(const arma::mat &S, double lam){
 //' @keywords internal
 //'
 // [[Rcpp::export]]
-List ADMMc(const arma::mat &S, const arma::mat &A, const arma::mat &B, const arma::mat &C, const arma::mat &initOmega, const arma::mat &initZ, const arma::mat &initY, const double lam, const double tau = 10, double rho = 2, const double mu = 10, const double tau_rho = 2, const int iter_rho = 10, std::string crit = "ADMM", const double tol_abs = 1e-4, const double tol_rel = 1e-4, const int maxit = 1e4){
+List ADMMc(const arma::mat &S, const arma::mat &A, const arma::mat &B, const arma::mat &C, const arma::mat &initOmega, const arma::mat &initZ, const arma::mat &initY, const double lam, const double alpha = 1, const double tau = 10, double rho = 2, const double mu = 10, const double tau_rho = 2, const int iter_rho = 10, std::string crit = "ADMM", const double tol_abs = 1e-4, const double tol_rel = 1e-4, const int maxit = 1e4){
   
   // allocate memory
   bool criterion = true;
@@ -123,8 +124,8 @@ List ADMMc(const arma::mat &S, const arma::mat &A, const arma::mat &B, const arm
     // soft-thresholding
     AOB = A*Omega*B;
     Z2 = rho*(AOB - C) + Y;
-    softmatrixc(Z2, lam);
-    Z2 /= rho;
+    softmatrixc(Z2, lam*alpha);
+    Z2 /= (rho + (1 - alpha)*lam);
     
     // update Y (4)
     Y += rho*(AOB - Z2 - C);
@@ -158,7 +159,7 @@ List ADMMc(const arma::mat &S, const arma::mat &A, const arma::mat &B, const arm
       
       // compute penalized loglik (close enough)
       arma::log_det(logdet, sgn, Omega);
-      lik2 = (-p/2)*(arma::accu(Omega % S) - logdet + lam*arma::accu(C % arma::abs(Omega)));
+      lik2 = (-p/2)*(arma::accu(Omega % S) - logdet + lam*((1 - alpha)/2*arma::accu(arma::square(Omega)) + alpha*arma::accu(arma::abs(Omega))));
       criterion = (std::abs((lik2 - lik)/lik) >= tol_abs);
       lik = lik2;
       

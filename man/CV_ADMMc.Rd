@@ -4,8 +4,8 @@
 \alias{CV_ADMMc}
 \title{CV ADMM penalized precision matrix estimation (c++)}
 \usage{
-CV_ADMMc(X, S, Y, A, B, C, lam, path = FALSE, tau = 10, rho = 2,
-  mu = 10, tau_rho = 2, iter_rho = 10L, crit = "ADMM",
+CV_ADMMc(X, S, Y, A, B, C, lam, alpha = 1, path = FALSE, tau = 10,
+  rho = 2, mu = 10, tau_rho = 2, iter_rho = 10L, crit = "ADMM",
   tol_abs = 1e-04, tol_rel = 1e-04, maxit = 10000L, adjmaxit = 10000L,
   K = 5L, crit_cv = "MSE", start = "warm", trace = "progress")
 }
@@ -23,6 +23,8 @@ CV_ADMMc(X, S, Y, A, B, C, lam, path = FALSE, tau = 10, rho = 2,
 \item{C}{option to provide user-specified matrix for penalty term. This matrix must have nrow(A) rows and ncol(B) columns. Defaults to identity matrix.}
 
 \item{lam}{positive tuning parameters for elastic net penalty. If a vector of parameters is provided, they should be in increasing order.}
+
+\item{alpha}{elastic net mixing parameter contained in [0, 1]. \code{0 = ridge, 1 = lasso}. Alpha must be a single value (cross validation across alpha not supported).}
 
 \item{path}{option to return the regularization path. This option should be used with extreme care if the dimension is large. If set to TRUE, cores will be set to 1 and errors and optimal tuning parameters will based on the full sample. Defaults to FALSE.}
 
@@ -42,7 +44,7 @@ CV_ADMMc(X, S, Y, A, B, C, lam, path = FALSE, tau = 10, rho = 2,
 
 \item{maxit}{maximum number of iterations. Defaults to 1e4.}
 
-\item{adjmaxit}{adjusted maximum number of iterations. During cross validation this option allows the user to adjust the maximum number of iterations after the first \code{lam} tuning parameter has converged. This option is intended to be paired with \code{warm} starts and allows for 'one-step' estimators. Defaults to 1e4.}
+\item{adjmaxit}{adjusted maximum number of iterations. During cross validation this option allows the user to adjust the maximum number of iterations after the first \code{lam} tuning parameter has converged. This option is intended to be paired with \code{warm} starts and allows for "one-step" estimators. Defaults to 1e4.}
 
 \item{K}{specify the number of folds for cross validation.}
 
