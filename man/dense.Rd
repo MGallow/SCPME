@@ -13,7 +13,14 @@ dense(p = 8, base = 0.9, n = NULL)
 
 \item{n}{option to generate n observations from covariance matrix S}
 }
+\value{
+Omega, S
+}
 \description{
 Generate p-dimensional matrices so that its inverse is dense.
+}
+\examples{
+# generate dense matrix with p = 5
+dense(p = 5)
 }
 \keyword{internal}

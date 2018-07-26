@@ -13,7 +13,14 @@ tridiag(p = 8, base = 0.7, n = NULL)
 
 \item{n}{option to generate n observations from covariance matrix S}
 }
+\value{
+Omega, S
+}
 \description{
 Generate p-dimensional matrices so that its inverse is tri-diagonal.
+}
+\examples{
+# generate tridiagonal matrix with p = 5
+tridiag(p = 5)
 }
 \keyword{internal}
