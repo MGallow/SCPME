@@ -10,7 +10,7 @@ template:
     ganalytics: UA-84680750-8
 
 navbar:
-  title: "shrink"
+  title: "SCPME"
   left:
     - icon: fa-home fa-lg
       href: index.html
@@ -20,6 +20,8 @@ navbar:
     #      href: articles/Tutorial.html
     #    - text: "Details"
     #      href: articles/Details.html
+    #    - text: "Connection"
+    #      href: articles/Jointloglik.html
     #    - text: "Simulations"
     #      href: articles/Simulations.html
     #    - text: "Benchmark"
