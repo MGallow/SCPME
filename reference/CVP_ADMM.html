@@ -152,11 +152,12 @@
     </div>
 
     <pre class="usage"><span class='fu'>CVP_ADMM</span>(<span class='no'>X</span>, <span class='kw'>Y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>A</span> <span class='kw'>=</span> <span class='fu'>diag</span>(<span class='fu'>ncol</span>(<span class='no'>X</span>)), <span class='kw'>B</span> <span class='kw'>=</span> <span class='fu'>diag</span>(<span class='fu'>ncol</span>(<span class='no'>X</span>)),
-  <span class='kw'>C</span> <span class='kw'>=</span> <span class='fu'>diag</span>(<span class='fu'>ncol</span>(<span class='no'>X</span>)), <span class='kw'>lam</span> <span class='kw'>=</span> <span class='fl'>10</span>^<span class='fu'>seq</span>(-<span class='fl'>2</span>, <span class='fl'>2</span>, <span class='fl'>0.2</span>), <span class='kw'>tau</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>rho</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>mu</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>tau.rho</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>iter.rho</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>crit</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"ADMM"</span>, <span class='st'>"loglik"</span>),
-  <span class='kw'>tol.abs</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>, <span class='kw'>tol.rel</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>, <span class='kw'>maxit</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>adjmaxit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>K</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>crit.cv</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"MSE"</span>, <span class='st'>"loglik"</span>, <span class='st'>"AIC"</span>, <span class='st'>"BIC"</span>), <span class='kw'>start</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"warm"</span>,
-  <span class='st'>"cold"</span>), <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>trace</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"progress"</span>, <span class='st'>"print"</span>, <span class='st'>"none"</span>))</pre>
+  <span class='kw'>C</span> <span class='kw'>=</span> <span class='fu'>diag</span>(<span class='fu'>ncol</span>(<span class='no'>X</span>)), <span class='kw'>lam</span> <span class='kw'>=</span> <span class='fl'>10</span>^<span class='fu'>seq</span>(-<span class='fl'>2</span>, <span class='fl'>2</span>, <span class='fl'>0.2</span>), <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>tau</span> <span class='kw'>=</span> <span class='fl'>10</span>,
+  <span class='kw'>rho</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>mu</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>tau.rho</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>iter.rho</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>crit</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"ADMM"</span>,
+  <span class='st'>"loglik"</span>), <span class='kw'>tol.abs</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>, <span class='kw'>tol.rel</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>, <span class='kw'>maxit</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
+  <span class='kw'>adjmaxit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>K</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>crit.cv</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"MSE"</span>, <span class='st'>"loglik"</span>, <span class='st'>"penloglik"</span>, <span class='st'>"AIC"</span>,
+  <span class='st'>"BIC"</span>), <span class='kw'>start</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"warm"</span>, <span class='st'>"cold"</span>), <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>trace</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"progress"</span>,
+  <span class='st'>"print"</span>, <span class='st'>"none"</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -184,6 +185,10 @@
     <tr>
       <th>lam</th>
       <td><p>positive tuning parameters for elastic net penalty. If a vector of parameters is provided, they should be in increasing order. Defaults to grid of values <code>10^seq(-2, 2, 0.2)</code>.</p></td>
+    </tr>
+    <tr>
+      <th>alpha</th>
+      <td><p>elastic net mixing parameter contained in [0, 1]. <code>0 = ridge, 1 = lasso</code>. Alpha must be a single value (cross validation across alpha not supported).</p></td>
     </tr>
     <tr>
       <th>tau</th>
@@ -231,7 +236,7 @@
     </tr>
     <tr>
       <th>crit.cv</th>
-      <td><p>cross validation criterion (<code>MSE</code>, <code>loglik</code>, <code>AIC</code>, or <code>BIC</code>). Defaults to <code>MSE</code>.</p></td>
+      <td><p>cross validation criterion (<code>MSE</code>, <code>loglik</code>, <code>penloglik</code>, <code>AIC</code>, or <code>BIC</code>). Defaults to <code>MSE</code>.</p></td>
     </tr>
     <tr>
       <th>start</th>

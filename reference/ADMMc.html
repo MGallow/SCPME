@@ -151,8 +151,8 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>ADMMc</span>(<span class='no'>S</span>, <span class='no'>A</span>, <span class='no'>B</span>, <span class='no'>C</span>, <span class='no'>initOmega</span>, <span class='no'>initZ</span>, <span class='no'>initY</span>, <span class='no'>lam</span>, <span class='kw'>tau</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>rho</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>mu</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>tau_rho</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>iter_rho</span> <span class='kw'>=</span> <span class='fl'>10L</span>, <span class='kw'>crit</span> <span class='kw'>=</span> <span class='st'>"ADMM"</span>,
+    <pre class="usage"><span class='fu'>ADMMc</span>(<span class='no'>S</span>, <span class='no'>A</span>, <span class='no'>B</span>, <span class='no'>C</span>, <span class='no'>initOmega</span>, <span class='no'>initZ</span>, <span class='no'>initY</span>, <span class='no'>lam</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>tau</span> <span class='kw'>=</span> <span class='fl'>10</span>,
+  <span class='kw'>rho</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>mu</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>tau_rho</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>iter_rho</span> <span class='kw'>=</span> <span class='fl'>10L</span>, <span class='kw'>crit</span> <span class='kw'>=</span> <span class='st'>"ADMM"</span>,
   <span class='kw'>tol_abs</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>, <span class='kw'>tol_rel</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>, <span class='kw'>maxit</span> <span class='kw'>=</span> <span class='fl'>10000L</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -189,6 +189,10 @@
     <tr>
       <th>lam</th>
       <td><p>postive tuning parameter for elastic net penalty.</p></td>
+    </tr>
+    <tr>
+      <th>alpha</th>
+      <td><p>elastic net mixing parameter contained in [0, 1]. <code>0 = ridge, 1 = lasso</code>. Alpha must be a single value (cross validation across alpha not supported).</p></td>
     </tr>
     <tr>
       <th>tau</th>

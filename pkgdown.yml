@@ -1,7 +1,8 @@
 pandoc: 2.2.1
 pkgdown: 1.1.0
 pkgdown_sha: ~
-articles: {}
+articles:
+  Details: Details.html
 urls:
   reference: https://mgallow.github.io/SCPME//reference
   article: https://mgallow.github.io/SCPME//articles
