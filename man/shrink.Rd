@@ -6,7 +6,7 @@
 \usage{
 shrink(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)),
   B = diag(ncol(S)), C = matrix(0, ncol = ncol(B), nrow = ncol(A)),
-  nlam = 10, lam.max = NULL, lam.min.ratio = 0.01, lam = NULL,
+  nlam = 10, lam.max = NULL, lam.min.ratio = 0.001, lam = NULL,
   alpha = 1, path = FALSE, rho = 2, mu = 10, tau.rho = 2,
   iter.rho = 10, crit = c("ADMM", "loglik"), tol.abs = 1e-04,
   tol.rel = 1e-04, maxit = 10000, adjmaxit = NULL, K = 5,
@@ -30,7 +30,7 @@ shrink(X = NULL, Y = NULL, S = NULL, A = diag(ncol(S)),
 
 \item{lam.max}{option to specify the maximum \code{lam} tuning parameter. Defaults to NULL.}
 
-\item{lam.min.ratio}{smallest \code{lam} value provided as a fraction of \code{lam.max}. The function will automatically generate \code{nlam} tuning parameters from \code{lam.min.ratio*lam.max} to \code{lam.max} in log10 scale. If \code{lam.max = NULL}, \code{lam.max} is calculated to be the smallest \code{lam} such that all off-diagonal entries in \code{Omega} are equal to zero. Defaults to 1e-2.}
+\item{lam.min.ratio}{smallest \code{lam} value provided as a fraction of \code{lam.max}. The function will automatically generate \code{nlam} tuning parameters from \code{lam.min.ratio*lam.max} to \code{lam.max} in log10 scale. If \code{lam.max = NULL}, \code{lam.max} is calculated to be the smallest \code{lam} such that all off-diagonal entries in \code{Omega} are equal to zero. Defaults to 1e-3.}
 
 \item{lam}{option to provide positive tuning parameters for penalty term. This will cause \code{nlam} and \code{lam.min.ratio} to be disregarded. If a vector of parameters is provided, they should be in increasing order. Defaults to NULL.}
 
