@@ -26,9 +26,6 @@ expect_error(shrink(data$X, data$Y, cores = 2, trace = "none"), NA)
 # adjmaxit
 expect_error(shrink(data$X, data$Y, adjmaxit = 2, trace = "none"), NA)
 
-# parallel adjmaxit
-expect_error(shrink(data$X, data$Y, adjmaxit = 2, cores = 2, trace = "none"), NA)
-
 # path
 expect_error(shrink(data$X, data$Y, path = TRUE, trace = "none"), NA)
 

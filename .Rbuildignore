@@ -9,3 +9,10 @@
 ^SPMCE\.pdf$
 ^_pkgdown\.yml$
 ^pkgdown$
+
+
+
+^vignettes/Jointloglik\.Rmd$
+^vignettes/Jointloglik_cache$
+^vignettes/Simulations\.Rmd$
+^vignettes/images/sim5\.Rdata$

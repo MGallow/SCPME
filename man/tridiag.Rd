@@ -19,8 +19,4 @@ Omega, S
 \description{
 Generate p-dimensional matrices so that its inverse is tri-diagonal.
 }
-\examples{
-# generate tridiagonal matrix with p = 5
-tridiag(p = 5)
-}
 \keyword{internal}

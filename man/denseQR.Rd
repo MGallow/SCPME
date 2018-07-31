@@ -19,8 +19,4 @@ Omega, S
 \description{
 Generate p-dimensional matrices so that its inverse is dense. The matrix will be generated so its first 'num' eigen values are 1000 and the remaining are 1. The orthogonal basis is generated via QR decomposition of
 }
-\examples{
-# generate denseQR matrix with p = 5
-denseQR(p = 5)
-}
 \keyword{internal}

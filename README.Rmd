@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Overview
 
-`shrink` is an implementation of the methods described in "Shrinking Characteristics of Precision Matrix Estimators" [pdf](https://doi.org/10.1093/biomet/asy023). It estimates a penalized precision matrix via a modified alternating direction method of multipliers (ADMM) algorithm.
+`SCPME` is an implementation of the methods described in "Shrinking Characteristics of Precision Matrix Estimators" [pdf](https://doi.org/10.1093/biomet/asy023). It estimates a penalized precision matrix via a modified alternating direction method of multipliers (ADMM) algorithm.
 
 <p align="center">
   <img src = "https://github.com/MGallow/SCPME/raw/master/vignettes/images/gif.gif"/>
@@ -45,52 +45,40 @@ If there are any issues/bugs, please let me know: [github](https://github.com/MG
 library(SCPME)
 set.seed(123)
 
-# let's generate some data!
+# let us generate data for a quick simulation
+# we can use the built-in `data_gen` function
 
-# specify marginal covariance of X
-# note that the inverse is tri-diagonal (sparse)
-Sxx = matrix(0.7, nrow = 5, ncol = 5)
-for (i in 1:5){
-  for (j in 1:5){
-    Sxx[i, j] = Sxx[i, j]^abs(i - j)
-  }
-}
+# generate 100 samples
+data = data_gen(p = 5, n = 100, r = 1)
 
-# now randomly generate some 100 observations of X
-Z = matrix(rnorm(100*5), nrow = 100, ncol = 5)
-out = eigen(Sxx, symmetric = TRUE)
-Sxx.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors)
-X = Z %*% Sxx.sqrt
+# default is generated from sparse regression coefficients
+data$betas
 
-# randomly generate regression coefficients
-betas = matrix(rnorm(5, 0, sqrt(1/5)), nrow = 5, ncol = 1)
-
-# we will also assume a sparse matrix here
-betas = betas*matrix(rbinom(5, 1, prob = 0.5), nrow = 5, ncol = 1)
-
-# now we randomly generate Y
-Y = X %*% betas + rnorm(100)
+# and a sparse oracle precision matrix
+round(qr.solve(data$SigmaX), 5)
 
 
+# now suppose we are interested in estimating the precision
 
 # print marginal sample precision matrix for X
 # this is perhaps a bad estimate (not sparse)
-Sample = (nrow(X) - 1)/nrow(X)*cov(X)
-round(qr.solve(Sample), 5)
+sample = (nrow(data$X) - 1)/nrow(data$X)*cov(data$X)
+round(qr.solve(sample), 5)
 
 # estimate preicison matrix (omega) assuming sparsity
-# note that this is simply lasso penalized preicision matrix
-shrink(X, lam = 0.5)
+# note that this is simply a lasso penalized preicision matrix
+shrink(data$X, lam = 0.5, crit.cv = "loglik")
 
 # what if we instead assumed sparsity in beta? (print estimated omega)
 # recall that beta is a product of marginal precision of X and cov(X, Y)
-(shrink = shrink(X, Y, B = cov(X, Y), nlam = 20, lam.max = max(abs(t(X) %*% Y))))
+lam_max = max(abs(t(data$X) %*% data$Y))
+(shrink = shrink(data$X, data$Y, B = cov(data$X, data$Y), nlam = 20, lam.max = lam_max))
 
 # print estimated beta
 shrink$Z
 
 # we could also assume sparsity in beta AND omega (print estimated omega)
-(shrink2 = shrink(X, Y, B = cbind(cov(X, Y), diag(ncol(X))), nlam = 20, lam.max = 10, lam.min.ratio = 1e-4))
+(shrink2 = shrink(data$X, data$Y, B = cbind(cov(data$X, data$Y), diag(ncol(data$X))), nlam = 20, lam.max = 10, lam.min.ratio = 1e-4))
 
 # print estimated beta
 shrink2$Z[,1, drop = FALSE]

@@ -3,6 +3,7 @@
 #' @importFrom grDevices colorRampPalette
 #' @importFrom stats cov
 #' @importFrom stats rnorm
+#' @importFrom stats rbinom
 #' @importFrom parallel detectCores
 #' @importFrom parallel makeCluster
 #' @importFrom parallel stopCluster

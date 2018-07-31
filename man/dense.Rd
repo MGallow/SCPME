@@ -19,8 +19,4 @@ Omega, S
 \description{
 Generate p-dimensional matrices so that its inverse is dense.
 }
-\examples{
-# generate dense matrix with p = 5
-dense(p = 5)
-}
 \keyword{internal}

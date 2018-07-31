@@ -93,10 +93,6 @@ data_gen = function(n, p, r = 1, sparsity = 0.5, Sigma = c("tridiag",
 #' @return Omega, S
 #'
 #' @keywords internal
-#'
-#' @examples
-#' # generate tridiagonal matrix with p = 5
-#' tridiag(p = 5)
 
 # we define the tridiag function
 tridiag = function(p = 8, base = 0.7, n = NULL) {
@@ -154,10 +150,6 @@ tridiag = function(p = 8, base = 0.7, n = NULL) {
 #' @return Omega, S
 #'
 #' @keywords internal
-#'
-#' @examples
-#' # generate dense matrix with p = 5
-#' dense(p = 5)
 
 # we define the dense function
 dense = function(p = 8, base = 0.9, n = NULL) {
@@ -210,10 +202,6 @@ dense = function(p = 8, base = 0.9, n = NULL) {
 #' @return Omega, S
 #'
 #' @keywords internal
-#'
-#' @examples
-#' # generate denseQR matrix with p = 5
-#' denseQR(p = 5)
 
 # we define the denseQR function
 denseQR = function(p = 8, num = 5, n = NULL) {
@@ -271,10 +259,6 @@ denseQR = function(p = 8, num = 5, n = NULL) {
 #' @return Omega, S
 #'
 #' @keywords internal
-#'
-#' @examples
-#' # generate compound symmetric matrix with p = 5
-#' compound(p = 5)
 
 # we define the compound function
 compound = function(p = 8, n = NULL) {

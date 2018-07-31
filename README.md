@@ -7,7 +7,7 @@ Status](https://travis-ci.org/MGallow/shrink.svg?branch=master)](https://travis-
 
 ## Overview
 
-`shrink` is an implementation of the methods described in “Shrinking
+`SCPME` is an implementation of the methods described in “Shrinking
 Characteristics of Precision Matrix Estimators”
 [pdf](https://doi.org/10.1093/biomet/asy023). It estimates a penalized
 precision matrix via a modified alternating direction method of
@@ -52,136 +52,139 @@ welcome\!
 library(SCPME)
 set.seed(123)
 
-# let's generate some data!
+# let us generate data for a quick simulation
+# we can use the built-in `data_gen` function
 
-# specify marginal covariance of X
-# note that the inverse is tri-diagonal (sparse)
-Sxx = matrix(0.7, nrow = 5, ncol = 5)
-for (i in 1:5){
-  for (j in 1:5){
-    Sxx[i, j] = Sxx[i, j]^abs(i - j)
-  }
-}
+# generate 100 samples
+data = data_gen(p = 5, n = 100, r = 1)
 
-# now randomly generate some 100 observations of X
-Z = matrix(rnorm(100*5), nrow = 100, ncol = 5)
-out = eigen(Sxx, symmetric = TRUE)
-Sxx.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors)
-X = Z %*% Sxx.sqrt
+# default is generated from sparse regression coefficients
+data$betas
+```
 
-# randomly generate regression coefficients
-betas = matrix(rnorm(5, 0, sqrt(1/5)), nrow = 5, ncol = 1)
+    ##             [,1]
+    ## [1,] -0.25065233
+    ## [2,]  0.00000000
+    ## [3,]  0.69707555
+    ## [4,]  0.03153231
+    ## [5,]  0.00000000
 
-# we will also assume a sparse matrix here
-betas = betas*matrix(rbinom(5, 1, prob = 0.5), nrow = 5, ncol = 1)
-
-# now we randomly generate Y
-Y = X %*% betas + rnorm(100)
-
-
-
-# print marginal sample precision matrix for X
-# this is perhaps a bad estimate (not sparse)
-Sample = (nrow(X) - 1)/nrow(X)*cov(X)
-round(qr.solve(Sample), 5)
+``` r
+# and a sparse oracle precision matrix
+round(qr.solve(data$SigmaX), 5)
 ```
 
     ##          [,1]     [,2]     [,3]     [,4]     [,5]
-    ## [1,]  2.32976 -1.55033  0.22105 -0.08607  0.24309
-    ## [2,] -1.55033  3.27561 -1.68026 -0.14277  0.18949
-    ## [3,]  0.22105 -1.68026  3.19897 -1.25158 -0.11016
-    ## [4,] -0.08607 -0.14277 -1.25158  2.76790 -1.37226
-    ## [5,]  0.24309  0.18949 -0.11016 -1.37226  2.05377
+    ## [1,]  1.96078 -1.37255  0.00000  0.00000  0.00000
+    ## [2,] -1.37255  2.92157 -1.37255  0.00000  0.00000
+    ## [3,]  0.00000 -1.37255  2.92157 -1.37255  0.00000
+    ## [4,]  0.00000  0.00000 -1.37255  2.92157 -1.37255
+    ## [5,]  0.00000  0.00000  0.00000 -1.37255  1.96078
+
+``` r
+# now suppose we are interested in estimating the precision
+
+# print marginal sample precision matrix for X
+# this is perhaps a bad estimate (not sparse)
+sample = (nrow(data$X) - 1)/nrow(data$X)*cov(data$X)
+round(qr.solve(sample), 5)
+```
+
+    ##          [,1]     [,2]     [,3]     [,4]     [,5]
+    ## [1,]  2.20420 -1.24670 -0.12435 -0.02156 -0.20889
+    ## [2,] -1.24670  2.39120 -0.90434  0.09653 -0.04804
+    ## [3,] -0.12435 -0.90434  2.61482 -1.62774  0.14684
+    ## [4,] -0.02156  0.09653 -1.62774  3.38677 -1.75151
+    ## [5,] -0.20889 -0.04804  0.14684 -1.75151  2.36464
 
 ``` r
 # estimate preicison matrix (omega) assuming sparsity
-# note that this is simply lasso penalized preicision matrix
-shrink(X, lam = 0.5)
+# note that this is simply a lasso penalized preicision matrix
+shrink(data$X, lam = 0.5, crit.cv = "loglik")
 ```
 
-    ## Matrix Y not detected... will use loglik for crit.cv instead!
-
     ## 
-    ## Call: shrink(X = X, lam = 0.5)
+    ## Call: shrink(X = data$X, lam = 0.5, crit.cv = "loglik")
     ## 
-    ## Iterations: 14
+    ## Iterations: 12
     ## 
     ## Tuning parameters:
     ##       log10(lam)  lam
     ## [1,]      -0.301  0.5
     ## 
-    ## Log-likelihood: -325.34961
+    ## Log-likelihood: -350.78138
     ## 
     ## Omega:
     ##          [,1]     [,2]     [,3]     [,4]     [,5]
-    ## [1,]  0.80258 -0.00363 -0.00002 -0.00003 -0.00001
-    ## [2,] -0.00363  0.74592 -0.03755 -0.00002 -0.00004
-    ## [3,] -0.00002 -0.03755  0.75451 -0.04662  0.00001
-    ## [4,] -0.00003 -0.00002 -0.04662  0.69268 -0.05671
-    ## [5,] -0.00001 -0.00004  0.00001 -0.05671  0.71739
+    ## [1,]  0.72812 -0.07110 -0.00014 -0.00024 -0.00020
+    ## [2,] -0.07110  0.68308 -0.07122 -0.00011 -0.00016
+    ## [3,] -0.00014 -0.07122  0.65016 -0.13351 -0.02023
+    ## [4,] -0.00024 -0.00011 -0.13351  0.67386 -0.13097
+    ## [5,] -0.00020 -0.00016 -0.02023 -0.13097  0.68046
 
 ``` r
 # what if we instead assumed sparsity in beta? (print estimated omega)
 # recall that beta is a product of marginal precision of X and cov(X, Y)
-(shrink = shrink(X, Y, B = cov(X, Y), nlam = 20, lam.max = max(abs(t(X) %*% Y))))
+lam_max = max(abs(t(data$X) %*% data$Y))
+(shrink = shrink(data$X, data$Y, B = cov(data$X, data$Y), nlam = 20, lam.max = lam_max))
 ```
 
     ## 
-    ## Call: shrink(X = X, Y = Y, B = cov(X, Y), nlam = 20, lam.max = max(abs(t(X) %*% 
-    ##     Y)))
+    ## Call: shrink(X = data$X, Y = data$Y, B = cov(data$X, data$Y), nlam = 20, 
+    ##     lam.max = lam_max)
     ## 
-    ## Iterations: 25
+    ## Iterations: 79
     ## 
     ## Tuning parameters:
     ##       log10(lam)    lam
-    ## [1,]      -0.164  0.686
+    ## [1,]      -0.641  0.229
     ## 
-    ## Log-likelihood: -115.58565
+    ## Log-likelihood: -122.00385
     ## 
     ## Omega:
     ##          [,1]     [,2]     [,3]     [,4]     [,5]
-    ## [1,]  1.69602 -1.13833  0.19624  0.30270 -0.02760
-    ## [2,] -1.13833  2.97473 -1.58959 -0.40033  0.30833
-    ## [3,]  0.19624 -1.58959  3.09219 -1.22341 -0.10923
-    ## [4,]  0.30270 -0.40033 -1.22341  2.50158 -1.17438
-    ## [5,] -0.02760  0.30833 -0.10923 -1.17438  1.98885
+    ## [1,]  2.11890 -1.19070 -0.05414  0.00778 -0.20174
+    ## [2,] -1.19070  2.27032 -0.69734  0.02508 -0.01117
+    ## [3,] -0.05414 -0.69734  2.17234 -1.39861 -0.00076
+    ## [4,]  0.00778  0.02508 -1.39861  2.84813 -1.43672
+    ## [5,] -0.20174 -0.01117 -0.00076 -1.43672  2.17420
 
 ``` r
 # print estimated beta
 shrink$Z
 ```
 
-    ##              [,1]
-    ## [1,] -0.228281131
-    ## [2,]  0.076127418
-    ## [3,]  0.003126976
-    ## [4,]  0.162514189
-    ## [5,]  0.000000000
+    ##             [,1]
+    ## [1,] -0.03497027
+    ## [2,]  0.00000000
+    ## [3,]  0.51785553
+    ## [4,]  0.09869005
+    ## [5,]  0.00000000
 
 ``` r
 # we could also assume sparsity in beta AND omega (print estimated omega)
-(shrink2 = shrink(X, Y, B = cbind(cov(X, Y), diag(ncol(X))), nlam = 20, lam.max = 10, lam.min.ratio = 1e-4))
+(shrink2 = shrink(data$X, data$Y, B = cbind(cov(data$X, data$Y), diag(ncol(data$X))), nlam = 20, lam.max = 10, lam.min.ratio = 1e-4))
 ```
 
     ## 
-    ## Call: shrink(X = X, Y = Y, B = cbind(cov(X, Y), diag(ncol(X))), nlam = 20, 
-    ##     lam.max = 10, lam.min.ratio = 1e-04)
+    ## Call: shrink(X = data$X, Y = data$Y, B = cbind(cov(data$X, data$Y), 
+    ##     diag(ncol(data$X))), nlam = 20, lam.max = 10, lam.min.ratio = 1e-04)
     ## 
-    ## Iterations: 29
+    ## Iterations: 61
     ## 
     ## Tuning parameters:
     ##       log10(lam)    lam
     ## [1,]      -1.105  0.078
     ## 
-    ## Log-likelihood: -171.52139
+    ## Log-likelihood: -188.60058
     ## 
     ## Omega:
     ##          [,1]     [,2]     [,3]     [,4]     [,5]
-    ## [1,]  1.54834 -0.70518  0.00008  0.00002  0.01828
-    ## [2,] -0.70518  1.84090 -0.76744 -0.08973 -0.00006
-    ## [3,]  0.00008 -0.76744  1.90009 -0.69543 -0.02743
-    ## [4,]  0.00002 -0.08973 -0.69543  1.70299 -0.72951
-    ## [5,]  0.01828 -0.00006 -0.02743 -0.72951  1.42057
+    ## [1,]  1.54822 -0.69209 -0.11001 -0.03356 -0.10665
+    ## [2,] -0.69209  1.59404 -0.47751 -0.03653 -0.03124
+    ## [3,] -0.11001 -0.47751  1.61213 -0.80601 -0.09970
+    ## [4,] -0.03356 -0.03653 -0.80601  1.91246 -0.87712
+    ## [5,] -0.10665 -0.03124 -0.09970 -0.87712  1.55736
 
 ``` r
 # print estimated beta
@@ -189,11 +192,11 @@ shrink2$Z[,1, drop = FALSE]
 ```
 
     ##             [,1]
-    ## [1,] -0.26572905
-    ## [2,]  0.08308531
-    ## [3,]  0.04632600
-    ## [4,]  0.17530014
-    ## [5,]  0.01228189
+    ## [1,] -0.02249550
+    ## [2,]  0.00000000
+    ## [3,]  0.48346853
+    ## [4,]  0.17778566
+    ## [5,]  0.02068491
 
 ``` r
 # produce CV heat map for shrink

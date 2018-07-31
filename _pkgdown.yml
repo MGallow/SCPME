@@ -14,20 +14,20 @@ navbar:
   left:
     - icon: fa-home fa-lg
       href: index.html
-    #- text: Articles
-    #  menu:
-    #    - text: "Tutorial"
-    #      href: articles/Tutorial.html
-    #    - text: "Details"
-    #      href: articles/Details.html
+    - text: Articles
+      menu:
+        - text: "Tutorial"
+          href: articles/Tutorial.html
+        - text: "Details"
+          href: articles/Details.html
     #    - text: "Connection"
     #      href: articles/Jointloglik.html
     #    - text: "Simulations"
     #      href: articles/Simulations.html
     #    - text: "Benchmark"
     #      href: articles/Benchmark.html
-    #    - text: "Functions"
-    #      href: "reference/index.html"
+        - text: "Functions"
+          href: "reference/index.html"
     - text: "Related Packages"
       menu:
         - text: "Omega"
