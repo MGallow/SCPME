@@ -21,7 +21,7 @@ expect_error(shrink(S = S, crit.cv = "loglik", lam = 0.1, trace = "none"), NA)
 expect_warning(shrink(S = S, crit.cv = "loglik", lam = 0.1, trace = "none"), NA)
 
 # parallel CV
-expect_error(shrink(data$X, data$Y, cores = 2, trace = "none"), NA)
+#expect_error(shrink(data$X, data$Y, cores = 2, trace = "none"), NA)
 
 # adjmaxit
 expect_error(shrink(data$X, data$Y, adjmaxit = 2, trace = "none"), NA)
