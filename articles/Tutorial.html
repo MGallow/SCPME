@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tutorial • SCPME</title>
+<title>SCPME Tutorial • SCPME</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="Tutorial">
+<meta property="og:title" content="SCPME Tutorial">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
@@ -62,6 +62,9 @@
       <a href="../articles/Details.html">Details</a>
     </li>
     <li>
+      <a href="../articles/Benchmark.html">Benchmark</a>
+    </li>
+    <li>
       <a href="../reference/index.html">Functions</a>
     </li>
   </ul>
@@ -74,9 +77,6 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="https://mgallow.github.io/Omega/">Omega</a>
-    </li>
-    <li>
       <a href="https://mgallow.github.io/ADMMsigma/">ADMMsigma</a>
     </li>
     <li>
@@ -120,7 +120,7 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>Tutorial</h1>
+      <h1>SCPME Tutorial</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/MGallow/SCPME/blob/master/vignettes/Tutorial.Rmd"><code>vignettes/Tutorial.Rmd</code></a></small>
@@ -130,140 +130,345 @@
 
     
     
-<p>BLAH BLAH BLAH!!!!!</p>
+<div id="introduction" class="section level2">
+<h2 class="hasAnchor">
+<a href="#introduction" class="anchor"></a>Introduction</h2>
+<p>In many statistical applications, estimating the covariance for a set of random variables is a critical task. Unfortunately, estimating <span class="math inline">\(\Sigma\)</span> well is often expensive and, in a few settings, extremely challenging. For this reason, emphasis in the literature and elsewhere has been placed on estimating the inverse of <span class="math inline">\(\Sigma\)</span> which we like to denote as <span class="math inline">\(\Omega \equiv \Sigma^{-1}\)</span>.</p>
+<p>If we have data that is normally distributed with mean <span class="math inline">\(\mu\)</span> and variance <span class="math inline">\(\Sigma\)</span> (that is, <span class="math inline">\(X_{i} \sim N_{p}\left(\mu, \Sigma \right)\)</span>), the optimal estimator for <span class="math inline">\(\Omega\)</span> with respect to the log-likelihood is of the form</p>
+<p><span class="math display">\[ \hat{\Omega}_{MLE} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| \right\} \]</span></p>
+<p>where <span class="math inline">\(S\)</span> denotes the usual sample estimator (<span class="math inline">\(S = \sum_{i = 1}^{n}\left(X_{i} - \bar{X} \right)\left(X_{i} - \bar{X} \right)^{T})\)</span>). As in regression settings, we can construct <em>penalized</em> log-likelihood estimators by adding a penalty term, <span class="math inline">\(P\left(\Omega\right)\)</span>, to the log-likelihood so that</p>
+<p><span class="math display">\[ \hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega \right| + P\left( \Omega \right) \right\} \]</span></p>
+<p><span class="math inline">\(P\left( \Omega \right)\)</span> is often of the form <span class="math inline">\(P\left(\Omega \right) = \lambda\|\Omega \|_{F}^{2}/2\)</span> or <span class="math inline">\(P\left(\Omega \right) = \|\Omega\|_{1}\)</span> where <span class="math inline">\(\lambda &gt; 0\)</span>, <span class="math inline">\(\left\|\cdot \right\|_{F}^{2}\)</span> is the Frobenius norm and we define <span class="math inline">\(\left\|A \right\|_{1} = \sum_{i, j} \left| A_{ij} \right|\)</span>. These penalties are the ridge and lasso, respectively. The penalty proposed in <span class="citation">Molstad and Rothman (2017)</span>, however, is of the form <span class="math inline">\(P\left(\Omega\right) = \left\|A\Omega B - C\right\|_{1}\)</span> so that the general optimization problem is</p>
+<p><span class="math display">\[\begin{align}
+  \hat{\Omega} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr(S\Omega) - \log\left| \Omega \right| + \lambda\left\| A\Omega B - C \right\|_{1} \right\}
+\end{align}\]</span></p>
+<p><code>SCPME</code> is an implementation of the proposed augmented ADMM algorithm in <span class="citation">Molstad and Rothman (2017)</span> for solving the previous optimization problem. In addition, this package places a big emphasis on flexibility that allows for rapid experimentation for the end user.</p>
+<p>We will illustrate this with a short simulation and show some of the new and interesting estimators for <span class="math inline">\(\Omega\)</span> that are a result of this penalty.</p>
+<p><br></p>
+</div>
+<div id="simulation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#simulation" class="anchor"></a>Simulation</h2>
+<p>Let us generate some data. For this example, we will assume</p>
+<p><span class="math display">\[ Y_{i} = \mu_{y} + \beta^{T}\left(X_{i} - \mu_{x}\right) + E_{i} \]</span></p>
+<p>where <span class="math inline">\(E_{i} \sim N_{r}\left( 0, \Omega_{y | x}^{-1} \right)\)</span>, <span class="math inline">\(X_{i} \sim N_{p}\left( \mu_{x}, \Omega^{-1} \right)\)</span> and we are interested in estimating the marginal precision matrix of <span class="math inline">\(X\)</span> (denoted <span class="math inline">\(\Omega\)</span>).</p>
 <p><br></p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(SCPME)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="co">#  generate data from a sparse matrix</span></a>
-<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="co"># first compute covariance matrix</span></a>
-<a class="sourceLine" id="cb1-5" data-line-number="5">S =<span class="st"> </span><span class="kw">matrix</span>(<span class="fl">0.7</span>, <span class="dt">nrow =</span> <span class="dv">5</span>, <span class="dt">ncol =</span> <span class="dv">5</span>)</a>
-<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>){</a>
-<a class="sourceLine" id="cb1-7" data-line-number="7">  <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>){</a>
-<a class="sourceLine" id="cb1-8" data-line-number="8">    S[i, j] =<span class="st"> </span>S[i, j]<span class="op">^</span><span class="kw">abs</span>(i <span class="op">-</span><span class="st"> </span>j)</a>
-<a class="sourceLine" id="cb1-9" data-line-number="9">  }</a>
-<a class="sourceLine" id="cb1-10" data-line-number="10">}</a>
-<a class="sourceLine" id="cb1-11" data-line-number="11"></a>
-<a class="sourceLine" id="cb1-12" data-line-number="12"><span class="co"># print oracle precision matrix (shrinkage might be useful)</span></a>
-<a class="sourceLine" id="cb1-13" data-line-number="13">(<span class="dt">Omega =</span> <span class="kw">round</span>(<span class="kw">qr.solve</span>(S), <span class="dv">3</span>))</a></code></pre></div>
-<pre><code>##        [,1]   [,2]   [,3]   [,4]   [,5]
-## [1,]  1.961 -1.373  0.000  0.000  0.000
-## [2,] -1.373  2.922 -1.373  0.000  0.000
-## [3,]  0.000 -1.373  2.922 -1.373  0.000
-## [4,]  0.000  0.000 -1.373  2.922 -1.373
-## [5,]  0.000  0.000  0.000 -1.373  1.961</code></pre>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># generate 100 x 5 matrix with rows drawn from iid N_p(0, S)</span></a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="kw">set.seed</span>(<span class="dv">123</span>)</a>
-<a class="sourceLine" id="cb3-3" data-line-number="3">Z =<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">rnorm</span>(<span class="dv">100</span><span class="op">*</span><span class="dv">5</span>), <span class="dt">nrow =</span> <span class="dv">100</span>, <span class="dt">ncol =</span> <span class="dv">5</span>)</a>
-<a class="sourceLine" id="cb3-4" data-line-number="4">out =<span class="st"> </span><span class="kw">eigen</span>(S, <span class="dt">symmetric =</span> <span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb3-5" data-line-number="5">S.sqrt =<span class="st"> </span>out<span class="op">$</span>vectors <span class="op">%*%</span><span class="st"> </span><span class="kw">diag</span>(out<span class="op">$</span>values<span class="op">^</span><span class="fl">0.5</span>) <span class="op">%*%</span><span class="st"> </span><span class="kw">t</span>(out<span class="op">$</span>vectors)</a>
-<a class="sourceLine" id="cb3-6" data-line-number="6">X =<span class="st"> </span>Z <span class="op">%*%</span><span class="st"> </span>S.sqrt</a>
-<a class="sourceLine" id="cb3-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co"># snap shot of data</span></a>
-<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="kw">head</span>(X)</a></code></pre></div>
-<pre><code>##            [,1]         [,2]         [,3]       [,4]        [,5]
-## [1,] -0.4311177 -0.217744186  1.276826576 -0.1061308 -0.02363953
-## [2,] -0.0418538  0.304253474  0.688201742 -0.5976510 -1.06758924
-## [3,]  1.1344174  0.004493877 -0.440059159 -0.9793198 -0.86953222
-## [4,] -0.0738241 -0.286438212  0.009577281 -0.7850619 -0.32351261
-## [5,] -0.2905499 -0.906939891 -0.656034183 -0.4324413  0.28516534
-## [6,]  1.3761967  0.276942730 -0.297518545 -0.2634814 -1.35944340</code></pre>
-<p><br></p>
-<p>As described earlier in the report, the maximum likelihood estimator (MLE) for Omega is the inverse of the sample precision matrix <span class="math inline">\(S^{-1} = \left[\sum_{i = 1}^{n}(X_{i} - \bar{X})(X_{i} - \bar{X})^{T}/n \right]^{-1}\)</span>:</p>
-<p><br></p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># print inverse of sample precision matrix (perhaps a bad estimate)</span></a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw">round</span>(<span class="kw">qr.solve</span>(<span class="kw">cov</span>(X)<span class="op">*</span>(<span class="kw">nrow</span>(X) <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)<span class="op">/</span><span class="kw">nrow</span>(X)), <span class="dv">5</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">set.seed</span>(<span class="dv">123</span>)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="co"># generate data from a sparse oracle precision matrix.</span></a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="co"># we can use the built-in `data_gen` function</span></a>
+<a class="sourceLine" id="cb1-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="co"># generate 100 x 5 X data matrix and 100 x 1 Y data matrix</span></a>
+<a class="sourceLine" id="cb1-8" data-line-number="8">data =<span class="st"> </span><span class="kw"><a href="../reference/data_gen.html">data_gen</a></span>(<span class="dt">p =</span> <span class="dv">5</span>, <span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">r =</span> <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb1-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb1-10" data-line-number="10"><span class="co"># the default regression coefficients are sparse</span></a>
+<a class="sourceLine" id="cb1-11" data-line-number="11">data<span class="op">$</span>betas</a></code></pre></div>
+<pre><code>##             [,1]
+## [1,] -0.25065233
+## [2,]  0.00000000
+## [3,]  0.69707555
+## [4,]  0.03153231
+## [5,]  0.00000000</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># default oracle precision matrix is also sparse</span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="kw">round</span>(<span class="kw">qr.solve</span>(data<span class="op">$</span>SigmaX), <span class="dv">5</span>)</a></code></pre></div>
 <pre><code>##          [,1]     [,2]     [,3]     [,4]     [,5]
-## [1,]  2.32976 -1.55033  0.22105 -0.08607  0.24309
-## [2,] -1.55033  3.27561 -1.68026 -0.14277  0.18949
-## [3,]  0.22105 -1.68026  3.19897 -1.25158 -0.11016
-## [4,] -0.08607 -0.14277 -1.25158  2.76790 -1.37226
-## [5,]  0.24309  0.18949 -0.11016 -1.37226  2.05377</code></pre>
+## [1,]  1.96078 -1.37255  0.00000  0.00000  0.00000
+## [2,] -1.37255  2.92157 -1.37255  0.00000  0.00000
+## [3,]  0.00000 -1.37255  2.92157 -1.37255  0.00000
+## [4,]  0.00000  0.00000 -1.37255  2.92157 -1.37255
+## [5,]  0.00000  0.00000  0.00000 -1.37255  1.96078</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># snap shot of X data matrix</span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw">head</span>(data<span class="op">$</span>X)</a></code></pre></div>
+<pre><code>##            [,1]       [,2]        [,3]       [,4]       [,5]
+## [1,]  1.1952948  0.6283794 -0.27324390  0.2400922 -0.7296045
+## [2,] -1.7420699 -0.9499532 -0.77653371 -0.1923880 -1.0364437
+## [3,]  1.4884219  0.8648877 -1.37448545 -1.5880668 -0.5314990
+## [4,]  1.2264760  1.9445153  1.25375134  1.2658125  0.2352873
+## [5,]  2.5151054  1.3458010  0.57675219  0.7688747  2.1911351
+## [6,]  0.3277334 -0.1521037 -0.09255265 -0.6744002 -1.3551462</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># snap shot of Y data matrix</span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw">head</span>(data<span class="op">$</span>Y)</a></code></pre></div>
+<pre><code>##            [,1]
+## [1,]  0.4089913
+## [2,]  0.7387282
+## [3,]  0.2296328
+## [4,]  0.6617543
+## [5,]  1.0012637
+## [6,] -1.9142132</code></pre>
 <p><br></p>
-<p>However, because Omega (known as the <em>oracle</em>) is sparse, a shrinkage estimator will perhaps perform better than the sample estimator. Below we construct various penalized estimators:</p>
+<p>We have generated 100 samples of the random variable <span class="math inline">\(X \in \mathbb{R}^{5}\)</span> and 100 samples of the random variable <span class="math inline">\(Y \in \mathbb{R}\)</span>. It turns out that this particular oracle covariance matrix for <span class="math inline">\(X\)</span> (tapered matrix) has an inverse that is sparse (tri-diagonal). That is, the precision matrix has many zeros.</p>
 <p><br></p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># elastic-net type penalty (set tolerance to 1e-8)</span></a>
-<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw"><a href="../reference/shrink.html">shrink</a></span>(X, <span class="dt">tol.abs =</span> <span class="fl">1e-8</span>, <span class="dt">tol.rel =</span> <span class="fl">1e-8</span>)</a></code></pre></div>
-<pre><code>## Matrix Y not detected... will use loglik for crit.cv instead!</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="co"># print oracle covariance matrix</span></a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">data<span class="op">$</span>SigmaX</a></code></pre></div>
+<pre><code>##        [,1]  [,2] [,3]  [,4]   [,5]
+## [1,] 1.0000 0.700 0.49 0.343 0.2401
+## [2,] 0.7000 1.000 0.70 0.490 0.3430
+## [3,] 0.4900 0.700 1.00 0.700 0.4900
+## [4,] 0.3430 0.490 0.70 1.000 0.7000
+## [5,] 0.2401 0.343 0.49 0.700 1.0000</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="co"># print inverse covariance matrix (omega)</span></a>
+<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="kw">round</span>(<span class="kw">qr.solve</span>(data<span class="op">$</span>SigmaX), <span class="dv">5</span>)</a></code></pre></div>
+<pre><code>##          [,1]     [,2]     [,3]     [,4]     [,5]
+## [1,]  1.96078 -1.37255  0.00000  0.00000  0.00000
+## [2,] -1.37255  2.92157 -1.37255  0.00000  0.00000
+## [3,]  0.00000 -1.37255  2.92157 -1.37255  0.00000
+## [4,]  0.00000  0.00000 -1.37255  2.92157 -1.37255
+## [5,]  0.00000  0.00000  0.00000 -1.37255  1.96078</code></pre>
+<p><br></p>
+<p>In this particular setting, we could estimate <span class="math inline">\(\Omega\)</span> by taking the inverse of the sample covariance matrix <span class="math inline">\(\hat{S} = \sum_{i = 1}^{n}(X_{i} - \bar{X})(X_{i} - \bar{X})^{T}/n\)</span>:</p>
+<p><br></p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="co"># print inverse of sample precision matrix (perhaps a bad estimate)</span></a>
+<a class="sourceLine" id="cb13-2" data-line-number="2"><span class="kw">round</span>(<span class="kw">qr.solve</span>(<span class="kw">cov</span>(data<span class="op">$</span>X)<span class="op">*</span>(<span class="kw">nrow</span>(data<span class="op">$</span>X) <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)<span class="op">/</span><span class="kw">nrow</span>(data<span class="op">$</span>X)), <span class="dv">5</span>)</a></code></pre></div>
+<pre><code>##          [,1]     [,2]     [,3]     [,4]     [,5]
+## [1,]  2.20420 -1.24670 -0.12435 -0.02156 -0.20889
+## [2,] -1.24670  2.39120 -0.90434  0.09653 -0.04804
+## [3,] -0.12435 -0.90434  2.61482 -1.62774  0.14684
+## [4,] -0.02156  0.09653 -1.62774  3.38677 -1.75151
+## [5,] -0.20889 -0.04804  0.14684 -1.75151  2.36464</code></pre>
+<p><br></p>
+<p>However, because <span class="math inline">\(\Omega\)</span> is sparse, this estimator will likely perform very poorly. Notice the number of zeros in our oracle precision matrix compared to the inverse of the sample covariance matrix. Instead, we will use <code>SCPME</code> to estimate <span class="math inline">\(\Omega\)</span>.</p>
+<p>By default, <code>SCPME</code> will estimate <span class="math inline">\(\Omega\)</span> using a lasso penalty (<span class="math inline">\(A = I_{p}, B = I_{p}, \mbox{ and } C = 0\)</span>) and choose the optimal <code>lam</code> tuning parameter that minimizes the mean squared prediction error for the regression of the variable <span class="math inline">\(Y\)</span> on <span class="math inline">\(X\)</span>.</p>
+<p><br></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="co"># lasso penalty</span></a>
+<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="kw"><a href="../reference/shrink.html">shrink</a></span>(<span class="dt">X =</span> data<span class="op">$</span>X, <span class="dt">Y =</span> data<span class="op">$</span>Y)</a></code></pre></div>
 <pre><code>## 
-## Call: shrink(X = X, tol.abs = 1e-08, tol.rel = 1e-08)
+## Call: shrink(X = data$X, Y = data$Y)
 ## 
-## Iterations: 95
+## Iterations: 37
 ## 
 ## Tuning parameters:
 ##       log10(lam)    lam
-## [1,]       -1.71  0.019
+## [1,]      -1.163  0.069
 ## 
-## Log-likelihood: -117.08619
+## Log-likelihood: -178.20154
 ## 
 ## Omega:
 ##          [,1]     [,2]     [,3]     [,4]     [,5]
-## [1,]  2.06713 -1.20300  0.00000  0.00000  0.18807
-## [2,] -1.20300  2.66691 -1.24308 -0.11881  0.04527
-## [3,]  0.00000 -1.24308  2.70804 -1.07533 -0.05046
-## [4,]  0.00000 -0.11881 -1.07533  2.38011 -1.12583
-## [5,]  0.18807  0.04527 -0.05046 -1.12583  1.81743</code></pre>
+## [1,]  1.60847 -0.73553 -0.14094 -0.04329 -0.11730
+## [2,] -0.73553  1.66045 -0.52579 -0.03576 -0.03342
+## [3,] -0.14094 -0.52579  1.73410 -0.85121 -0.07332
+## [4,] -0.04329 -0.03576 -0.85121  2.02541 -0.93612
+## [5,] -0.11730 -0.03342 -0.07332 -0.93612  1.62397</code></pre>
 <p><br></p>
-<p><strong>LASSO:</strong></p>
+<p>However, we could also select the optimal tuning parameter based on other criteria, such as log-likelihood. Other options include: AIC, BIC, and penalized log-likelihood (<code>penloglik</code>).</p>
 <p><br></p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="co"># lasso penalty (default tolerance)</span></a>
-<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="kw"><a href="../reference/shrink.html">shrink</a></span>(X, <span class="dt">alpha =</span> <span class="dv">1</span>)</a></code></pre></div>
-<pre><code>## Matrix Y not detected... will use loglik for crit.cv instead!</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="co"># lasso penalty with crit.cv = loglik</span></a>
+<a class="sourceLine" id="cb17-2" data-line-number="2"><span class="kw"><a href="../reference/shrink.html">shrink</a></span>(<span class="dt">X =</span> data<span class="op">$</span>X, <span class="dt">Y =</span> data<span class="op">$</span>Y, <span class="dt">crit.cv =</span> <span class="st">"loglik"</span>)</a></code></pre></div>
 <pre><code>## 
-## Call: shrink(X = X, alpha = 1)
+## Call: shrink(X = data$X, Y = data$Y, crit.cv = "loglik")
 ## 
 ## Iterations: 51
 ## 
 ## Tuning parameters:
 ##       log10(lam)    lam
-## [1,]       -1.71  0.019
+## [1,]      -2.163  0.007
 ## 
-## Log-likelihood: -117.08659
+## Log-likelihood: -120.02858
 ## 
 ## Omega:
 ##          [,1]     [,2]     [,3]     [,4]     [,5]
-## [1,]  2.06658 -1.20249  0.00019 -0.00002  0.18782
-## [2,] -1.20249  2.66514 -1.24079 -0.12047  0.04608
-## [3,]  0.00019 -1.24079  2.70357 -1.07210 -0.05169
-## [4,] -0.00002 -0.12047 -1.07210  2.37768 -1.12487
-## [5,]  0.18782  0.04608 -0.05169 -1.12487  1.81698</code></pre>
+## [1,]  2.11926 -1.17294 -0.13784 -0.00678 -0.20014
+## [2,] -1.17294  2.28420 -0.81629  0.00009 -0.00001
+## [3,] -0.13784 -0.81629  2.45520 -1.42117  0.01650
+## [4,] -0.00678  0.00009 -1.42117  3.09526 -1.56839
+## [5,] -0.20014 -0.00001  0.01650 -1.56839  2.24703</code></pre>
 <p><br></p>
-<p><strong>RIDGE:</strong></p>
+<p><code>SCPME</code> also has the capability to provide plots for the cross validation errors. In the heatmap plot below, the more bright (white) areas of the heat map correspond to a better tuning parameter selection.</p>
 <p><br></p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="co"># ridge penalty</span></a>
-<a class="sourceLine" id="cb13-2" data-line-number="2"><span class="kw"><a href="../reference/shrink.html">shrink</a></span>(X, <span class="dt">alpha =</span> <span class="dv">0</span>)</a></code></pre></div>
-<pre><code>## Matrix Y not detected... will use loglik for crit.cv instead!</code></pre>
-<pre><code>## 
-## Call: shrink(X = X, alpha = 0)
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="co"># produce CV heat map</span></a>
+<a class="sourceLine" id="cb19-2" data-line-number="2">shrink =<span class="st"> </span><span class="kw"><a href="../reference/shrink.html">shrink</a></span>(<span class="dt">X =</span> data<span class="op">$</span>X, <span class="dt">nlam =</span> <span class="dv">50</span>, <span class="dt">crit.cv =</span> <span class="st">"BIC"</span>)</a>
+<a class="sourceLine" id="cb19-3" data-line-number="3"><span class="kw">plot</span>(shrink, <span class="dt">type =</span> <span class="st">"heatmap"</span>)</a></code></pre></div>
+<p><img src="Tutorial_files/figure-html/unnamed-chunk-6-1.png" width="700"><br></p>
+<p>Note that in the previous plot, it is not necessary to provide the <span class="math inline">\(Y\)</span> data matrix because neither the penalty nor the cross validation criteria depends on the values of <span class="math inline">\(Y\)</span>.</p>
+<p>We can also produce a line graph of the cross validation errors:</p>
+<p><br></p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="co"># produce line graph</span></a>
+<a class="sourceLine" id="cb20-2" data-line-number="2"><span class="kw">plot</span>(shrink, <span class="dt">type =</span> <span class="st">"line"</span>)</a></code></pre></div>
+<p><img src="Tutorial_files/figure-html/unnamed-chunk-7-1.png" width="700"><br></p>
+<p>We also have the option to print <em>all</em> of the estimated precision matrices for each tuning parameter using the <code>path</code> option. This option should be used with <em>extreme</em> care when the dimension and sample size is large – you may run into memory issues.</p>
+<p><br></p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="co"># keep all estimates using path</span></a>
+<a class="sourceLine" id="cb21-2" data-line-number="2">shrink =<span class="st"> </span><span class="kw"><a href="../reference/shrink.html">shrink</a></span>(<span class="dt">X =</span> data<span class="op">$</span>X, <span class="dt">crit.cv =</span> <span class="st">"loglik"</span>, <span class="dt">path =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb21-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb21-4" data-line-number="4"><span class="co"># print only first three objects</span></a>
+<a class="sourceLine" id="cb21-5" data-line-number="5">shrink<span class="op">$</span>Path[,,<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>]</a></code></pre></div>
+<pre><code>## , , 1
 ## 
-## Iterations: 47
+##             [,1]        [,2]       [,3]        [,4]        [,5]
+## [1,]  2.19543530 -1.23889959 -0.1271551 -0.01682895 -0.21009482
+## [2,] -1.23889959  2.37914630 -0.8914841  0.07898398 -0.03816845
+## [3,] -0.12715507 -0.89148407  2.5931517 -1.59916427  0.12892500
+## [4,] -0.01682895  0.07898398 -1.5991643  3.34883645 -1.72795124
+## [5,] -0.21009482 -0.03816845  0.1289250 -1.72795124  2.34972956
+## 
+## , , 2
+## 
+##             [,1]        [,2]       [,3]        [,4]       [,5]
+## [1,]  2.18478579 -1.23000041 -0.1292381 -0.01274449 -0.2106575
+## [2,] -1.23000041  2.36658349 -0.8803800  0.06396425 -0.0297196
+## [3,] -0.12923808 -0.88037999  2.5773851 -1.57991498  0.1159757
+## [4,] -0.01274449  0.06396425 -1.5799150  3.32563221 -1.7124030
+## [5,] -0.21065749 -0.02971960  0.1159757 -1.71240305  2.3391038
+## 
+## , , 3
+## 
+##              [,1]         [,2]        [,3]         [,4]         [,5]
+## [1,]  2.164172415 -1.211739989 -0.13561589 -0.002034714 -0.213142034
+## [2,] -1.211739989  2.339429494 -0.85304014  0.027076850 -0.009253626
+## [3,] -0.135615886 -0.853040140  2.53351655 -1.523234253  0.080310543
+## [4,] -0.002034714  0.027076850 -1.52323425  3.251973536 -1.666506825
+## [5,] -0.213142034 -0.009253626  0.08031054 -1.666506825  2.309830670</code></pre>
+<p><br></p>
+<p>Recall that all of the estimators so far have used a lasso penalty that penalizes the sum of the absolute value of all the entries in <span class="math inline">\(\Omega\)</span>. In effect, this penalty embeds an assumption in our estimate that the true <span class="math inline">\(\Omega\)</span> is sparse.</p>
+<p>The flexibility of the penalty described in <span class="citation">Molstad and Rothman (2017)</span> allows us to make other assumptions as well. For instance, in the penalty we could set <span class="math inline">\(A = I_{p}, B = \Sigma_{xy}\)</span> where <span class="math inline">\(\Sigma_{xy}\)</span> is the covariance matrix of <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>, and <span class="math inline">\(C = 0\)</span>. In which case</p>
+<p><span class="math display">\[P_{\lambda}\left(\Omega \right) = \lambda\left\| A\Omega B - C \right\|_{1} = \lambda\left\| \Omega\Sigma_{xy} \right\|_{1} = \lambda\left\| \beta \right\|_{1} \]</span></p>
+<p>This objective function estimates an <span class="math inline">\(\Omega\)</span> via the marginal log-likelihood of <span class="math inline">\(X\)</span> under the assumption that the forward regression coefficient <span class="math inline">\(\beta\)</span> is sparse (recall that <span class="math inline">\(\beta \equiv \Omega\Sigma_{xy}\)</span>). Of course, we do not know the true covariance matrix <span class="math inline">\(\Sigma_{xy}\)</span> but we could use the sample estimate instead.</p>
+<p><br></p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="co"># assume sparsity in beta</span></a>
+<a class="sourceLine" id="cb23-2" data-line-number="2">lam_max =<span class="st"> </span><span class="kw">max</span>(<span class="kw">abs</span>(<span class="kw">crossprod</span>(data<span class="op">$</span>X, data<span class="op">$</span>Y)))</a>
+<a class="sourceLine" id="cb23-3" data-line-number="3">(<span class="dt">shrink =</span> <span class="kw"><a href="../reference/shrink.html">shrink</a></span>(<span class="dt">X =</span> data<span class="op">$</span>X, <span class="dt">Y =</span> data<span class="op">$</span>Y, <span class="dt">B =</span> <span class="kw">cov</span>(data<span class="op">$</span>X, data<span class="op">$</span>Y), <span class="dt">lam.max =</span> lam_max, <span class="dt">nlam =</span> <span class="dv">20</span>))</a></code></pre></div>
+<pre><code>## 
+## Call: shrink(X = data$X, Y = data$Y, B = cov(data$X, data$Y), nlam = 20, 
+##     lam.max = lam_max)
+## 
+## Iterations: 84
 ## 
 ## Tuning parameters:
 ##       log10(lam)    lam
-## [1,]      -2.377  0.004
+## [1,]      -0.167  0.681
 ## 
-## Log-likelihood: -98.92729
+## Log-likelihood: -133.98097
 ## 
 ## Omega:
 ##          [,1]     [,2]     [,3]     [,4]     [,5]
-## [1,]  2.20968 -1.38378  0.12187 -0.06242  0.23321
-## [2,] -1.38378  2.98201 -1.45757 -0.18501  0.17736
-## [3,]  0.12187 -1.45757  2.93846 -1.12008 -0.13877
-## [4,] -0.06242 -0.18501 -1.12008  2.59176 -1.26982
-## [5,]  0.23321  0.17736 -0.13877 -1.26982  1.97111</code></pre>
+## [1,]  2.12467 -1.20016 -0.01149  0.01660 -0.20424
+## [2,] -1.20016  2.28202 -0.70370  0.03047 -0.01211
+## [3,] -0.01149 -0.70370  2.09284 -1.47505  0.01020
+## [4,]  0.01660  0.03047 -1.47505  2.86829 -1.45784
+## [5,] -0.20424 -0.01211  0.01020 -1.45784  2.18752</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="co"># plot CV errors</span></a>
+<a class="sourceLine" id="cb25-2" data-line-number="2"><span class="kw">plot</span>(shrink)</a></code></pre></div>
+<p><img src="Tutorial_files/figure-html/unnamed-chunk-9-1.png" width="700"><br></p>
+<p>Note that we specified the maximum <code>lam</code> value in the previous function to expand the tuning parameter grid.</p>
+<p>Conveniently, with these settings, the augmented ADMM algorithm also solves for the estimated <span class="math inline">\(\beta\)</span> coefficient matrix simultaneously:</p>
 <p><br></p>
-<p>This package also has the capability to provide heat maps for the cross validation errors. The more bright (white) areas of the heat map pertain to more optimal tuning parameters.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="co"># print estimated beta matrix</span></a>
+<a class="sourceLine" id="cb26-2" data-line-number="2">shrink<span class="op">$</span>Z</a></code></pre></div>
+<pre><code>##            [,1]
+## [1,] 0.00000000
+## [2,] 0.00000000
+## [3,] 0.42221120
+## [4,] 0.04782093
+## [5,] 0.00000000</code></pre>
 <p><br></p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="co"># produce CV heat map for ADMMsigma</span></a>
-<a class="sourceLine" id="cb16-2" data-line-number="2">shrink =<span class="st"> </span><span class="kw"><a href="../reference/shrink.html">shrink</a></span>(X, <span class="dt">tol.abs =</span> <span class="fl">1e-8</span>, <span class="dt">tol.rel =</span> <span class="fl">1e-8</span>)</a></code></pre></div>
-<pre><code>## Matrix Y not detected... will use loglik for crit.cv instead!</code></pre>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw">plot</span>(shrink, <span class="dt">type =</span> <span class="st">"heatmap"</span>)</a></code></pre></div>
-<p><img src="Tutorial_files/figure-html/unnamed-chunk-6-1.png" width="700"><br></p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="co"># produce line graph for CV errors for ADMMsigma</span></a>
-<a class="sourceLine" id="cb19-2" data-line-number="2"><span class="kw">plot</span>(shrink, <span class="dt">type =</span> <span class="st">"line"</span>)</a></code></pre></div>
-<p><img src="Tutorial_files/figure-html/unnamed-chunk-7-1.png" width="700"><br></p>
+<p>Another possible penalty is to set <span class="math inline">\(B = \left[ \Sigma_{xy}, I_{p} \right]\)</span> so that the identity matrix (dimension <span class="math inline">\(p\)</span>) is appended to the covariance matrix of <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>.</p>
+<p><span class="math display">\[ P_{\lambda}\left(\Omega \right) = \lambda\left\| A\Omega B - C \right\|_{1} = \lambda\left\| \Omega\left[\Sigma_{xy}, I_{p}\right] \right\|_{1} = \lambda\left\| \beta \right\|_{1} + \lambda\left\| \Omega \right\|_{1} \]</span></p>
+<p>In this case, not only are we assuming that <span class="math inline">\(\beta\)</span> is sparse, but we are also assuming sparsity in <span class="math inline">\(\Omega\)</span>.</p>
+<p><br></p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="co"># assume sparsity in beta AND omega</span></a>
+<a class="sourceLine" id="cb28-2" data-line-number="2">(<span class="dt">shrink =</span> <span class="kw"><a href="../reference/shrink.html">shrink</a></span>(<span class="dt">X =</span> data<span class="op">$</span>X, <span class="dt">Y =</span> data<span class="op">$</span>Y, <span class="dt">B =</span> <span class="kw">cbind</span>(<span class="kw">cov</span>(data<span class="op">$</span>X, data<span class="op">$</span>Y), <span class="kw">diag</span>(<span class="kw">ncol</span>(data<span class="op">$</span>X))), <span class="dt">lam.max =</span> <span class="dv">10</span>, <span class="dt">lam.min.ratio =</span> <span class="fl">1e-4</span>, <span class="dt">nlam =</span> <span class="dv">20</span>))</a></code></pre></div>
+<pre><code>## 
+## Call: shrink(X = data$X, Y = data$Y, B = cbind(cov(data$X, data$Y), 
+##     diag(ncol(data$X))), nlam = 20, lam.max = 10, lam.min.ratio = 1e-04)
+## 
+## Iterations: 31
+## 
+## Tuning parameters:
+##       log10(lam)    lam
+## [1,]      -0.684  0.207
+## 
+## Log-likelihood: -267.31073
+## 
+## Omega:
+##          [,1]     [,2]     [,3]     [,4]     [,5]
+## [1,]  1.09086 -0.34708 -0.12033 -0.04611 -0.04621
+## [2,] -0.34708  1.07196 -0.27895 -0.06526 -0.02562
+## [3,] -0.12033 -0.27895  1.06681 -0.41038 -0.12078
+## [4,] -0.04611 -0.06526 -0.41038  1.15921 -0.44333
+## [5,] -0.04621 -0.02562 -0.12078 -0.44333  1.05342</code></pre>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="co"># print estimated beta</span></a>
+<a class="sourceLine" id="cb30-2" data-line-number="2">shrink<span class="op">$</span>Z[, <span class="dv">1</span>, drop =<span class="st"> </span><span class="ot">FALSE</span>]</a></code></pre></div>
+<pre><code>##            [,1]
+## [1,] 0.00000000
+## [2,] 0.03332707
+## [3,] 0.37463383
+## [4,] 0.18450103
+## [5,] 0.07200722</code></pre>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1"><span class="co"># plot CV errors</span></a>
+<a class="sourceLine" id="cb32-2" data-line-number="2"><span class="kw">plot</span>(shrink)</a></code></pre></div>
+<p><img src="Tutorial_files/figure-html/unnamed-chunk-11-1.png" width="700"><br></p>
+</div>
+<div id="more-advanced-options" class="section level2">
+<h2 class="hasAnchor">
+<a href="#more-advanced-options" class="anchor"></a>More advanced options</h2>
+<p>A huge issue in precision matrix estimation is the computational complexity when the sample size and dimension of our data is particularly large. There are a number of built-in options in <code>SCPME</code> that can be used to improve computation speed:</p>
+<ul>
+<li>Reduce the number of <code>lam</code> values during cross validation. The default number is 10.</li>
+</ul>
+<p><br></p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1"><span class="co"># reduce number of lam to 5</span></a>
+<a class="sourceLine" id="cb33-2" data-line-number="2">shrink =<span class="st"> </span><span class="kw"><a href="../reference/shrink.html">shrink</a></span>(<span class="dt">X =</span> data<span class="op">$</span>X, <span class="dt">Y =</span> data<span class="op">$</span>Y, <span class="dt">nlam =</span> <span class="dv">5</span>)</a></code></pre></div>
+<p><br></p>
+<ul>
+<li>Reduce the number of <code>K</code> folds during cross validation. The default number is 5.</li>
+</ul>
+<p><br></p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1"><span class="co"># reduce number of folds to 3</span></a>
+<a class="sourceLine" id="cb34-2" data-line-number="2">shrink =<span class="st"> </span><span class="kw"><a href="../reference/shrink.html">shrink</a></span>(<span class="dt">X =</span> data<span class="op">$</span>X, <span class="dt">Y =</span> data<span class="op">$</span>Y, <span class="dt">K =</span> <span class="dv">3</span>)</a></code></pre></div>
+<p><br></p>
+<ul>
+<li>Relax the convergence critera for the ADMM algorithm using the <code>tol.abs</code> and <code>tol.rel</code> options. The default for each is 1e-4.</li>
+</ul>
+<p><br></p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" data-line-number="1"><span class="co"># relax convergence criteria</span></a>
+<a class="sourceLine" id="cb35-2" data-line-number="2">shrink =<span class="st"> </span><span class="kw"><a href="../reference/shrink.html">shrink</a></span>(<span class="dt">X =</span> data<span class="op">$</span>X, <span class="dt">Y =</span> data<span class="op">$</span>Y, <span class="dt">tol.abs =</span> <span class="fl">1e-3</span>, <span class="dt">tol.rel =</span> <span class="fl">1e-3</span>)</a></code></pre></div>
+<p><br></p>
+<ul>
+<li>Adjust the maximum number of iterations. The default is 1e4.</li>
+</ul>
+<p><br></p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1"><span class="co"># adjust maximum number of iterations</span></a>
+<a class="sourceLine" id="cb36-2" data-line-number="2">shrink =<span class="st"> </span><span class="kw"><a href="../reference/shrink.html">shrink</a></span>(<span class="dt">X =</span> data<span class="op">$</span>X, <span class="dt">Y =</span> data<span class="op">$</span>Y, <span class="dt">maxit =</span> <span class="fl">1e3</span>)</a></code></pre></div>
+<p><br></p>
+<ul>
+<li>Adjust <code>adjmaxit</code>. This allows the user to adjust the maximum number of iterations <em>after</em> the first <code>lam</code> tuning parameter has fully converged during cross validation. This allows for <em>one-step estimators</em> and can greatly reduce the time required for the cross validation procedure while still choosing near-optimal tuning parameters.</li>
+</ul>
+<p><br></p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" data-line-number="1"><span class="co"># adjust adjmaxit</span></a>
+<a class="sourceLine" id="cb37-2" data-line-number="2">shrink =<span class="st"> </span><span class="kw"><a href="../reference/shrink.html">shrink</a></span>(<span class="dt">X =</span> data<span class="op">$</span>X, <span class="dt">Y =</span> data<span class="op">$</span>Y, <span class="dt">adjmaxit =</span> <span class="dv">2</span>)</a></code></pre></div>
+<p><br></p>
+<ul>
+<li>We can also opt to run our cross validation procedure in parallel. The user should check how many cores are on their system before using this option</li>
+</ul>
+<p><br></p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" data-line-number="1"><span class="co"># parallel CV</span></a>
+<a class="sourceLine" id="cb38-2" data-line-number="2">shrink =<span class="st"> </span><span class="kw"><a href="../reference/shrink.html">shrink</a></span>(<span class="dt">X =</span> data<span class="op">$</span>X, <span class="dt">Y =</span> data<span class="op">$</span>Y, <span class="dt">cores =</span> <span class="dv">2</span>)</a></code></pre></div>
+<p><br></p>
+<p><br><br></p>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2 class="hasAnchor">
+<a href="#references" class="anchor"></a>References</h2>
+<div id="refs" class="references">
+<div id="ref-molstad2017shrinking">
+<p>Molstad, Aaron J, and Adam J Rothman. 2017. “Shrinking Characteristics of Precision Matrix Estimators.” <em>Biometrika</em>.</p>
+</div>
+</div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+        <div id="tocnav">
+      <h2 class="hasAnchor">
+<a href="#tocnav" class="anchor"></a>Contents</h2>
+      <ul class="nav nav-pills nav-stacked">
+<li><a href="#introduction">Introduction</a></li>
+      <li><a href="#simulation">Simulation</a></li>
+      <li><a href="#more-advanced-options">More advanced options</a></li>
+      <li><a href="#references">References</a></li>
+      </ul>
+</div>
       </div>
 
 </div>
