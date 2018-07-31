@@ -3,6 +3,7 @@ pkgdown: 1.1.0
 pkgdown_sha: ~
 articles:
   Details: Details.html
+  Tutorial: Tutorial.html
 urls:
   reference: https://mgallow.github.io/SCPME//reference
   article: https://mgallow.github.io/SCPME//articles
