@@ -9,9 +9,9 @@ Status](https://travis-ci.org/MGallow/shrink.svg?branch=master)](https://travis-
 
 `SCPME` is an implementation of the methods described in “Shrinking
 Characteristics of Precision Matrix Estimators”
-[pdf](https://doi.org/10.1093/biomet/asy023). It estimates a penalized
-precision matrix via a modified alternating direction method of
-multipliers (ADMM)
+([link](https://doi.org/10.1093/biomet/asy023)). It estimates a
+penalized precision matrix via a modified alternating direction method
+of multipliers (ADMM)
 algorithm.
 
 <p align="center">
@@ -30,14 +30,13 @@ be found below:
   - `plot.shrink()` produces a heat map or line graph for cross
     validation errors
 
-See [vignette](https://mgallow.github.io/SCPME/) or
+See package [website](https://mgallow.github.io/SCPME/) or
 [manual](https://github.com/MGallow/ADMMsigma/blob/master/SCPME.pdf).
 
 ## Installation
 
 ``` r
-# The easiest way to install is from GitHub:
-# install.packages("devtools")
+# The easiest way to install is from GitHub: install.packages('devtools')
 devtools::install_github("MGallow/shrink")
 ```
 
@@ -52,13 +51,13 @@ welcome\!
 library(SCPME)
 set.seed(123)
 
-# let us generate data for a quick simulation
-# we can use the built-in `data_gen` function
+# generate data from a sparse oracle precision matrix we can use the
+# built-in `data_gen` function
 
-# generate 100 samples
+# generate 100 x 5 X data matrix and 100 x 1 Y data matrix
 data = data_gen(p = 5, n = 100, r = 1)
 
-# default is generated from sparse regression coefficients
+# the default regression coefficients are sparse
 data$betas
 ```
 
@@ -70,7 +69,7 @@ data$betas
     ## [5,]  0.00000000
 
 ``` r
-# and a sparse oracle precision matrix
+# default oracle precision matrix is also sparse
 round(qr.solve(data$SigmaX), 5)
 ```
 
@@ -84,9 +83,9 @@ round(qr.solve(data$SigmaX), 5)
 ``` r
 # now suppose we are interested in estimating the precision
 
-# print marginal sample precision matrix for X
-# this is perhaps a bad estimate (not sparse)
-sample = (nrow(data$X) - 1)/nrow(data$X)*cov(data$X)
+# print marginal sample precision matrix for X this is perhaps a bad
+# estimate (not sparse)
+sample = (nrow(data$X) - 1)/nrow(data$X) * cov(data$X)
 round(qr.solve(sample), 5)
 ```
 
@@ -98,8 +97,8 @@ round(qr.solve(sample), 5)
     ## [5,] -0.20889 -0.04804  0.14684 -1.75151  2.36464
 
 ``` r
-# estimate preicison matrix (omega) assuming sparsity
-# note that this is simply a lasso penalized preicision matrix
+# now use SCPME to estimate preicison matrix (omega) assuming sparsity note
+# that this is simply a lasso penalized preicision matrix
 shrink(data$X, lam = 0.5, crit.cv = "loglik")
 ```
 
@@ -163,7 +162,8 @@ shrink$Z
 
 ``` r
 # we could also assume sparsity in beta AND omega (print estimated omega)
-(shrink2 = shrink(data$X, data$Y, B = cbind(cov(data$X, data$Y), diag(ncol(data$X))), nlam = 20, lam.max = 10, lam.min.ratio = 1e-4))
+(shrink2 = shrink(data$X, data$Y, B = cbind(cov(data$X, data$Y), diag(ncol(data$X))), 
+    nlam = 20, lam.max = 10, lam.min.ratio = 1e-04))
 ```
 
     ## 
@@ -188,7 +188,7 @@ shrink$Z
 
 ``` r
 # print estimated beta
-shrink2$Z[,1, drop = FALSE]
+shrink2$Z[, 1, drop = FALSE]
 ```
 
     ##             [,1]
