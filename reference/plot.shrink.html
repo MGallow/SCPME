@@ -87,6 +87,24 @@
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/Tutorial.html">Tutorial</a>
+    </li>
+    <li>
+      <a href="../articles/Details.html">Details</a>
+    </li>
+    <li>
+      <a href="../reference/index.html">Functions</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Related Packages
      
     <span class="caret"></span>
@@ -181,33 +199,32 @@
 <span class='no'>data</span> <span class='kw'>=</span> <span class='fu'><a href='data_gen.html'>data_gen</a></span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>p</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>r</span> <span class='kw'>=</span> <span class='fl'>1</span>)
 
 <span class='co'># lasso penalized beta (print estimated omega)</span>
-(<span class='no'>shrink</span> <span class='kw'>=</span> <span class='fu'><a href='shrink.html'>shrink</a></span>(<span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>X</span>, <span class='kw'>Y</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>Y</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='fu'>cov</span>(<span class='no'>data</span>$<span class='no'>X</span>, <span class='no'>data</span>$<span class='no'>Y</span>), <span class='kw'>lam.max</span> <span class='kw'>=</span> <span class='fu'>max</span>(<span class='fu'>abs</span>(<span class='fu'>t</span>(<span class='no'>data</span>$<span class='no'>X</span>) <span class='kw'>%*%</span> <span class='no'>data</span>$<span class='no'>Y</span>))))</div><div class='output co'>#&gt; 
-#&gt; Optimal tuning parameter on boundary...!</div><div class='output co'>#&gt; 
-#&gt; Call: shrink(X = data$X, Y = data$Y, B = cov(data$X, data$Y), lam.max = max(abs(t(data$X) %*% 
-#&gt;     data$Y)))
+<span class='no'>lam.max</span> <span class='kw'>=</span> <span class='fu'>max</span>(<span class='fu'>abs</span>(<span class='fu'>t</span>(<span class='no'>data</span>$<span class='no'>X</span>) <span class='kw'>%*%</span> <span class='no'>data</span>$<span class='no'>Y</span>))
+(<span class='no'>shrink</span> <span class='kw'>=</span> <span class='fu'><a href='shrink.html'>shrink</a></span>(<span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>X</span>, <span class='kw'>Y</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>Y</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='fu'>cov</span>(<span class='no'>data</span>$<span class='no'>X</span>, <span class='no'>data</span>$<span class='no'>Y</span>), <span class='kw'>lam.max</span> <span class='kw'>=</span> <span class='no'>lam.max</span>))</div><div class='output co'>#&gt; 
+#&gt; Call: shrink(X = data$X, Y = data$Y, B = cov(data$X, data$Y), lam.max = lam.max)
 #&gt; 
-#&gt; Iterations: 26
+#&gt; Iterations: 34
 #&gt; 
 #&gt; Tuning parameters:
 #&gt;       log10(lam)    lam
-#&gt; [1,]       -0.36  0.436
+#&gt; [1,]       0.307  2.026
 #&gt; 
-#&gt; Log-likelihood: -128.48303
+#&gt; Log-likelihood: -153.84938
 #&gt; 
 #&gt; Omega:
 #&gt;          [,1]     [,2]     [,3]     [,4]     [,5]
-#&gt; [1,]  1.63392 -1.05031 -0.10946 -0.07576 -0.06284
-#&gt; [2,] -1.05031  2.46777 -1.16402  0.18325 -0.25770
-#&gt; [3,] -0.10946 -1.16402  2.61180 -0.94468 -0.37604
-#&gt; [4,] -0.07576  0.18325 -0.94468  2.30039 -0.91588
-#&gt; [5,] -0.06284 -0.25770 -0.37604 -0.91588  1.85976</div><div class='input'>
+#&gt; [1,]  1.53191 -1.06296 -0.13706 -0.06565 -0.12001
+#&gt; [2,] -1.06296  2.31629 -1.06647  0.13630 -0.28381
+#&gt; [3,] -0.13706 -1.06647  2.49204 -0.87867 -0.39150
+#&gt; [4,] -0.06565  0.13630 -0.87867  2.22646 -0.87815
+#&gt; [5,] -0.12001 -0.28381 -0.39150 -0.87815  1.81671</div><div class='input'>
 <span class='co'># print estimated beta</span>
 <span class='no'>shrink</span>$<span class='no'>Z</span></div><div class='output co'>#&gt;            [,1]
-#&gt; [1,] 0.21230091
-#&gt; [2,] 0.14967305
+#&gt; [1,] 0.14183710
+#&gt; [2,] 0.09678515
 #&gt; [3,] 0.00000000
 #&gt; [4,] 0.00000000
-#&gt; [5,] 0.04311244</div><div class='input'>
+#&gt; [5,] 0.00000000</div><div class='input'>
 <span class='co'># create heatmap of CV errors</span>
 <span class='fu'>plot</span>(<span class='no'>shrink</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>'heatmap'</span>)</div><div class='img'><img src='plot.shrink-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># create line graph of CV errors</span>

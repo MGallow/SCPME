@@ -96,6 +96,24 @@ where \(\lambda &amp;gt; 0\) and we define
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/Tutorial.html">Tutorial</a>
+    </li>
+    <li>
+      <a href="../articles/Details.html">Details</a>
+    </li>
+    <li>
+      <a href="../reference/index.html">Functions</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Related Packages
      
     <span class="caret"></span>
@@ -171,7 +189,7 @@ following optimization problem:</p><dl class='dl-horizontal'>
 
     <pre class="usage"><span class='fu'>shrink</span>(<span class='kw'>X</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>S</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>A</span> <span class='kw'>=</span> <span class='fu'>diag</span>(<span class='fu'>ncol</span>(<span class='no'>S</span>)),
   <span class='kw'>B</span> <span class='kw'>=</span> <span class='fu'>diag</span>(<span class='fu'>ncol</span>(<span class='no'>S</span>)), <span class='kw'>C</span> <span class='kw'>=</span> <span class='fu'>matrix</span>(<span class='fl'>0</span>, <span class='kw'>ncol</span> <span class='kw'>=</span> <span class='fu'>ncol</span>(<span class='no'>B</span>), <span class='kw'>nrow</span> <span class='kw'>=</span> <span class='fu'>ncol</span>(<span class='no'>A</span>)),
-  <span class='kw'>nlam</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>lam.max</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>lam.min.ratio</span> <span class='kw'>=</span> <span class='fl'>0.01</span>, <span class='kw'>lam</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>nlam</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>lam.max</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>lam.min.ratio</span> <span class='kw'>=</span> <span class='fl'>0.001</span>, <span class='kw'>lam</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>path</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>rho</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>mu</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>tau.rho</span> <span class='kw'>=</span> <span class='fl'>2</span>,
   <span class='kw'>iter.rho</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>crit</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"ADMM"</span>, <span class='st'>"loglik"</span>), <span class='kw'>tol.abs</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>,
   <span class='kw'>tol.rel</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>, <span class='kw'>maxit</span> <span class='kw'>=</span> <span class='fl'>10000</span>, <span class='kw'>adjmaxit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>K</span> <span class='kw'>=</span> <span class='fl'>5</span>,
@@ -215,7 +233,7 @@ following optimization problem:</p><dl class='dl-horizontal'>
     </tr>
     <tr>
       <th>lam.min.ratio</th>
-      <td><p>smallest <code>lam</code> value provided as a fraction of <code>lam.max</code>. The function will automatically generate <code>nlam</code> tuning parameters from <code>lam.min.ratio*lam.max</code> to <code>lam.max</code> in log10 scale. If <code>lam.max = NULL</code>, <code>lam.max</code> is calculated to be the smallest <code>lam</code> such that all off-diagonal entries in <code>Omega</code> are equal to zero. Defaults to 1e-2.</p></td>
+      <td><p>smallest <code>lam</code> value provided as a fraction of <code>lam.max</code>. The function will automatically generate <code>nlam</code> tuning parameters from <code>lam.min.ratio*lam.max</code> to <code>lam.max</code> in log10 scale. If <code>lam.max = NULL</code>, <code>lam.max</code> is calculated to be the smallest <code>lam</code> such that all off-diagonal entries in <code>Omega</code> are equal to zero. Defaults to 1e-3.</p></td>
     </tr>
     <tr>
       <th>lam</th>
@@ -334,25 +352,25 @@ following optimization problem:</p><dl class='dl-horizontal'>
 <span class='fu'>shrink</span>(<span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>X</span>, <span class='kw'>Y</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>Y</span>)</div><div class='output co'>#&gt; 
 #&gt; Call: shrink(X = data$X, Y = data$Y)
 #&gt; 
-#&gt; Iterations: 35
+#&gt; Iterations: 41
 #&gt; 
 #&gt; Tuning parameters:
 #&gt;       log10(lam)    lam
-#&gt; [1,]      -0.961  0.109
+#&gt; [1,]      -1.073  0.085
 #&gt; 
-#&gt; Log-likelihood: -197.32226
+#&gt; Log-likelihood: -179.30164
 #&gt; 
 #&gt; Omega:
 #&gt;          [,1]     [,2]     [,3]     [,4]     [,5]
-#&gt; [1,]  1.21328 -0.71866 -0.08761 -0.03386 -0.04071
-#&gt; [2,] -0.71866  1.80710 -0.65498  0.00009 -0.01834
-#&gt; [3,] -0.08761 -0.65498  1.84601 -0.78331  0.00005
-#&gt; [4,] -0.03386  0.00009 -0.78331  1.62316 -0.62687
-#&gt; [5,] -0.04071 -0.01834  0.00005 -0.62687  1.31702</div><div class='input'>
+#&gt; [1,]  1.31952 -0.84100 -0.07959 -0.02455 -0.05374
+#&gt; [2,] -0.84100  2.03956 -0.77868  0.00007 -0.00758
+#&gt; [3,] -0.07959 -0.77868  2.08500 -0.91900  0.00003
+#&gt; [4,] -0.02455  0.00007 -0.91900  1.81751 -0.72308
+#&gt; [5,] -0.05374 -0.00758  0.00003 -0.72308  1.42184</div><div class='input'>
 <span class='co'># lasso penalized beta (print estimated omega)</span>
-(<span class='no'>shrink</span> <span class='kw'>=</span> <span class='fu'>shrink</span>(<span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>X</span>, <span class='kw'>Y</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>Y</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='fu'>cov</span>(<span class='no'>data</span>$<span class='no'>X</span>, <span class='no'>data</span>$<span class='no'>Y</span>), <span class='kw'>lam.max</span> <span class='kw'>=</span> <span class='fu'>max</span>(<span class='fu'>abs</span>(<span class='fu'>t</span>(<span class='no'>data</span>$<span class='no'>X</span>) <span class='kw'>%*%</span> <span class='no'>data</span>$<span class='no'>Y</span>))))</div><div class='output co'>#&gt; 
-#&gt; Call: shrink(X = data$X, Y = data$Y, B = cov(data$X, data$Y), lam.max = max(abs(t(data$X) %*% 
-#&gt;     data$Y)))
+<span class='no'>lam.max</span> <span class='kw'>=</span> <span class='fu'>max</span>(<span class='fu'>abs</span>(<span class='fu'>t</span>(<span class='no'>data</span>$<span class='no'>X</span>) <span class='kw'>%*%</span> <span class='no'>data</span>$<span class='no'>Y</span>))
+(<span class='no'>shrink</span> <span class='kw'>=</span> <span class='fu'>shrink</span>(<span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>X</span>, <span class='kw'>Y</span> <span class='kw'>=</span> <span class='no'>data</span>$<span class='no'>Y</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='fu'>cov</span>(<span class='no'>data</span>$<span class='no'>X</span>, <span class='no'>data</span>$<span class='no'>Y</span>), <span class='kw'>lam.max</span> <span class='kw'>=</span> <span class='no'>lam.max</span>))</div><div class='output co'>#&gt; 
+#&gt; Call: shrink(X = data$X, Y = data$Y, B = cov(data$X, data$Y), lam.max = lam.max)
 #&gt; 
 #&gt; Iterations: 42
 #&gt; 
