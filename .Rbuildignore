@@ -9,7 +9,8 @@
 ^SCPME\.pdf$
 ^_pkgdown\.yml$
 ^pkgdown$
-
+^vignettes/Benchmark\.Rmd$
+^vignettes/Benchmark_cache$
 
 
 ^vignettes/Jointloglik\.Rmd$
