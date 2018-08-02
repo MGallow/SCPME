@@ -11,6 +11,7 @@
 ^pkgdown$
 ^vignettes/Benchmark\.Rmd$
 ^vignettes/Benchmark_cache$
+^vignettes/Benchmark\.html$
 
 
 ^vignettes/Jointloglik\.Rmd$

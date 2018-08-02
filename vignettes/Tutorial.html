@@ -241,8 +241,8 @@ hr {
 <pre><code class="r">library(SCPME)
 set.seed(123)
 
-# generate data from a sparse oracle precision matrix.  we can use the
-# built-in `data_gen` function
+# generate data from a sparse oracle precision matrix.
+# we can use the built-in `data_gen` function
 
 # generate 100 x 5 X data matrix and 100 x 1 Y data matrix
 data = data_gen(p = 5, n = 100, r = 1)
@@ -334,7 +334,7 @@ round(qr.solve(data$SigmaX), 5)
 <p><br>\vspace{0.5cm}</p>
 
 <pre><code class="r"># print inverse of sample precision matrix (perhaps a bad estimate)
-round(qr.solve(cov(data$X) * (nrow(data$X) - 1)/nrow(data$X)), 5)
+round(qr.solve(cov(data$X)*(nrow(data$X) - 1)/nrow(data$X)), 5)
 </code></pre>
 
 <pre><code>##          [,1]     [,2]     [,3]     [,4]     [,5]
@@ -442,7 +442,7 @@ plot(shrink, type = &quot;line&quot;)
 shrink = shrink(X = data$X, crit.cv = &quot;loglik&quot;, path = TRUE)
 
 # print only first three objects
-shrink$Path[, , 1:3]
+shrink$Path[,,1:3]
 </code></pre>
 
 <pre><code>## , , 1
@@ -487,8 +487,7 @@ shrink$Path[, , 1:3]
 
 <pre><code class="r"># assume sparsity in beta
 lam_max = max(abs(crossprod(data$X, data$Y)))
-(shrink = shrink(X = data$X, Y = data$Y, B = cov(data$X, data$Y), lam.max = lam_max, 
-    nlam = 20))
+(shrink = shrink(X = data$X, Y = data$Y, B = cov(data$X, data$Y), lam.max = lam_max, nlam = 20))
 </code></pre>
 
 <pre><code>## 
@@ -548,8 +547,7 @@ shrink$Z
 <p><br>\vspace{0.5cm}</p>
 
 <pre><code class="r"># assume sparsity in beta AND omega
-(shrink = shrink(X = data$X, Y = data$Y, B = cbind(cov(data$X, data$Y), diag(ncol(data$X))), 
-    lam.max = 10, lam.min.ratio = 1e-04, nlam = 20))
+(shrink = shrink(X = data$X, Y = data$Y, B = cbind(cov(data$X, data$Y), diag(ncol(data$X))), lam.max = 10, lam.min.ratio = 1e-4, nlam = 20))
 </code></pre>
 
 <pre><code>## 
@@ -627,7 +625,7 @@ shrink = shrink(X = data$X, Y = data$Y, K = 3)
 <p><br>\vspace{0.5cm}</p>
 
 <pre><code class="r"># relax convergence criteria
-shrink = shrink(X = data$X, Y = data$Y, tol.abs = 0.001, tol.rel = 0.001)
+shrink = shrink(X = data$X, Y = data$Y, tol.abs = 1e-3, tol.rel = 1e-3)
 </code></pre>
 
 <p><br>\vspace{0.5cm}</p>
@@ -639,7 +637,7 @@ shrink = shrink(X = data$X, Y = data$Y, tol.abs = 0.001, tol.rel = 0.001)
 <p><br>\vspace{0.5cm}</p>
 
 <pre><code class="r"># adjust maximum number of iterations
-shrink = shrink(X = data$X, Y = data$Y, maxit = 1000)
+shrink = shrink(X = data$X, Y = data$Y, maxit = 1e3)
 </code></pre>
 
 <p><br>\vspace{0.5cm}</p>
