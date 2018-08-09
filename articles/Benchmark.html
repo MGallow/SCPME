@@ -153,8 +153,8 @@
 <pre><code>## Unit: milliseconds
 ##                                                                                                      expr
 ##  shrink(S = sample, crit.cv = "loglik", lam = 0.1, tol.abs = 1e-04,      tol.rel = 1e-04, trace = "none")
-##       min       lq     mean  median       uq      max neval
-##  444.9687 460.6336 469.2401 468.103 476.5996 519.1884   100</code></pre>
+##       min       lq     mean   median       uq      max neval
+##  443.3506 450.3688 463.6747 461.9791 473.2268 496.8634   100</code></pre>
 <p><br></p>
 <ul>
 <li>Stricter convergence tolerance with specified tuning parameters (no cross validation):</li>
@@ -166,7 +166,7 @@
 ##                                                                                                      expr
 ##  shrink(S = sample, crit.cv = "loglik", lam = 0.1, tol.abs = 1e-08,      tol.rel = 1e-08, trace = "none")
 ##       min       lq     mean   median       uq      max neval
-##  1.594546 1.633642 1.670715 1.662222 1.699537 2.191108   100</code></pre>
+##  1.600358 1.646749 1.670888 1.669327 1.690355 1.778268   100</code></pre>
 <p><br></p>
 <ul>
 <li>Default convergence tolerance with cross validation for <code>lam</code>:</li>
@@ -176,9 +176,9 @@
 <a class="sourceLine" id="cb6-2" data-line-number="2"><span class="kw"><a href="http://www.rdocumentation.org/packages/microbenchmark/topics/microbenchmark">microbenchmark</a></span>(<span class="kw"><a href="../reference/shrink.html">shrink</a></span>(<span class="dt">X =</span> data<span class="op">$</span>X, <span class="dt">Y =</span> data<span class="op">$</span>Y, <span class="dt">trace =</span> <span class="st">"none"</span>), <span class="dt">times =</span> <span class="dv">5</span>)</a></code></pre></div>
 <pre><code>## Unit: seconds
 ##                                            expr      min       lq     mean
-##  shrink(X = data$X, Y = data$Y, trace = "none") 16.23068 16.31082 17.15836
-##    median      uq      max neval
-##  17.30101 17.3825 18.56678     5</code></pre>
+##  shrink(X = data$X, Y = data$Y, trace = "none") 16.06304 16.36117 16.61059
+##    median       uq      max neval
+##  16.43248 16.60028 17.59596     5</code></pre>
 <p><br></p>
 <ul>
 <li>Parallel (<code>cores = 2</code>) cross validation:</li>
@@ -188,9 +188,9 @@
 <a class="sourceLine" id="cb8-2" data-line-number="2"><span class="kw"><a href="http://www.rdocumentation.org/packages/microbenchmark/topics/microbenchmark">microbenchmark</a></span>(<span class="kw"><a href="../reference/shrink.html">shrink</a></span>(<span class="dt">X =</span> data<span class="op">$</span>X, <span class="dt">Y =</span> data<span class="op">$</span>Y, <span class="dt">cores =</span> <span class="dv">2</span>, <span class="dt">trace =</span> <span class="st">"none"</span>), <span class="dt">times =</span> <span class="dv">5</span>)</a></code></pre></div>
 <pre><code>## Unit: seconds
 ##                                                       expr      min
-##  shrink(X = data$X, Y = data$Y, cores = 2, trace = "none") 12.67027
-##        lq     mean   median       uq      max neval
-##  12.76902 13.29724 13.56868 13.70113 13.77712     5</code></pre>
+##  shrink(X = data$X, Y = data$Y, cores = 2, trace = "none") 12.25516
+##        lq     mean  median       uq      max neval
+##  12.37918 12.50935 12.4228 12.65463 12.83499     5</code></pre>
 <p><br></p>
 <ul>
 <li>Cross validation with <span class="math inline">\(B = \hat{\Sigma}_{xy}\)</span>:</li>
@@ -202,8 +202,8 @@
 <pre><code>## Unit: seconds
 ##                                                                                                                    expr
 ##  shrink(X = data$X, Y = data$Y, B = cov(data$X, data$Y), lam.max = lam_max,      lam.min.ratio = 1e-04, trace = "none")
-##       min       lq     mean   median       uq      max neval
-##  20.76995 21.25143 21.89653 22.08462 22.49018 22.88647     5</code></pre>
+##      min       lq     mean   median       uq      max neval
+##  19.4061 19.87525 20.09298 20.10041 20.47427 20.60889     5</code></pre>
 <p><br></p>
 <ul>
 <li>Cross validation with <span class="math inline">\(B = \left[\hat{\Sigma}_{xy}, I_{p} \right]\)</span>:</li>
@@ -214,8 +214,8 @@
 <pre><code>## Unit: seconds
 ##                                                                                                                                               expr
 ##  shrink(X = data$X, Y = data$Y, B = cbind(cov(data$X, data$Y),      diag(ncol(data$X))), lam.max = 10, lam.min.ratio = 1e-04,      trace = "none")
-##       min       lq     mean   median       uq      max neval
-##  68.97569 70.64955 72.05298 72.95886 73.25877 74.42204     5</code></pre>
+##       min       lq     mean   median       uq     max neval
+##  64.52161 65.65382 66.49351 65.99164 67.67487 68.6256     5</code></pre>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
