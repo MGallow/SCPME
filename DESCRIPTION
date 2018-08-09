@@ -2,10 +2,10 @@ Package: SCPME
 Type: Package
 Title: Shrinking Characteristics of Precision Matrix Estimators
 Version: 1.0
-Date: 2018-07-30
+Date: 2018-08-09
 Authors@R: person("Matt", "Galloway", email = "gall0441@umn.edu",
                   role = c("aut", "cre"))
-Description: An implementation of the methods described in "Shrinking Characteristics of Precision Matrix Estimators" by Aaron J. Molstad, PhD and Adam J. Rothman, PhD. The manuscript can be found here: <doi:10.1093/biomet/asy023> .
+Description: Estimates a penalized precision matrix via an augmented ADMM algorithm. This package is an implementation of the methods described in "Shrinking Characteristics of Precision Matrix Estimators" by Aaron J. Molstad, PhD and Adam J. Rothman, PhD. The manuscript can be found here: <doi:10.1093/biomet/asy023> .
 URL: https://github.com/MGallow/SCPME
 BugReports: https://github.com/MGallow/SCPME/issues
 License: GPL (>= 2)

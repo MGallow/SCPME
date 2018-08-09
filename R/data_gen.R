@@ -34,14 +34,15 @@ data_gen = function(n, p, r = 1, sparsity = 0.5, Sigma = c("tridiag",
     Sigma = match.arg(Sigma)
     
     # randomly generate betas
-    betas = matrix(rnorm(p * r, 0, sqrt(1/p)), nrow = p, ncol = r)
-    betas = betas * matrix(rbinom(p * r, 1, prob = sparsity), nrow = p, 
+    betas = matrix(rnorm(p * r, 0, sqrt(1/p)), nrow = p, 
         ncol = r)
+    betas = betas * matrix(rbinom(p * r, 1, prob = sparsity), 
+        nrow = p, ncol = r)
     
     # generate data X
-    SigmaX = switch(SigmaX, tridiag = tridiag(p = p, n = n, ...), 
-        dense = dense(p = p, n = n, ...), denseQR = denseQR(p = p, 
-            n = n, ...), compound = compound(p = p, n = n))
+    SigmaX = switch(SigmaX, tridiag = tridiag(p = p, n = n, 
+        ...), dense = dense(p = p, n = n, ...), denseQR = denseQR(p = p, 
+        n = n, ...), compound = compound(p = p, n = n))
     X = SigmaX$X
     
     SigmaX = SigmaX$S
@@ -50,9 +51,9 @@ data_gen = function(n, p, r = 1, sparsity = 0.5, Sigma = c("tridiag",
     }
     
     # generate sigma matrix
-    Sigma = switch(Sigma, tridiag = tridiag(p = r, n = n, ...), 
-        dense = dense(p = r, n = n, ...), denseQR = denseQR(p = r, 
-            n = n, ...), compound = compound(p = r, n = n))
+    Sigma = switch(Sigma, tridiag = tridiag(p = r, n = n, 
+        ...), dense = dense(p = r, n = n, ...), denseQR = denseQR(p = r, 
+        n = n, ...), compound = compound(p = r, n = n))
     
     Sigma = Sigma$S
     if (!is.null(s)) {
@@ -62,7 +63,8 @@ data_gen = function(n, p, r = 1, sparsity = 0.5, Sigma = c("tridiag",
     # create data
     out = eigen(Sigma, symmetric = TRUE)
     if (length(Sigma > 1)) {
-        Sigma.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors)
+        Sigma.sqrt = out$vectors %*% diag(out$values^0.5) %*% 
+            t(out$vectors)
     } else {
         Sigma.sqrt = sqrt(Sigma)
     }
@@ -110,10 +112,12 @@ tridiag = function(p = 8, base = 0.7, n = NULL) {
     # create data, if specified
     if (!is.null(n)) {
         
-        # generate n by p matrix X with rows drawn iid N_p(0, sigma)
+        # generate n by p matrix X with rows drawn iid N_p(0,
+        # sigma)
         out = eigen(S, symmetric = TRUE)
         if (length(S > 1)) {
-            S.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors)
+            S.sqrt = out$vectors %*% diag(out$values^0.5) %*% 
+                t(out$vectors)
         } else {
             S.sqrt = sqrt(S)
         }
@@ -160,10 +164,12 @@ dense = function(p = 8, base = 0.9, n = NULL) {
     # create data, if specified
     if (!is.null(n)) {
         
-        # generate n by p matrix X with rows drawn iid N_p(0, sigma)
+        # generate n by p matrix X with rows drawn iid N_p(0,
+        # sigma)
         out = eigen(S, symmetric = TRUE)
         if (length(S > 1)) {
-            S.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors)
+            S.sqrt = out$vectors %*% diag(out$values^0.5) %*% 
+                t(out$vectors)
         } else {
             S.sqrt = sqrt(S)
         }
@@ -215,10 +221,12 @@ denseQR = function(p = 8, num = 5, n = NULL) {
     # create data, if specified
     if (!is.null(n)) {
         
-        # generate n by p matrix X with rows drawn iid N_p(0, sigma)
+        # generate n by p matrix X with rows drawn iid N_p(0,
+        # sigma)
         out = eigen(S, symmetric = TRUE)
         if (length(S > 1)) {
-            S.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors)
+            S.sqrt = out$vectors %*% diag(out$values^0.5) %*% 
+                t(out$vectors)
         } else {
             S.sqrt = sqrt(S)
         }
@@ -265,10 +273,12 @@ compound = function(p = 8, n = NULL) {
     # create data, if specified
     if (!is.null(n)) {
         
-        # generate n by p matrix X with rows drawn iid N_p(0, sigma)
+        # generate n by p matrix X with rows drawn iid N_p(0,
+        # sigma)
         out = eigen(S, symmetric = TRUE)
         if (length(S > 1)) {
-            S.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors)
+            S.sqrt = out$vectors %*% diag(out$values^0.5) %*% 
+                t(out$vectors)
         } else {
             S.sqrt = sqrt(S)
         }
